@@ -144,6 +144,36 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.9.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+    
+                <configuration>
+                    <forceRegenerate>true</forceRegenerate>
+                   
+<!--online-through url-->
+<!--                    <schemas>
+                        <schema>
+                            <url>http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd</url>
+                        </schema>
+                    </schemas> -->
+         
+         <!--offline through xsd-->
+         <schemaDirectory>src/main/java/in/gov/nvli/harvester/schemas/</schemaDirectory>
+         <schemaFiles>OAI-PMH.xsd</schemaFiles>
+        
+                    <generateDirectory>src/main/java/</generateDirectory>
+                    <generatePackage>in.gov.nvli.harvester.OAIPMH_beans</generatePackage> 
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
