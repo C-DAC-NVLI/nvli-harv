@@ -5,14 +5,13 @@
  */
 package in.gov.nvli.harvester.controllers;
 
-import in.gov.nvli.harvester.beans.VerbType;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -38,9 +37,13 @@ public class IdentifyController {
             identifyService.getRepositoryInformation(baseURL);
         } catch (MalformedURLException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (JAXBException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        catch (IOException ex) {
+            Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
    return "example";
    }
     
