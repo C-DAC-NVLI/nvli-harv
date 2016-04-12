@@ -13,5 +13,6 @@
     </head>
     <body>
         <h1>Hello harvester!</h1>
+        <a href="identify?baseURL=http://dspace.library.iitb.ac.in/oai/request">identify</a>
     </body>
 </html>

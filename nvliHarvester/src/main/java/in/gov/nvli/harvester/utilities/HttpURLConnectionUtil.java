@@ -17,7 +17,7 @@ import java.net.URL;
  */
 public class HttpURLConnectionUtil {
     
-    public HttpURLConnection getConnection(String  baseURL,String method,String userAgnet,String adminEmail) throws ProtocolException, MalformedURLException, IOException
+    public static HttpURLConnection getConnection(String  baseURL,String method,String userAgnet,String adminEmail) throws ProtocolException, MalformedURLException, IOException
     {
         URL identifyRequestURL = new URL(baseURL);
 		HttpURLConnection con = (HttpURLConnection) identifyRequestURL.openConnection();
@@ -30,6 +30,14 @@ public class HttpURLConnectionUtil {
 		con.setRequestProperty("From", "From : " + adminEmail);
                 return con;
 
+    }
+    public static int getConnectionStatus(HttpURLConnection coonection) throws IOException {
+
+        int responseCode = coonection.getResponseCode();
+        if (responseCode != 200) {
+            return -1;
+        }
+    return 0;
     }
     
 }

@@ -5,15 +5,19 @@
  */
 package in.gov.nvli.harvester.controllers;
 
+import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.services.IdentifyService;
-import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -22,29 +26,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IdentifyController {
  
-   // @Autowired
+   @Autowired
     public IdentifyService identifyService;
-    private String  baseURL = "http://dspace.library.iitb.ac.in/oai/request?";
  
    @RequestMapping("/identify")
-   public String identify()
+   public ModelAndView identify(@RequestParam("baseURL") String baseURL)
    {
-      // baseURL=baseURL+"verb="+(VerbType.IDENTIFY).toString().toLowerCase();
-       baseURL="http://dspace.library.iitb.ac.in/oai/request?verb=Identify";
-       System.err.println("base url"+baseURL);
+       baseURL=baseURL+"?verb="+VerbType.IDENTIFY.value();
+        ModelAndView mv=new ModelAndView("identify");
         try {
-           identifyService=new IdentifyServiceImpl();
-            identifyService.getRepositoryInformation(baseURL);
+           int status= identifyService.getConnectionStatus(baseURL, "", "","");
+           mv.addObject("status",status);
+            if(!(status<0))
+            {
+                OAIPMHtype OAIPMHObj=identifyService.getRepositoryInformation();
+                mv.addObject("OAIPMHObj",OAIPMHObj);
+            }
+            
         } catch (MalformedURLException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JAXBException ex) {
+        } catch (JAXBException | IOException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        catch (IOException ex) {
-            Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-   return "example";
+       
+      
+return mv;
    }
     
 }
