@@ -5,19 +5,16 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
-import in.gov.nvli.harvester.beans.OAIPMHtype;
-import in.gov.nvli.harvester.dao.IdentifyDao;
+import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
+import in.gov.nvli.harvester.utilities.UnmarshalUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -30,35 +27,25 @@ public class IdentifyServiceImpl implements IdentifyService{
     private HttpURLConnectionUtil httpURLConnectionUtil;
     private OAIResponseUtil OAIResponseUtil;
     @Override
-    public void getRepositoryInformation(String baseURL) throws ProtocolException, MalformedURLException, IOException
+    public void getRepositoryInformation(String baseURL) throws ProtocolException, MalformedURLException, IOException,JAXBException
     {
         httpURLConnectionUtil=new HttpURLConnectionUtil();
         HttpURLConnection con = httpURLConnectionUtil.getConnection(baseURL, "GET", "", "");
         int responseCode = con.getResponseCode();
-//		if (responseCode != 200)
-//			return null;
+		if (responseCode != 200)
+			         System.err.println("ERROR");
         OAIResponseUtil=new OAIResponseUtil();
-        System.out.println(OAIResponseUtil.createResponseFromXML(con));
-    unMarshaling(con);
+        String response=OAIResponseUtil.createResponseFromXML(con);
+        OAIPMHtype OAIPMHType= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response);
+        
+        System.out.println(OAIPMHType.getResponseDate());
+    //unMarshaling(con);
     }
   
-    public void unMarshaling(HttpURLConnection con) throws IOException
-    {
-         try {  
-     
-        JAXBContext jaxbContext = JAXBContext.newInstance(OAIPMHtype.class);  
-   
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();  
-        OAIPMHtype que= (OAIPMHtype) jaxbUnmarshaller.unmarshal(con.getInputStream());  
-          
-        System.out.println(que.getResponseDate());  
-        
-   
-      } catch (JAXBException e) {  
-        e.printStackTrace();  
-      }  
-   
-    }  
-    }
+    
+    
+    
+
+}
     
 
