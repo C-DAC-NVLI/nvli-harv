@@ -8,6 +8,7 @@ package in.gov.nvli.harvester.services;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 //@Service
 public interface IdentifyService {
     
-    public void getRepositoryInformation(String baseURL) throws ProtocolException, MalformedURLException, IOException;
+    public void getRepositoryInformation(String baseURL) throws ProtocolException, MalformedURLException, IOException,JAXBException;
     
     
 }
