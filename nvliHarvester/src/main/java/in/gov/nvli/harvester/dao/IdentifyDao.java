@@ -5,10 +5,13 @@
  */
 package in.gov.nvli.harvester.dao;
 
+import org.springframework.stereotype.Repository;
+
 /**
  *
  * @author vootla
  */
+@Repository
 public interface IdentifyDao {
  
     public void saveREpositoryInformation();
