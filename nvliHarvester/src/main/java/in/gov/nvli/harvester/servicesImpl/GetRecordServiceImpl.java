@@ -37,6 +37,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
 
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
+    System.out.println("Metadata " + getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc().getSubject());
 
   }
 

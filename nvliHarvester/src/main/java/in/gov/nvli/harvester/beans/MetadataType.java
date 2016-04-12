@@ -4,8 +4,6 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2015.06.29 at 12:36:38 PM IST 
 //
-
-
 package in.gov.nvli.harvester.beans;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,16 +12,17 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * Metadata must be expressed in XML that complies
- *        with another XML Schema (namespace=#other). Metadata must be 
- *        explicitly qualified in the response.
- * 
- * <p>Java class for metadataType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * Metadata must be expressed in XML that complies with another XML Schema
+ * (namespace=#other). Metadata must be explicitly qualified in the response.
+ *
+ * <p>
+ * Java class for metadataType complex type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
+ *
  * <pre>
  * &lt;complexType name="metadataType">
  *   &lt;complexContent>
@@ -35,56 +34,49 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MetadataType {
-    
-    @XmlAnyElement(lax = true)
-    protected Object any;
 
+  @XmlAnyElement(lax = true)
+  protected Object any;
 
-   @XmlElement(name="dc",required = true,namespace = "http://www.openarchives.org/OAI/2.0/oai_dc/")
-    protected OAIDC oaidc;
+  @XmlElement(name = "dc", required = true, namespace = "http://www.openarchives.org/OAI/2.0/oai_dc/")
+  protected OAIDC oaidc;
 
-    public void setOaidc(OAIDC oaidc) {
-        this.oaidc = oaidc;
-    }
+  public void setOaidc(OAIDC oaidc) {
+    this.oaidc = oaidc;
+  }
 
-  
+  public OAIDC getOaidc() {
+    return oaidc;
+  }
 
-    /**
-     * Sets the value of the any property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    
-    
-    /**
-     * Gets the value of the any property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
-     */
-    public Object getAny() {
-        return any;
-    }
+  /**
+   * Sets the value of the any property.
+   *
+   * @param value allowed object is {@link Object }
+   *
+   */
+  /**
+   * Gets the value of the any property.
+   *
+   * @return possible object is {@link Object }
+   *
+   */
+  public Object getAny() {
+    return any;
+  }
 
-    /**
-     * Sets the value of the any property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setAny(Object value) {
-        this.any = value;
-    }
+  /**
+   * Sets the value of the any property.
+   *
+   * @param value allowed object is {@link Object }
+   *
+   */
+  public void setAny(Object value) {
+    this.any = value;
+  }
 }
