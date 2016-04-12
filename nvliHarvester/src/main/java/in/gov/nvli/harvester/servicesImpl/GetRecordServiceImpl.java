@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.servicesImpl;
 
 
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
@@ -36,7 +37,9 @@ public class GetRecordServiceImpl implements GetRecordService {
     OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
 
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
-    System.out.println("Metadata " + getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc().getSubject());
+    
+    OAIDC oaiDC=(OAIDC) getRecordObj.getGetRecord().getRecord().getMetadata().getAny();
+    System.out.println("Metadata " +oaiDC.getSubject());
 
   }
 
