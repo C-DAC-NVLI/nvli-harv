@@ -5,7 +5,6 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
-
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.services.GetRecordService;
@@ -30,36 +29,34 @@ public class GetRecordServiceImpl implements GetRecordService {
 
   @Override
   public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException {
-     connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+    connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
     int responseCode = connection.getResponseCode();
     String response = OAIResponseUtil.createResponseFromXML(connection);
 
     OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
 
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
-    
-    OAIDC oaiDC=getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc();
-       
-    
+
+    OAIDC oaiDC = getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc();
 
   }
-  
-  public void getMetadataFromObj(OAIDC oaiDC){
-    List<String> titles=oaiDC.getTitle();
-    List<String> creators=oaiDC.getCreator();
-    List<String> subjects=oaiDC.getSubject();
-    List<String> descriptions=oaiDC.getDescription();
-    List<String> dates=oaiDC.getDate();
-    List<String> types=oaiDC.getType();
-    List<String> identifiers=oaiDC.getIdentifier();
-    List<String> contributors=oaiDC.getContributor();
-    List<String> coverages=oaiDC.getCoverage();
-    List<String> languages=oaiDC.getLanguage();
-    List<String> publishers=oaiDC.getPublisher();
-    List<String> relations=oaiDC.getRelation();
-    List<String> rights=oaiDC.getRights();
-    List<String> sources=oaiDC.getSource();
-    List<String> formats=oaiDC.getFormat();
+
+  public void getMetadataFromObj(OAIDC oaiDC) {
+    List<String> titles = oaiDC.getTitle();
+    List<String> creators = oaiDC.getCreator();
+    List<String> subjects = oaiDC.getSubject();
+    List<String> descriptions = oaiDC.getDescription();
+    List<String> dates = oaiDC.getDate();
+    List<String> types = oaiDC.getType();
+    List<String> identifiers = oaiDC.getIdentifier();
+    List<String> contributors = oaiDC.getContributor();
+    List<String> coverages = oaiDC.getCoverage();
+    List<String> languages = oaiDC.getLanguage();
+    List<String> publishers = oaiDC.getPublisher();
+    List<String> relations = oaiDC.getRelation();
+    List<String> rights = oaiDC.getRights();
+    List<String> sources = oaiDC.getSource();
+    List<String> formats = oaiDC.getFormat();
   }
 
 }

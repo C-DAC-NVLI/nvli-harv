@@ -5,9 +5,9 @@
  */
 package in.gov.nvli.harvester.controllers;
 
-import in.gov.nvli.harvester.services.ListRecordsService;
-import in.gov.nvli.harvester.servicesImpl.ListRecordsServiceImpl;
-import java.io.IOException;                                                                                                                                                                                                                                             
+import in.gov.nvli.harvester.services.ListIdentifiersService;
+import in.gov.nvli.harvester.servicesImpl.ListIdentifiersServiceImpl;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,19 +20,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author richa
  */
 @Controller
-public class ListRecordsController {
-  
-  public ListRecordsService listRecordsService;
+public class ListIdentifiersControllers {
+
+  private ListIdentifiersService listIdentifiersService;
   private String baseURL = "";
 
-  @RequestMapping("/listrecords")
-  public String getRecord() {
+  @RequestMapping("/listidentifiers")
+  public String listIdentifiers() {
     // baseURL=baseURL+"verb="+(VerbType.IDENTIFY).toString().toLowerCase();
-    baseURL = "http://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc";
+    baseURL = "http://dspace.library.iitb.ac.in/oai/request?verb=ListIdentifiers&metadataPrefix=oai_dc";
     System.err.println("base url" + baseURL);
     try {
-      listRecordsService = new ListRecordsServiceImpl();
-      listRecordsService.getListRecord(baseURL);
+      listIdentifiersService = new ListIdentifiersServiceImpl();
+      listIdentifiersService.getListIdentifiers(baseURL);
     } catch (MalformedURLException ex) {
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
     } catch (IOException ex) {
@@ -42,5 +42,5 @@ public class ListRecordsController {
     }
     return "example";
   }
-  
+
 }
