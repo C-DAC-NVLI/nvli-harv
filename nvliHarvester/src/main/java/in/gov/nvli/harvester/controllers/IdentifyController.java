@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
+import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import java.io.IOException;
@@ -42,8 +43,8 @@ public class IdentifyController {
            mv.addObject("status",status);
             if(!(status<0))
             {
-                OAIPMHtype OAIPMHObj=identifyService.getRepositoryInformation();
-                mv.addObject("OAIPMHObj",OAIPMHObj);
+                HarRepo repo=identifyService.getRepositoryInformation();
+                mv.addObject("repo",repo);
             }
             
         } catch (MalformedURLException ex) {
