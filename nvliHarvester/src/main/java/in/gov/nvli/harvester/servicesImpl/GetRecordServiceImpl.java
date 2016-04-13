@@ -15,6 +15,7 @@ import in.gov.nvli.harvester.utilities.UnmarshalUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Service;
 
@@ -38,9 +39,27 @@ public class GetRecordServiceImpl implements GetRecordService {
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
     
     OAIDC oaiDC=getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc();
-    System.out.println("Metadata " +oaiDC.getSubject());
-    System.out.println("Metadata " +oaiDC.getIdentifier());
+       
+    
 
+  }
+  
+  public void getMetadataFromObj(OAIDC oaiDC){
+    List<String> titles=oaiDC.getTitle();
+    List<String> creators=oaiDC.getCreator();
+    List<String> subjects=oaiDC.getSubject();
+    List<String> descriptions=oaiDC.getDescription();
+    List<String> dates=oaiDC.getDate();
+    List<String> types=oaiDC.getType();
+    List<String> identifiers=oaiDC.getIdentifier();
+    List<String> contributors=oaiDC.getContributor();
+    List<String> coverages=oaiDC.getCoverage();
+    List<String> languages=oaiDC.getLanguage();
+    List<String> publishers=oaiDC.getPublisher();
+    List<String> relations=oaiDC.getRelation();
+    List<String> rights=oaiDC.getRights();
+    List<String> sources=oaiDC.getSource();
+    List<String> formats=oaiDC.getFormat();
   }
 
 }
