@@ -5,8 +5,13 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
+import in.gov.nvli.harvester.OAIPMH_beans.AboutType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.beans.HarRecord;
+import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.OAIDC;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
@@ -36,12 +41,32 @@ public class GetRecordServiceImpl implements GetRecordService {
     OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
 
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
-
-    OAIDC oaiDC = getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc();
+    
+    HarRecord record=new HarRecord();
+    record.setIdentifier(getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
+    record.setMetadataTypeId(new HarMetadataType());
+    List<AboutType> aboutTypes=getRecordObj.getGetRecord().getRecord().getAbout();
+    String temp="";
+    for (AboutType about : aboutTypes) {
+      temp+=about;
+    }
+    record.setAbout(temp);
+   //save record object in db
+    
+    //end
+    
+    HarRecordMetadataDc recordMetadataDc=new HarRecordMetadataDc();
+    recordMetadataDc.setRecordId(record);
+    getMetadataFromObj(getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc(), recordMetadataDc);
+    
+    //save metadata object in db
+    
+    //end
+    
 
   }
 
-  public void getMetadataFromObj(OAIDC oaiDC) {
+  public HarRecordMetadataDc getMetadataFromObj(OAIDC oaiDC,HarRecordMetadataDc recordMetadataDc) {
     List<String> titles = oaiDC.getTitle();
     List<String> creators = oaiDC.getCreator();
     List<String> subjects = oaiDC.getSubject();
@@ -57,6 +82,35 @@ public class GetRecordServiceImpl implements GetRecordService {
     List<String> rights = oaiDC.getRights();
     List<String> sources = oaiDC.getSource();
     List<String> formats = oaiDC.getFormat();
+    
+    recordMetadataDc.setTitle(getMetadataTagValueSeparatedBySpecialChar(titles));
+    recordMetadataDc.setCreator(getMetadataTagValueSeparatedBySpecialChar(creators));
+    recordMetadataDc.setSubject(getMetadataTagValueSeparatedBySpecialChar(subjects));
+    recordMetadataDc.setDescription(getMetadataTagValueSeparatedBySpecialChar(descriptions));
+    //recordMetadataDc.setDate(getMetadataTagValueSeparatedBySpecialChar(dates));
+    recordMetadataDc.setType(getMetadataTagValueSeparatedBySpecialChar(types));
+    recordMetadataDc.setIdentifier(getMetadataTagValueSeparatedBySpecialChar(identifiers));
+    recordMetadataDc.setContributor(getMetadataTagValueSeparatedBySpecialChar(contributors));
+    recordMetadataDc.setCoverage(getMetadataTagValueSeparatedBySpecialChar(coverages));
+    recordMetadataDc.setLanguage(getMetadataTagValueSeparatedBySpecialChar(languages));
+    recordMetadataDc.setPublisher(getMetadataTagValueSeparatedBySpecialChar(publishers));
+    recordMetadataDc.setRelation(getMetadataTagValueSeparatedBySpecialChar(relations));
+    recordMetadataDc.setRights(getMetadataTagValueSeparatedBySpecialChar(rights));
+    recordMetadataDc.setSource(getMetadataTagValueSeparatedBySpecialChar(sources));
+    recordMetadataDc.setFormat(getMetadataTagValueSeparatedBySpecialChar(formats));
+    
+    return recordMetadataDc;
   }
+  
+  public String getMetadataTagValueSeparatedBySpecialChar(List<String> tagValues){
+    
+    String columnValue="";
+    for (String tagValue : tagValues) {
+      columnValue+=tagValue+CommonConstants.COLUMNVALUESEPARARTOR;
+    }
+    
+    return columnValue;
+  }
+
 
 }
