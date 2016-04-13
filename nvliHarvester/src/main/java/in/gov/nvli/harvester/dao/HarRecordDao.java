@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
  */
 public interface HarRecordDao {
   
-  public HarRecord saveHarRecord(HarRecord record);
+  public void saveHarRecord(HarRecord record);
   
 }

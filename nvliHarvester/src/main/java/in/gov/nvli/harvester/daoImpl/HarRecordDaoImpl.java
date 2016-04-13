@@ -19,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
  * @author richa
  */
 @Repository
-@Transactional
 public class HarRecordDaoImpl implements HarRecordDao{
   
   @Autowired(required = true)
   private SessionFactory sessionFactory;
 
   @Override
-  public HarRecord saveHarRecord(HarRecord record) {
+  @Transactional
+  public void saveHarRecord(HarRecord record) {
     Session session=null;
     Transaction tx=null;
     try{
@@ -38,7 +38,6 @@ public class HarRecordDaoImpl implements HarRecordDao{
       if(tx!=null)
         tx.rollback();
     }
-    return record;
   }
   
 }

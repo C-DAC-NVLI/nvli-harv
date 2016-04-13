@@ -13,6 +13,6 @@ import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
  */
 public interface HarRecordMetadataDcDao {
   
-  public HarRecordMetadataDc save(HarRecordMetadataDc metadataDc);
+  public void save(HarRecordMetadataDc metadataDc);
   
 }

@@ -12,6 +12,10 @@ import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.dao.HarRecordDao;
+import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
+import in.gov.nvli.harvester.daoImpl.HarRecordDaoImpl;
+import in.gov.nvli.harvester.daoImpl.HarRecordMetadataDcDaoImpl;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
@@ -52,7 +56,8 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
     record.setAbout(temp);
    //save record object in db
-    
+    HarRecordDao recordDao=new HarRecordDaoImpl();
+    recordDao.saveHarRecord(record);
     //end
     
     HarRecordMetadataDc recordMetadataDc=new HarRecordMetadataDc();
@@ -60,7 +65,8 @@ public class GetRecordServiceImpl implements GetRecordService {
     getMetadataFromObj(getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc(), recordMetadataDc);
     
     //save metadata object in db
-    
+    HarRecordMetadataDcDao metadataDcDao=new HarRecordMetadataDcDaoImpl();
+    metadataDcDao.save(recordMetadataDc);
     //end
     
 
@@ -87,7 +93,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     recordMetadataDc.setCreator(getMetadataTagValueSeparatedBySpecialChar(creators));
     recordMetadataDc.setSubject(getMetadataTagValueSeparatedBySpecialChar(subjects));
     recordMetadataDc.setDescription(getMetadataTagValueSeparatedBySpecialChar(descriptions));
-    //recordMetadataDc.setDate(getMetadataTagValueSeparatedBySpecialChar(dates));
+    recordMetadataDc.setDate(getMetadataTagValueSeparatedBySpecialChar(dates));
     recordMetadataDc.setType(getMetadataTagValueSeparatedBySpecialChar(types));
     recordMetadataDc.setIdentifier(getMetadataTagValueSeparatedBySpecialChar(identifiers));
     recordMetadataDc.setContributor(getMetadataTagValueSeparatedBySpecialChar(contributors));
