@@ -52,6 +52,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "HarRecordMetadataDc.findByRights", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.rights = :rights")})
 public class HarRecordMetadataDc implements Serializable {
 
+    @Size(max = 500)
+    @Column(name = "date")
+    private String date;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -100,11 +104,6 @@ public class HarRecordMetadataDc implements Serializable {
     @Size(min = 1, max = 500)
     @Column(name = "contributor")
     private String contributor;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
@@ -159,7 +158,7 @@ public class HarRecordMetadataDc implements Serializable {
         this.recordMetadataDcId = recordMetadataDcId;
     }
 
-    public HarRecordMetadataDc(Long recordMetadataDcId, Date created, Date udpated, String title, String creator, String subject, String description, String publisher, String contributor, Date date, String type, String format, String identifier, String source, String language, String relation, String coverage, String rights) {
+    public HarRecordMetadataDc(Long recordMetadataDcId, Date created, Date udpated, String title, String creator, String subject, String description, String publisher, String contributor, String date, String type, String format, String identifier, String source, String language, String relation, String coverage, String rights) {
         this.recordMetadataDcId = recordMetadataDcId;
         this.created = created;
         this.udpated = udpated;
@@ -252,13 +251,6 @@ public class HarRecordMetadataDc implements Serializable {
         this.contributor = contributor;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     public String getType() {
         return type;
@@ -363,6 +355,14 @@ public class HarRecordMetadataDc implements Serializable {
     @Override
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRecordMetadataDc[ recordMetadataDcId=" + recordMetadataDcId + " ]";
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
     
 }

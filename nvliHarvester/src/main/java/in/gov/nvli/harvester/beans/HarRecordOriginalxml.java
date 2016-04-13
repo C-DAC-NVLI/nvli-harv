@@ -33,17 +33,18 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "HarRecordOriginalxml.findByRecordorginalXMLid", query = "SELECT h FROM HarRecordOriginalxml h WHERE h.recordorginalXMLid = :recordorginalXMLid")})
 public class HarRecordOriginalxml implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "xml")
+    private byte[] xml;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "record_orginalXML_id")
     private Long recordorginalXMLid;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "xml")
-    private byte[] xml;
     @JoinColumn(name = "record_id", referencedColumnName = "record_id")
     @ManyToOne(optional = false)
     private HarRecord recordId;
@@ -68,13 +69,6 @@ public class HarRecordOriginalxml implements Serializable {
         this.recordorginalXMLid = recordorginalXMLid;
     }
 
-    public byte[] getXml() {
-        return xml;
-    }
-
-    public void setXml(byte[] xml) {
-        this.xml = xml;
-    }
 
     public HarRecord getRecordId() {
         return recordId;
@@ -107,6 +101,14 @@ public class HarRecordOriginalxml implements Serializable {
     @Override
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRecordOriginalxml[ recordorginalXMLid=" + recordorginalXMLid + " ]";
+    }
+
+    public byte[] getXml() {
+        return xml;
+    }
+
+    public void setXml(byte[] xml) {
+        this.xml = xml;
     }
     
 }
