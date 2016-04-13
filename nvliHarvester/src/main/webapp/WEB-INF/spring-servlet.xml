@@ -13,11 +13,10 @@
 	<context:annotation-config />
 	<!-- To specify to spring container to search for spring components supply 
 		comma separated list of packages -->
-        <context:component-scan base-package="in.gov.nvli.harvester">
-     <context:include-filter type="aspectj" expression="in.gov.nvli.harvester.*" />
-</context:component-scan>
-	<!-- Configures the annotation-driven Spring MVC Controller programming 
-		model. -->
+                <context:component-scan base-package="in.gov.nvli.harvester.controllers" />
+                <context:component-scan base-package="in.gov.nvli.harvester.services" />
+                <context:component-scan base-package="in.gov.nvli.harvester.dao" />
+
 	<mvc:annotation-driven />
 	
 	
