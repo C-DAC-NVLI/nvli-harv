@@ -6,7 +6,6 @@
 package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
-import in.gov.nvli.harvester.dao.IdentifyDao;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
@@ -15,17 +14,15 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author vootla
  */
-
 public class IdentifyServiceImpl implements IdentifyService{
 
-    @Autowired
-  public IdentifyDao identifyDao; 
+  
     private HttpURLConnection connection;
    @Override
     public OAIPMHtype getRepositoryInformation() throws IOException,JAXBException
@@ -45,14 +42,6 @@ public class IdentifyServiceImpl implements IdentifyService{
        }
        return status;
    }
-    
-public static void  main(String args[]) throws IOException, JAXBException
-{
-    // String response=OAIResponseUtil.createResponseFromXML(new File("D:/request.xml"));  
-     String response= OAIResponseUtil.createResponseFromXML(HttpURLConnectionUtil.getConnection("http://dspace.library.iitb.ac.in/oai/request?verb=Identify", "GET", "", ""));
-     OAIPMHtype OAIPMHType= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response); 
-        System.out.println(OAIPMHType.getIdentify().getRepositoryName());
-}
 }
     
 
