@@ -8,12 +8,14 @@ package in.gov.nvli.harvester.controllers;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.services.IdentifyService;
+import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,12 +28,13 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IdentifyController {
  
-   //@Autowired
+  // @Autowired
     public IdentifyService identifyService;
  
    @RequestMapping("/identify")
    public ModelAndView identify(@RequestParam("baseURL") String baseURL)
    {
+       identifyService=new IdentifyServiceImpl();
        baseURL=baseURL+"?verb="+VerbType.IDENTIFY.value();
         ModelAndView mv=new ModelAndView("identify");
         try {

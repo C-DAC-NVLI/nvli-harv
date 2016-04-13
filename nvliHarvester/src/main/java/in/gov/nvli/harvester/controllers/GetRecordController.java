@@ -7,14 +7,15 @@ package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.servicesImpl.GetRecordServiceImpl;
-import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.RequestMapping;
+
 
 /**
  *
