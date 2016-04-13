@@ -14,9 +14,14 @@
     </head>
     <body>
         <h1>Identify</h1>
-        <h4>responseDate: ${OAIPMHObj.responseDate}</h4>
-        <h4>request ${OAIPMHObj.request}</h4>
-        <h4>identify ${OAIPMHObj.identify}</h4>
+      
+        <h4>Repository Name <i style="color: red;">${repo.repoName}</i></h4>
+         <h4>Repository Base Url<i style="color: red;"> ${repo.repoBaseUrl}</i></h4>
+          <h4>Repository Protocol Version <i style="color: red;">${repo.repoProtocolVersion}</i></h4>
+           <h4>Repository Granularity Date<i style="color: red;"> ${repo.repoGranularityDate}</i></h4>
+            <h4>Repository Earliest Timestamp <i style="color: red;">${repo.repoEarliestTimestamp}</i></h4>
+             <h4>Repository Deletion Mode <i style="color: red;">${repo.repoDeletionMode}</i></h4>
+        
         
         
     </body>
