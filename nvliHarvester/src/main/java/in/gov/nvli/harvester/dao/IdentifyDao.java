@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  *
  * @author vootla
  */
-@Repository
+//@Repository
 public interface IdentifyDao {
  
     public void saveREpositoryInformation();

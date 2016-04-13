@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class IdentifyServiceImpl implements IdentifyService{
 
-    @Autowired
+  //  @Autowired
   public IdentifyDao identifyDao; 
     private HttpURLConnection connection;
    @Override

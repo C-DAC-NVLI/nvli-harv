@@ -9,13 +9,12 @@ import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
-import org.springframework.stereotype.Service;
 
 /**
  *
  * @author vootla
  */
-@Service
+//@Service
 public interface IdentifyService {
     
     public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException;

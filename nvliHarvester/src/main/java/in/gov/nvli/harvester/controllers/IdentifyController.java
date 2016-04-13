@@ -26,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class IdentifyController {
  
-   @Autowired
+   //@Autowired
     public IdentifyService identifyService;
  
    @RequestMapping("/identify")
