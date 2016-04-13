@@ -37,7 +37,7 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
     
-    OAIDC oaiDC=(OAIDC) getRecordObj.getGetRecord().getRecord().getMetadata().getAny();
+    OAIDC oaiDC=getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc();
     System.out.println("Metadata " +oaiDC.getSubject());
     System.out.println("Metadata " +oaiDC.getIdentifier());
 

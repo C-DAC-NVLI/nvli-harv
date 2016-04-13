@@ -40,7 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "metadataType", propOrder = {
-  "any"
+  "any",
+  "oaidc"
 })
 public class MetadataType {
 
