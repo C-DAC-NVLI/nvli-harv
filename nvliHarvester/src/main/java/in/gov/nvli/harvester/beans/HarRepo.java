@@ -56,6 +56,24 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HarRepo.findByRepoLongitude", query = "SELECT h FROM HarRepo h WHERE h.repoLongitude = :repoLongitude")})
 public class HarRepo implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "repo_email")
+    private String repoEmail;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "repol_desc")
+    private String repolDesc;
+    @Size(max = 500)
+    @Column(name = "repo_compression")
+    private String repoCompression;
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "repo_logo")
+    private byte[] repoLogo;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,11 +130,6 @@ public class HarRepo implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "repo_permanent_link")
     private String repoPermanentLink;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "repo_logo")
-    private byte[] repoLogo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "repo_last_sync_date")
@@ -440,5 +453,28 @@ public class HarRepo implements Serializable {
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRepo[ repoId=" + repoId + " ]";
     }
-    
+
+    public String getRepoEmail() {
+        return repoEmail;
+    }
+
+    public void setRepoEmail(String repoEmail) {
+        this.repoEmail = repoEmail;
+    }
+
+    public String getRepolDesc() {
+        return repolDesc;
+    }
+
+    public void setRepolDesc(String repolDesc) {
+        this.repolDesc = repolDesc;
+    }
+
+    public String getRepoCompression() {
+        return repoCompression;
+    }
+
+    public void setRepoCompression(String repoCompression) {
+        this.repoCompression = repoCompression;
+    }    
 }
