@@ -49,7 +49,7 @@ public class HarSet implements Serializable {
     @Size(min = 1, max = 100)
     @Column(name = "name")
     private String name;
-    @Lob
+   // @Lob
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
@@ -64,6 +64,11 @@ public class HarSet implements Serializable {
     private Collection<HarSetRecord> harSetRecordCollection;
 
     public HarSet() {
+    }
+
+    public HarSet(String name,String setSpec) {
+        this.name = name;
+        this.setSpec = setSpec;
     }
 
     public HarSet(Long setId) {

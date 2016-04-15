@@ -88,6 +88,7 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
+  
         <!--logging-->
          <dependency>
             <groupId>log4j</groupId>
@@ -107,11 +108,11 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
     <groupId>commons-dbcp</groupId>
     <artifactId>commons-dbcp</artifactId>
-    <version>1.2.2</version>
-</dependency>
+    <version>1.4</version>
+</dependency>-->
     </dependencies>
 
     <build>
@@ -126,6 +127,7 @@
                     <compilerArguments>
                         <endorseddirs>${endorsed.dir}</endorseddirs>
                     </compilerArguments>
+                     <proc>none</proc>
                 </configuration>
             </plugin>
             <plugin>

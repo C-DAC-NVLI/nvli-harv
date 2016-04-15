@@ -24,6 +24,17 @@
     </head>
     <body>
         <h1> Harvester Demo!</h1>
+		<p>
+		Example OAI-PMH links <br><br><br>
+http://dspace.library.iitb.ac.in/oai/request <br>
+http://export.arxiv.org/oai2 <br>
+http://dyuthi.cusat.ac.in/oai/request <br>
+http://etd.ncsi.iisc.ernet.in/dspace-oai/request <br>
+http://oar.icrisat.org/cgi/oai2 <br>
+
+</p>
+		
+		
         
        Defualt Base URL : <input type="text" id="baseUrlInput" value="http://dspace.library.iitb.ac.in/oai/request" style="width: 500px;"/>
        <input type="button" id="btn" value="update" onclick="update();">

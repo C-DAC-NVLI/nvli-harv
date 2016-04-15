@@ -12,12 +12,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author vootla
  */
+
 public interface ListSetsService {
       public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException;
       public List<SetType> getListSets() throws IOException,JAXBException;
+        public boolean saveListSets() throws IOException, JAXBException; 
 }
