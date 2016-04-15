@@ -5,8 +5,17 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
+import in.gov.nvli.harvester.OAIPMH_beans.AboutType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.beans.HarRecord;
+import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.OAIDC;
+import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.dao.HarRecordDao;
+import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
+import in.gov.nvli.harvester.daoImpl.HarRecordDaoImpl;
+import in.gov.nvli.harvester.daoImpl.HarRecordMetadataDcDaoImpl;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
@@ -37,11 +46,35 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
 
-    OAIDC oaiDC = getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc();
+    HarRecord record = new HarRecord();
+    record.setIdentifier(getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
+    record.setMetadataTypeId(new HarMetadataType());
+    List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
+    String temp = "";
+
+    if (aboutTypes != null) {
+      for (AboutType about : aboutTypes) {
+        temp += about;
+      }
+      record.setAbout(temp);
+    }
+    //save record object in db
+    HarRecordDao recordDao = new HarRecordDaoImpl();
+    recordDao.saveHarRecord(record);
+    //end
+
+    HarRecordMetadataDc recordMetadataDc = new HarRecordMetadataDc();
+    recordMetadataDc.setRecordId(record);
+    getMetadataFromObj(getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc(), recordMetadataDc);
+
+    //save metadata object in db
+    HarRecordMetadataDcDao metadataDcDao = new HarRecordMetadataDcDaoImpl();
+    metadataDcDao.save(recordMetadataDc);
+    //end
 
   }
 
-  public void getMetadataFromObj(OAIDC oaiDC) {
+  public HarRecordMetadataDc getMetadataFromObj(OAIDC oaiDC, HarRecordMetadataDc recordMetadataDc) {
     List<String> titles = oaiDC.getTitle();
     List<String> creators = oaiDC.getCreator();
     List<String> subjects = oaiDC.getSubject();
@@ -57,6 +90,78 @@ public class GetRecordServiceImpl implements GetRecordService {
     List<String> rights = oaiDC.getRights();
     List<String> sources = oaiDC.getSource();
     List<String> formats = oaiDC.getFormat();
+
+    if (titles != null) {
+      recordMetadataDc.setTitle(getMetadataTagValueSeparatedBySpecialChar(titles));
+    }
+
+    if (creators != null) {
+      recordMetadataDc.setCreator(getMetadataTagValueSeparatedBySpecialChar(creators));
+    }
+
+    if (subjects != null) {
+      recordMetadataDc.setSubject(getMetadataTagValueSeparatedBySpecialChar(subjects));
+    }
+
+    if (descriptions != null) {
+      recordMetadataDc.setDescription(getMetadataTagValueSeparatedBySpecialChar(descriptions));
+    }
+
+    if (dates != null) {
+      recordMetadataDc.setDate(getMetadataTagValueSeparatedBySpecialChar(dates));
+    }
+
+    if (types != null) {
+      recordMetadataDc.setType(getMetadataTagValueSeparatedBySpecialChar(types));
+    }
+
+    if (identifiers != null) {
+      recordMetadataDc.setIdentifier(getMetadataTagValueSeparatedBySpecialChar(identifiers));
+    }
+
+    if (contributors != null) {
+      recordMetadataDc.setContributor(getMetadataTagValueSeparatedBySpecialChar(contributors));
+    }
+
+    if (coverages != null) {
+      recordMetadataDc.setCoverage(getMetadataTagValueSeparatedBySpecialChar(coverages));
+    }
+
+    if (languages != null) {
+      recordMetadataDc.setLanguage(getMetadataTagValueSeparatedBySpecialChar(languages));
+    }
+
+    if (publishers != null) {
+      recordMetadataDc.setPublisher(getMetadataTagValueSeparatedBySpecialChar(publishers));
+    }
+
+    if (relations != null) {
+      recordMetadataDc.setRelation(getMetadataTagValueSeparatedBySpecialChar(relations));
+    }
+
+    if (rights != null) {
+      recordMetadataDc.setRights(getMetadataTagValueSeparatedBySpecialChar(rights));
+    }
+
+    if (sources != null) {
+      recordMetadataDc.setSource(getMetadataTagValueSeparatedBySpecialChar(sources));
+    }
+
+    if (formats != null) {
+      recordMetadataDc.setFormat(getMetadataTagValueSeparatedBySpecialChar(formats));
+    }
+    System.out.println("Metadata obj "+recordMetadataDc.getDescription());
+    return recordMetadataDc;
+  }
+
+  public String getMetadataTagValueSeparatedBySpecialChar(List<String> tagValues) {
+
+    String columnValue = "";
+    for (String tagValue : tagValues) {
+      columnValue += tagValue + CommonConstants.COLUMNVALUESEPARARTOR;
+    }
+
+    return columnValue;
   }
 
 }
