@@ -17,7 +17,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +49,22 @@ public class IdentifyServiceImpl implements IdentifyService{
         repo.setRepoName(identifyObj.getRepositoryName());
         repo.setRepoBaseUrl(identifyObj.getBaseURL());
         repo.setRepoProtocolVersion(identifyObj.getProtocolVersion());
-      //  repo.setRepoEarliestTimestamp(new Date(identifyObj.getEarliestDatestamp()));
+//        System.out.println("dd"+identifyObj.getGranularity().value());
+//        SimpleDateFormat formatter = new SimpleDateFormat(identifyObj.getGranularity().value());
+//	
+//
+//	try {
+//
+//		Date date = formatter.parse(identifyObj.getEarliestDatestamp());
+//		 repo.setRepoEarliestTimestamp(date);
+//                System.out.println(date);
+//		System.out.println(formatter.format(date));
+//
+//	} catch (ParseException e) {
+//		e.printStackTrace();
+//	}
+//        
+   
         repo.setRepoGranularityDate(identifyObj.getGranularity().value());
         repo.setRepoDeletionMode(identifyObj.getDeletedRecord().value());
 
