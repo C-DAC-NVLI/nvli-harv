@@ -9,7 +9,7 @@ import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.beans.HarRepoType;
 import in.gov.nvli.harvester.services.RepositoryService;
-import in.gov.nvli.harvester.servicesImpl.TEst;
+import in.gov.nvli.harvester.servicesImpl.RepositoryServiceImpl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +39,7 @@ public class RepositoryController {
         short repositoryTypeId = 7;
         short statusid = 8;
         try {
-            repositoryService = new TEst();
+            repositoryService = new RepositoryServiceImpl();
             HarRepo repObject = new HarRepo();
             repositoryObject.setRepoName("Name");
             repositoryObject.setRepoBaseUrl("baseurl");
@@ -84,4 +84,7 @@ public class RepositoryController {
         return false;
     }
 
+    public static void main(String args[]){
+        System.out.println("--->"+new RepositoryController().addRepository(new HarRepo()));
+    }
 }
