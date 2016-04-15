@@ -5,6 +5,7 @@
  */
 package in.gov.nvli.harvester.controllers;
 
+import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.services.ListIdentifiersService;
 import in.gov.nvli.harvester.servicesImpl.ListIdentifiersServiceImpl;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -26,18 +28,21 @@ public class ListIdentifiersControllers {
   private String baseURL = "";
 
   @RequestMapping("/listidentifiers")
-  public String listIdentifiers() {
-    // baseURL=baseURL+"verb="+(VerbType.IDENTIFY).toString().toLowerCase();
-    baseURL = "http://dspace.library.iitb.ac.in/oai/request?verb=ListIdentifiers&metadataPrefix=oai_dc";
-    System.err.println("base url" + baseURL);
+  public String listIdentifiers(@RequestParam("baseURL") String baseURL,@RequestParam("metadataPrefix") String metadataPrefix) {
+        
+    String requestURL = baseURL+"?verb="+VerbType.LIST_IDENTIFIERS.value()+"&metadataPrefix="+metadataPrefix;
+    System.err.println("base url" + requestURL);
     try {
       listIdentifiersService = new ListIdentifiersServiceImpl();
-      listIdentifiersService.getListIdentifiers(baseURL);
+      listIdentifiersService.getListIdentifiers(requestURL);
     } catch (MalformedURLException ex) {
+      ex.printStackTrace();
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
     } catch (IOException ex) {
+      ex.printStackTrace();
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
     } catch (JAXBException ex) {
+      ex.printStackTrace();
       Logger.getLogger(GetRecordController.class.getName()).log(Level.SEVERE, null, ex);
     }
     return "example";

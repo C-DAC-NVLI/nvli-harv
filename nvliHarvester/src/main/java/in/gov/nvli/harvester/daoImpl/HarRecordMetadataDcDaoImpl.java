@@ -37,6 +37,7 @@ public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao{
     }catch(Exception e){
       if(tx!=null)
         tx.rollback();
+      e.printStackTrace();
     }
   }
   
