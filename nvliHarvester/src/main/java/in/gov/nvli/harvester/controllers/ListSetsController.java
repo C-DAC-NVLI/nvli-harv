@@ -30,12 +30,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class ListSetsController {
     
     
-    //@Autowired
+    @Autowired
     private ListSetsService service;
     @RequestMapping("/listSets")
     public ModelAndView listSets(String baseURL)
     {
-       service=new ListSetsServiceImpl();
+       //service=new ListSetsServiceImpl();
        baseURL=baseURL+"?verb="+VerbType.LIST_SETS.value();
         ModelAndView mv=new ModelAndView("listsets");
         try {
@@ -43,9 +43,9 @@ public class ListSetsController {
            mv.addObject("status",status);
             if(!(status<0))
             {
-                List<SetType> Sets=service.getListSets();
-                
-                mv.addObject("sets",Sets);
+             //   List<SetType> Sets=service.getListSets();
+                service.saveListSets();
+               // mv.addObject("sets",Sets);
             }
             
         } catch (MalformedURLException ex) {
