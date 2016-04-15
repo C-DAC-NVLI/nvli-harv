@@ -8,23 +8,33 @@ package in.gov.nvli.harvester.servicesImpl;
 import in.gov.nvli.harvester.OAIPMH_beans.ListSetsType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
+import in.gov.nvli.harvester.beans.HarSet;
+import in.gov.nvli.harvester.dao.HarSetDao;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
+import in.gov.nvli.harvester.utilities.OAIBeanConverter;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
 import in.gov.nvli.harvester.utilities.UnmarshalUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author vootla
  */
+@Service
 public class ListSetsServiceImpl implements ListSetsService{
       
-       private HttpURLConnection connection;
+     @Autowired
+    public HarSetDao harSetDao;
+    private HttpURLConnection connection;
+   
     @Override
    public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException
    {
@@ -42,7 +52,16 @@ public class ListSetsServiceImpl implements ListSetsService{
     {
        String response=OAIResponseUtil.createResponseFromXML(connection);
         OAIPMHtype obj= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response); 
-        System.err.println(".set."+obj.getListSets().getSet().get(0).getSetName());
         return obj.getListSets().getSet();
+    }
+    @Override
+    public boolean saveListSets() throws IOException, JAXBException 
+    {
+        List<HarSet> sets=new ArrayList<>();
+        for(SetType setTemp:getListSets())
+        {
+            sets.add(OAIBeanConverter.setTypeToHarSet(setTemp));
+        }
+       return harSetDao.saveHarSets(sets);
     }
 }
