@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class GetRecordController {
 
+  @Autowired
   public GetRecordService getRecordService;
 
   @RequestMapping("/getrecord")
@@ -34,7 +36,6 @@ public class GetRecordController {
     String requestURL = baseURL+"?verb="+VerbType.GET_RECORD.value()+"&identifier="+identifier+"&metadataPrefix="+metadataPrefix;
     System.err.println("request url" + requestURL);
     try {
-      getRecordService = new GetRecordServiceImpl();
       getRecordService.getRecord(requestURL);
     } catch (MalformedURLException ex) {
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);

@@ -12,6 +12,7 @@ import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
 import in.gov.nvli.harvester.daoImpl.HarRecordDaoImpl;
@@ -25,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,6 +37,17 @@ import org.springframework.stereotype.Service;
 public class GetRecordServiceImpl implements GetRecordService {
 
   private HttpURLConnection connection;
+  
+  private static Short OAIDC=1;
+  
+  @Autowired
+  private HarRecordMetadataDcDao metadataDcDao;
+
+  @Autowired
+  private HarRecordDao recordDao;
+  
+  @Autowired
+  private HarMetadataTypeDao metadataTypeDao;
 
   @Override
   public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException {
@@ -48,7 +61,7 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     HarRecord record = new HarRecord();
     record.setIdentifier(getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
-    record.setMetadataTypeId(new HarMetadataType());
+    record.setMetadataTypeId(metadataTypeDao.getMetadataType(OAIDC));
     List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
     String temp = "";
 
@@ -56,10 +69,9 @@ public class GetRecordServiceImpl implements GetRecordService {
       for (AboutType about : aboutTypes) {
         temp += about;
       }
-      record.setAbout(temp);
     }
+    record.setAbout(temp);
     //save record object in db
-    HarRecordDao recordDao = new HarRecordDaoImpl();
     recordDao.saveHarRecord(record);
     //end
 
@@ -68,7 +80,6 @@ public class GetRecordServiceImpl implements GetRecordService {
     getMetadataFromObj(getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc(), recordMetadataDc);
 
     //save metadata object in db
-    HarRecordMetadataDcDao metadataDcDao = new HarRecordMetadataDcDaoImpl();
     metadataDcDao.save(recordMetadataDc);
     //end
 
@@ -162,6 +173,10 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
 
     return columnValue;
+  }
+  
+  public static void main(String[] args) throws Exception {
+    new GetRecordServiceImpl().getRecord("http://export.arxiv.org/oai2?verb=GetRecord&identifier=oai:arXiv.org:cs/0112017&metadataPrefix=oai_dc");
   }
 
 }

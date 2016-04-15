@@ -5,16 +5,14 @@
  */
 package in.gov.nvli.harvester.dao;
 
-import in.gov.nvli.harvester.beans.HarRecord;
-import java.util.List;
-import org.springframework.stereotype.Repository;
+import in.gov.nvli.harvester.beans.HarMetadataType;
 
 /**
  *
  * @author richa
  */
-public interface HarRecordDao {
+public interface HarMetadataTypeDao {
   
-  public void saveHarRecord(HarRecord record);
+  public HarMetadataType getMetadataType(Short metadataId);
   
 }

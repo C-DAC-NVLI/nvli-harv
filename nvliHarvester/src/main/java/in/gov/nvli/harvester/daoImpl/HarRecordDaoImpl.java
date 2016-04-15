@@ -19,25 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
  * @author richa
  */
 @Repository
-public class HarRecordDaoImpl implements HarRecordDao{
-  
-  @Autowired(required = true)
+@Transactional(readOnly = true)
+public class HarRecordDaoImpl implements HarRecordDao {
+
+  @Autowired
   private SessionFactory sessionFactory;
 
   @Override
   @Transactional
   public void saveHarRecord(HarRecord record) {
-    Session session=null;
-    Transaction tx=null;
-    try{
+    Session session = null;
+    try {
       session = sessionFactory.getCurrentSession();
-      tx=session.beginTransaction();
       session.save(record);
-      tx.commit();
-    }catch(Exception e){
-      if(tx!=null)
-        tx.rollback();
+
+    } catch (Exception e) {
+
     }
   }
-  
+
 }

@@ -5,11 +5,12 @@
  */
 package in.gov.nvli.harvester.daoImpl;
 
-import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
-import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
+import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,24 +21,24 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao{
-  
+public class HarMetadataTypeDaoImpl implements HarMetadataTypeDao {
+
   @Autowired
   private SessionFactory sessionFactory;
 
   @Override
-  @Transactional
-  public void save(HarRecordMetadataDc metadataDc) {
-    Session session=null;
-    try{
+  public HarMetadataType getMetadataType(Short metadataId) {
+    Session session = null;
+    HarMetadataType metadataType=null;
+    try {
       session = sessionFactory.getCurrentSession();
-      session.save(metadataDc);
-
-    }catch(Exception e){
-      e.printStackTrace();
+      Query query =session.createQuery("from HarMetadataType where metadataId=:metadataId");
+      query.setParameter("metadataId", metadataId);
+      metadataType=(HarMetadataType) query.uniqueResult();
+    } catch (Exception e) {
+e.printStackTrace();
     }
+    return metadataType;
   }
-  
-  
-  
+
 }
