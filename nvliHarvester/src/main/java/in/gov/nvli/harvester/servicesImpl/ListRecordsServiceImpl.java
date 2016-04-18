@@ -63,7 +63,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   @Autowired
   private HarMetadataTypeDao metadataTypeDao;
-  
+
   @Autowired
   private HarSetDao harSetDao;
 
@@ -75,7 +75,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   List<HarRecordMetadataDc> recordMetadataDcs;
   HarSetRecord harSetRecord;
   HarSet harSet;
-  
+
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
     System.out.println("url================" + baseUrl);
@@ -122,15 +122,16 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         harRecord.setAbout(temp);
 
         harRecords.add(harRecord);
-        
-        List<String> setSpecs=record.getHeader().getSetSpec();
+
+        List<String> setSpecs = record.getHeader().getSetSpec();
         for (String setSpec : setSpecs) {
-          harSet=harSetDao.getHarSet(setSpec);
-          
-          harSetRecord=new HarSetRecord();
-          harSetRecord.setSetId(harSet);
-          harSetRecord.setRecordId(harRecord);
-          harSetRecord.setRepoId(new HarRepo());
+          harSet = harSetDao.getHarSet(setSpec);
+          if (harSet != null) {
+            harSetRecord = new HarSetRecord();
+            harSetRecord.setSetId(harSet);
+            harSetRecord.setRecordId(harRecord);
+            harSetRecord.setRepoId(new HarRepo());
+          }
         }
 
         recordMetadataDc = new HarRecordMetadataDc();
