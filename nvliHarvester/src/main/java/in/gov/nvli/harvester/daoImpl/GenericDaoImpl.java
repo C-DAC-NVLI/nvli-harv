@@ -2,6 +2,7 @@ package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.dao.GenericDao;
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 1
  * @since 1
  */
-@Repository
+
 public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T, ID> {
 
     /**
@@ -46,9 +47,8 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
      * Parameterized Type Conversion of proxy.
      *
      */
-    public GenericDaoImpl() {
-//             ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-//        this.persistentClass = (Class<T>) genericSuperclass.getActualTypeArguments()[0];
+    public GenericDaoImpl(Class<T> entityClass) {
+ this.persistentClass = entityClass;
     }
 
     /**

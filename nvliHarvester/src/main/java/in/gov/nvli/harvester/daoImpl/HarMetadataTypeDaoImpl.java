@@ -18,6 +18,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HarMetadataTypeDaoImpl extends GenericDaoImpl<HarMetadataType, Short> implements HarMetadataTypeDao {
 
+    public HarMetadataTypeDaoImpl() {
+        super(HarMetadataType.class);
+    }
+
  
 
   @Override

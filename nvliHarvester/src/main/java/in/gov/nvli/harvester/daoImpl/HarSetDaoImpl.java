@@ -17,6 +17,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HarSetDaoImpl  extends GenericDaoImpl<HarSet,Long> implements HarSetDao{
 
+    public HarSetDaoImpl() {
+        super(HarSet.class);
+    }
+
     @Override
     public boolean saveHarSets(List<HarSet> sets) {
        try
