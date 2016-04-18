@@ -8,6 +8,7 @@ package in.gov.nvli.harvester.daoImpl;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import java.util.List;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -36,7 +37,9 @@ public class HarMetadataTypeDaoImpl extends GenericDaoImpl<HarMetadataType, Shor
        {
         for(HarMetadataType metadata:metadataTypes)
         {
-           if(!createNew(metadata))
+           if(getMetadataTypeByMetadatPrefix(metadata.getMetadataPrefix())!=null)
+                   continue;
+            if(!createNew(metadata))
                return false;
         }
       return true;
@@ -46,5 +49,14 @@ public class HarMetadataTypeDaoImpl extends GenericDaoImpl<HarMetadataType, Shor
        }
     }
     
-
+@Override
+  public HarMetadataType getMetadataTypeByMetadatPrefix(String metaPrefix) {
+ 
+      HarMetadataType metadataType=null;
+    try {
+     metadataType =  (HarMetadataType) currentSession().createCriteria(HarMetadataType.class).add(Restrictions.eq("metadataPrefix", metaPrefix)).uniqueResult();
+    } catch (Exception e) {
+    }
+    return metadataType;
+  }
 }

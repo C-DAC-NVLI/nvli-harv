@@ -16,4 +16,5 @@ public interface HarMetadataTypeDao  extends GenericDao<HarMetadataType, Short> 
   
   public HarMetadataType getMetadataType(Short metadataId);
   public boolean saveHarMetadataTypes(List<HarMetadataType> metadataTypes);
+   public HarMetadataType getMetadataTypeByMetadatPrefix(String metaPrefix);
 }
