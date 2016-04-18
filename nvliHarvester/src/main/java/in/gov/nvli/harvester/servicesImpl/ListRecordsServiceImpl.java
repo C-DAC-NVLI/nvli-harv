@@ -6,19 +6,16 @@
 package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.AboutType;
-import in.gov.nvli.harvester.OAIPMH_beans.GetRecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
+import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
-import in.gov.nvli.harvester.beans.MetadataType;
-import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
-import in.gov.nvli.harvester.daoImpl.HarRecordMetadataDcDaoImpl;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
@@ -48,7 +45,7 @@ import org.springframework.stereotype.Service;
 public class ListRecordsServiceImpl implements ListRecordsService {
 
   private static int i = 0;
-  private static int interval = 1000;
+  private static int interval = 60000;
 
   private HttpURLConnection connection;
   @Autowired
@@ -63,10 +60,22 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   @Autowired
   private HarMetadataTypeDao metadataTypeDao;
 
+  ResumptionTokenType resumptionToken;
+
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
     System.out.println("url================" + baseUrl);
-    connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+    System.setProperty("http.keepAlive", "false");
+
+    try {
+      if (i > 0) {
+        Thread.sleep(interval);
+      }
+      connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+    } catch (InterruptedException ex) {
+      Logger.getLogger(ListRecordsServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
     int responseCode = connection.getResponseCode();
     System.out.println("response code " + responseCode);
     if (responseCode == 200) {
@@ -114,25 +123,20 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       metadataDcDao.saveList(recordMetadataDcs);
       System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
       System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
-      if (getRecordObj.getListRecords().getResumptionToken() != null) {
+      resumptionToken = getRecordObj.getListRecords().getResumptionToken();
+      if (resumptionToken != null) {
         String urlSubtr[] = baseUrl.split("&");
-        String requestUrl = urlSubtr[0] + "&resumptionToken=" + getRecordObj.getListRecords().getResumptionToken().getValue();
+        String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
         getListRecord(requestUrl);
 
       }
 
     } else {
       i = i + 1;
-      try {
-        Thread.sleep(interval);
-        System.out.println("i "+i);
-        if (i <= 3) {
-          getListRecord(baseUrl);
-        }
-      } catch (InterruptedException ex) {
-        Logger.getLogger(ListRecordsServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+      System.out.println("i " + i);
+      if (i <= 3) {
+        getListRecord(baseUrl);
       }
-
     }
 
   }
