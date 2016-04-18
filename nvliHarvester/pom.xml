@@ -108,7 +108,7 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
-       <dependency>
+        <dependency>
     <groupId>commons-dbcp</groupId>
     <artifactId>commons-dbcp</artifactId>
     <version>1.4</version>
@@ -189,11 +189,11 @@ online-through url
          <schemaDirectory>src/main/java/in/gov/nvli/harvester/schemas/</schemaDirectory>
          <schemaFiles>OAI-PMH.xsd</schemaFiles>
         
-                    <generateDirectory>src/main/java/</generateDirectory>
-                    <generatePackage>in.gov.nvli.harvester.OAIPMH_beans</generatePackage> 
-                </configuration>
-            </plugin>-->
-        </plugins>
-    </build>
+              <generateDirectory>src/main/java/</generateDirectory>
+              <generatePackage>in.gov.nvli.harvester.OAIPMH_beans</generatePackage> 
+          </configuration>
+      </plugin>-->
+    </plugins>
+  </build>
 
 </project>
