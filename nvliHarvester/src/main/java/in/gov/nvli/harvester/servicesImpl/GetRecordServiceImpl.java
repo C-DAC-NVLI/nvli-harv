@@ -171,7 +171,6 @@ public class GetRecordServiceImpl implements GetRecordService {
     if (formats != null) {
       recordMetadataDc.setFormat(getMetadataTagValueSeparatedBySpecialChar(formats));
     }
-    System.out.println("Metadata obj " + recordMetadataDc.getDescription());
     return recordMetadataDc;
   }
 
@@ -184,9 +183,4 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     return columnValue;
   }
-
-  public static void main(String[] args) throws Exception {
-    new GetRecordServiceImpl().getRecord("http://export.arxiv.org/oai2?verb=GetRecord&identifier=oai:arXiv.org:cs/0112017&metadataPrefix=oai_dc");
-  }
-
 }

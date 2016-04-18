@@ -62,10 +62,15 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   ResumptionTokenType resumptionToken;
 
+  HarRecord harRecord;
+  HarRecordMetadataDc recordMetadataDc;
+  List<HarRecord> harRecords;
+  List<HarRecordMetadataDc> recordMetadataDcs;
+  
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
     System.out.println("url================" + baseUrl);
-    System.setProperty("http.keepAlive", "false");
+    System.setProperty("http.keepAlive", "true");
 
     try {
       if (i > 0) {
@@ -86,11 +91,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
       List<RecordType> records = getRecordObj.getListRecords().getRecord();
 
-      HarRecord harRecord;
-      HarRecordMetadataDc recordMetadataDc;
-
-      List<HarRecord> harRecords = new ArrayList<>();
-      List<HarRecordMetadataDc> recordMetadataDcs = new ArrayList<>();
+      harRecords = new ArrayList<>();
+      recordMetadataDcs = new ArrayList<>();
       HarMetadataType metadataType = metadataTypeDao.getMetadataType(CommonConstants.OAIDC);
       for (RecordType record : records) {
 
