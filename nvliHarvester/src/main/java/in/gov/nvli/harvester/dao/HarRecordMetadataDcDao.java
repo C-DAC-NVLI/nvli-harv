@@ -15,5 +15,6 @@ import java.util.List;
 public interface HarRecordMetadataDcDao {
   
   public void save(HarRecordMetadataDc metadataDc);
+  public void saveList(List<HarRecordMetadataDc> metadataDcs);
   
 }

@@ -12,6 +12,7 @@ package in.gov.nvli.harvester.constants;
 public class CommonConstants {
   
   public static String COLUMNVALUESEPARARTOR="<>";   
+  public static Short OAIDC = 1;
   
   
 }

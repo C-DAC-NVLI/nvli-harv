@@ -45,8 +45,6 @@ public class GetRecordServiceImpl implements GetRecordService {
 
   private HttpURLConnection connection;
 
-  private static Short OAIDC = 1;
-
   @Autowired
   private HarRecordMetadataDcDao metadataDcDao;
 
@@ -73,7 +71,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
     Date sourceDate = formatter.parse(recordType.getHeader().getDatestamp());
     record.setSoureDatestamp(sourceDate);
-    record.setMetadataTypeId(metadataTypeDao.getMetadataType(OAIDC));
+    record.setMetadataTypeId(metadataTypeDao.getMetadataType(CommonConstants.OAIDC));
     List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
     String temp = "";
 
@@ -173,7 +171,6 @@ public class GetRecordServiceImpl implements GetRecordService {
     if (formats != null) {
       recordMetadataDc.setFormat(getMetadataTagValueSeparatedBySpecialChar(formats));
     }
-    System.out.println("Metadata obj " + recordMetadataDc.getDescription());
     return recordMetadataDc;
   }
 
@@ -186,9 +183,4 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     return columnValue;
   }
-
-  public static void main(String[] args) throws Exception {
-    new GetRecordServiceImpl().getRecord("http://export.arxiv.org/oai2?verb=GetRecord&identifier=oai:arXiv.org:cs/0112017&metadataPrefix=oai_dc");
-  }
-
 }

@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.services;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.ParseException;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -15,6 +16,6 @@ import javax.xml.bind.JAXBException;
  */
 public interface ListRecordsService {
   
-  public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException;
+  public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException,ParseException;
   
 }

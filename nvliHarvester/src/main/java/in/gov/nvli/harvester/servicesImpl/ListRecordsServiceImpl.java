@@ -6,17 +6,16 @@
 package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.AboutType;
-import in.gov.nvli.harvester.OAIPMH_beans.GetRecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
+import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
-import in.gov.nvli.harvester.beans.OAIDC;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
-import in.gov.nvli.harvester.daoImpl.HarRecordMetadataDcDaoImpl;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
@@ -25,16 +24,28 @@ import in.gov.nvli.harvester.utilities.UnmarshalUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author richa
  */
+@Service
 public class ListRecordsServiceImpl implements ListRecordsService {
+
+  private static int i = 0;
+  private static int interval = 60000;
 
   private HttpURLConnection connection;
   @Autowired
@@ -45,50 +56,91 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   @Autowired
   private HarRecordDao recordDao;
-  
+
   @Autowired
   private HarMetadataTypeDao metadataTypeDao;
 
+  ResumptionTokenType resumptionToken;
+
+  HarRecord harRecord;
+  HarRecordMetadataDc recordMetadataDc;
+  List<HarRecord> harRecords;
+  List<HarRecordMetadataDc> recordMetadataDcs;
+  
   @Override
-  public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException {
-    connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+  public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
+    System.out.println("url================" + baseUrl);
+    System.setProperty("http.keepAlive", "true");
+
+    try {
+      if (i > 0) {
+        Thread.sleep(interval);
+      }
+      connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+    } catch (InterruptedException ex) {
+      Logger.getLogger(ListRecordsServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
     int responseCode = connection.getResponseCode();
-    String response = OAIResponseUtil.createResponseFromXML(connection);
+    System.out.println("response code " + responseCode);
+    if (responseCode == 200) {
 
-    OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
+      String response = OAIResponseUtil.createResponseFromXML(connection);
 
-    List<RecordType> records = getRecordObj.getListRecords().getRecord();
-    int i = 0;
-    HarRecord harRecord;
-    HarRecordMetadataDc recordMetadataDc;
-    for (RecordType record : records) {
-      harRecord = new HarRecord();
-      harRecord.setIdentifier(record.getHeader().getIdentifier());
-      harRecord.setMetadataTypeId(metadataTypeDao.getMetadataType((short)1));
-      List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
-      String temp = "";
+      OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
 
-      if (aboutTypes != null) {
-        for (AboutType about : aboutTypes) {
-          temp += about;
+      List<RecordType> records = getRecordObj.getListRecords().getRecord();
+
+      harRecords = new ArrayList<>();
+      recordMetadataDcs = new ArrayList<>();
+      HarMetadataType metadataType = metadataTypeDao.getMetadataType(CommonConstants.OAIDC);
+      for (RecordType record : records) {
+
+        harRecord = new HarRecord();
+        harRecord.setIdentifier(record.getHeader().getIdentifier());
+        DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
+        Date sourceDate = formatter.parse(record.getHeader().getDatestamp());
+        harRecord.setSoureDatestamp(sourceDate);
+        harRecord.setMetadataTypeId(metadataType);
+        List<AboutType> aboutTypes = record.getAbout();
+        String temp = "";
+
+        if (aboutTypes != null) {
+          for (AboutType about : aboutTypes) {
+            temp += about;
+          }
         }
         harRecord.setAbout(temp);
+
+        harRecords.add(harRecord);
+
+        recordMetadataDc = new HarRecordMetadataDc();
+        recordMetadataDc.setRecordId(harRecord);
+        getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
+
+        recordMetadataDcs.add(recordMetadataDc);
+
       }
-      
+      recordDao.saveListHarRecord(harRecords);
+      metadataDcDao.saveList(recordMetadataDcs);
+      System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
+      System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
+      resumptionToken = getRecordObj.getListRecords().getResumptionToken();
+      if (resumptionToken != null) {
+        String urlSubtr[] = baseUrl.split("&");
+        String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
+        getListRecord(requestUrl);
 
-      recordMetadataDc = new HarRecordMetadataDc();
-      recordMetadataDc.setRecordId(harRecord);
-      getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
-      metadataDcDao.save(recordMetadataDc);
-      System.out.println("Identifier " + (++i) + record.getHeader().getIdentifier());
-      System.out.println("Metatadata " + (++i) + record.getMetadata().getOaidc().getSubject());
+      }
+
+    } else {
+      i = i + 1;
+      System.out.println("i " + i);
+      if (i <= 3) {
+        getListRecord(baseUrl);
+      }
     }
-    System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken());
 
-  }
-
-  public static void main(String[] args) throws Exception {
-    new ListRecordsServiceImpl().getListRecord("http://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc");
   }
 
 }
