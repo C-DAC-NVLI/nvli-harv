@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
+import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -19,27 +20,40 @@ import org.springframework.transaction.annotation.Transactional;
  * @author richa
  */
 @Repository
-public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao{
-  
+@Transactional(readOnly = true)
+public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao {
+
   @Autowired
   private SessionFactory sessionFactory;
 
   @Override
+  @Transactional
   public void save(HarRecordMetadataDc metadataDc) {
-    Session session=null;
-    Transaction tx=null;
-    try{
+    Session session = null;
+    try {
       session = sessionFactory.getCurrentSession();
-      tx=session.beginTransaction();
       session.save(metadataDc);
-      tx.commit();
-    }catch(Exception e){
-      if(tx!=null)
-        tx.rollback();
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
-  
-  
-  
+
+  @Override
+  @Transactional
+  public void saveList(List<HarRecordMetadataDc> metadataDcs) {
+    Session session = null;
+    try {
+      session = sessionFactory.getCurrentSession();
+      for (HarRecordMetadataDc metadataDc : metadataDcs) {
+        session.save(metadataDc);
+        if ((metadataDcs.indexOf(metadataDc) + 1) % 10 == 0) {
+          session.flush();
+          session.clear();
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
 }

@@ -45,8 +45,6 @@ public class GetRecordServiceImpl implements GetRecordService {
 
   private HttpURLConnection connection;
 
-  private static Short OAIDC = 1;
-
   @Autowired
   private HarRecordMetadataDcDao metadataDcDao;
 
@@ -73,7 +71,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
     Date sourceDate = formatter.parse(recordType.getHeader().getDatestamp());
     record.setSoureDatestamp(sourceDate);
-    record.setMetadataTypeId(metadataTypeDao.getMetadataType(OAIDC));
+    record.setMetadataTypeId(metadataTypeDao.getMetadataType(CommonConstants.OAIDC));
     List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
     String temp = "";
 

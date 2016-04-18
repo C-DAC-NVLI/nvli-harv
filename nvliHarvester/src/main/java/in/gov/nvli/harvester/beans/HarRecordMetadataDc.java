@@ -75,7 +75,7 @@ public class HarRecordMetadataDc implements Serializable {
     @Column(name = "title")
     private String title;
     @Basic(optional = false)
-    @Size(min = 1, max = 500)
+    @Size(min = 1, max = 2000)
     @Column(name = "creator")
     private String creator;
     @Basic(optional = false)
