@@ -5,6 +5,7 @@
  */
 package in.gov.nvli.harvester.controllers;
 
+import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.servicesImpl.ListRecordsServiceImpl;
 import java.io.IOException;                                                                                                                                                                                                                                             
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
@@ -26,13 +28,14 @@ public class ListRecordsController {
   private String baseURL = "";
 
   @RequestMapping("/listrecords")
-  public String getRecord() {
-    // baseURL=baseURL+"verb="+(VerbType.IDENTIFY).toString().toLowerCase();
-    baseURL = "http://export.arxiv.org/oai2?verb=ListRecords&metadataPrefix=oai_dc";
-    System.err.println("base url" + baseURL);
+  public String listRecord(@RequestParam("baseURL") String baseURL,@RequestParam("metadataPrefix") String metadataPrefix) {
+    baseURL="http://export.arxiv.org/oai2";
+    metadataPrefix="oai_dc";
+    String requestURL = baseURL+"?verb="+VerbType.LIST_RECORDS+"&metadataPrefix="+metadataPrefix;
+    System.err.println("base url" + requestURL);
     try {
       listRecordsService = new ListRecordsServiceImpl();
-      listRecordsService.getListRecord(baseURL);
+      listRecordsService.getListRecord(requestURL);
     } catch (MalformedURLException ex) {
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
     } catch (IOException ex) {

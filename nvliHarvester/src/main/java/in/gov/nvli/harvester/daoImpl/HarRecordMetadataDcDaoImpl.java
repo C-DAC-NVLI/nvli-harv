@@ -21,11 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao{
   
-  @Autowired(required = true)
+  @Autowired
   private SessionFactory sessionFactory;
 
   @Override
-  @Transactional
   public void save(HarRecordMetadataDc metadataDc) {
     Session session=null;
     Transaction tx=null;
@@ -37,6 +36,7 @@ public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao{
     }catch(Exception e){
       if(tx!=null)
         tx.rollback();
+      e.printStackTrace();
     }
   }
   

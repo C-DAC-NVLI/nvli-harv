@@ -59,10 +59,9 @@ public class HarRecord implements Serializable {
     @Column(name = "soure_datestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date soureDatestamp;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Size(min = 1, max = 65535)
+//    @Basic(optional = false)
+//    @Lob
+//    @Size(min = 1, max = 65535)
     @Column(name = "about")
     private String about;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")

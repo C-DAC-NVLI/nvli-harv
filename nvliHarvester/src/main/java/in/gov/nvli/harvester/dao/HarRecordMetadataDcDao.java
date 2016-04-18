@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
+import java.util.List;
 
 /**
  *

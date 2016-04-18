@@ -63,93 +63,75 @@ public class HarRecordMetadataDc implements Serializable {
     @Column(name = "record_metadata_dc_id")
     private Long recordMetadataDcId;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
     @Basic(optional = false)
-    @NotNull
     @Column(name = "udpated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date udpated;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "title")
     private String title;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "creator")
     private String creator;
     @Basic(optional = false)
-    @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "subject")
     private String subject;
     @Basic(optional = false)
-    @NotNull
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "description")
     private String description;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "publisher")
     private String publisher;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "contributor")
     private String contributor;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "type")
     private String type;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "format")
     private String format;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "identifier")
     private String identifier;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "source")
     private String source;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "language")
     private String language;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "relation")
     private String relation;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "coverage")
     private String coverage;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "rights")
     private String rights;
     @JoinColumn(name = "record_id", referencedColumnName = "record_id")
     @ManyToOne(optional = false)
     private HarRecord recordId;
-    @JoinColumn(name = "metadata_type_id", referencedColumnName = "metadata_type_repo_id")
-    @ManyToOne(optional = false)
-    private HarMetadataTypeRepository metadataTypeId;
+    
 
     public HarRecordMetadataDc() {
     }
@@ -322,14 +304,6 @@ public class HarRecordMetadataDc implements Serializable {
 
     public void setRecordId(HarRecord recordId) {
         this.recordId = recordId;
-    }
-
-    public HarMetadataTypeRepository getMetadataTypeId() {
-        return metadataTypeId;
-    }
-
-    public void setMetadataTypeId(HarMetadataTypeRepository metadataTypeId) {
-        this.metadataTypeId = metadataTypeId;
     }
 
     @Override
