@@ -6,7 +6,9 @@
 package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.AboutType;
+import in.gov.nvli.harvester.OAIPMH_beans.GetRecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
@@ -24,7 +26,12 @@ import in.gov.nvli.harvester.utilities.UnmarshalUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.xml.bind.JAXBException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,20 +44,20 @@ import org.springframework.stereotype.Service;
 public class GetRecordServiceImpl implements GetRecordService {
 
   private HttpURLConnection connection;
-  
-  private static Short OAIDC=1;
-  
+
+  private static Short OAIDC = 1;
+
   @Autowired
   private HarRecordMetadataDcDao metadataDcDao;
 
   @Autowired
   private HarRecordDao recordDao;
-  
+
   @Autowired
   private HarMetadataTypeDao metadataTypeDao;
 
   @Override
-  public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException {
+  public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
     connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
     int responseCode = connection.getResponseCode();
     String response = OAIResponseUtil.createResponseFromXML(connection);
@@ -59,8 +66,13 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     System.out.println("Identifier " + getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
 
+    RecordType recordType = getRecordObj.getGetRecord().getRecord();
+
     HarRecord record = new HarRecord();
-    record.setIdentifier(getRecordObj.getGetRecord().getRecord().getHeader().getIdentifier());
+    record.setIdentifier(recordType.getHeader().getIdentifier());
+    DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
+    Date sourceDate = formatter.parse(recordType.getHeader().getDatestamp());
+    record.setSoureDatestamp(sourceDate);
     record.setMetadataTypeId(metadataTypeDao.getMetadataType(OAIDC));
     List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
     String temp = "";
@@ -161,7 +173,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     if (formats != null) {
       recordMetadataDc.setFormat(getMetadataTagValueSeparatedBySpecialChar(formats));
     }
-    System.out.println("Metadata obj "+recordMetadataDc.getDescription());
+    System.out.println("Metadata obj " + recordMetadataDc.getDescription());
     return recordMetadataDc;
   }
 
@@ -174,7 +186,7 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     return columnValue;
   }
-  
+
   public static void main(String[] args) throws Exception {
     new GetRecordServiceImpl().getRecord("http://export.arxiv.org/oai2?verb=GetRecord&identifier=oai:arXiv.org:cs/0112017&metadataPrefix=oai_dc");
   }

@@ -10,6 +10,7 @@ import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.servicesImpl.GetRecordServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -42,6 +43,8 @@ public class GetRecordController {
     } catch (IOException ex) {
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
     } catch (JAXBException ex) {
+      Logger.getLogger(GetRecordController.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (ParseException ex) {
       Logger.getLogger(GetRecordController.class.getName()).log(Level.SEVERE, null, ex);
     }
     return "example";

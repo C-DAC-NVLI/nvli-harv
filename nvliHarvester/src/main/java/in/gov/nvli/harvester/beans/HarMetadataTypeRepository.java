@@ -41,8 +41,6 @@ public class HarMetadataTypeRepository implements Serializable {
     @Basic(optional = false)
     @Column(name = "metadata_type_repo_id")
     private Short metadataTypeRepoId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadataTypeId")
-    private Collection<HarRecordMetadataDc> harRecordMetadataDcCollection;
     @JoinColumn(name = "metadata_type_id", referencedColumnName = "metadata_id")
     @ManyToOne(optional = false)
     private HarMetadataType metadataTypeId;
@@ -63,15 +61,6 @@ public class HarMetadataTypeRepository implements Serializable {
 
     public void setMetadataTypeRepoId(Short metadataTypeRepoId) {
         this.metadataTypeRepoId = metadataTypeRepoId;
-    }
-
-    @XmlTransient
-    public Collection<HarRecordMetadataDc> getHarRecordMetadataDcCollection() {
-        return harRecordMetadataDcCollection;
-    }
-
-    public void setHarRecordMetadataDcCollection(Collection<HarRecordMetadataDc> harRecordMetadataDcCollection) {
-        this.harRecordMetadataDcCollection = harRecordMetadataDcCollection;
     }
 
     public HarMetadataType getMetadataTypeId() {

@@ -19,21 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
  * @author richa
  */
 @Repository
-@Transactional(readOnly = true)
 public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao{
   
   @Autowired
   private SessionFactory sessionFactory;
 
   @Override
-  @Transactional
   public void save(HarRecordMetadataDc metadataDc) {
     Session session=null;
+    Transaction tx=null;
     try{
       session = sessionFactory.getCurrentSession();
+      tx=session.beginTransaction();
       session.save(metadataDc);
-
+      tx.commit();
     }catch(Exception e){
+      if(tx!=null)
+        tx.rollback();
       e.printStackTrace();
     }
   }
