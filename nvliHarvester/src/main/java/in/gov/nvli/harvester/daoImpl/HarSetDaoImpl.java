@@ -8,34 +8,23 @@ package in.gov.nvli.harvester.daoImpl;
 import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.dao.HarSetDao;
 import java.util.List;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author vootla
  */
 @Repository
-@Transactional(readOnly = true)
-public class HarSetDaoImpl implements HarSetDao{
-
-  @Autowired
-  public SessionFactory sf;
-    
+public class HarSetDaoImpl  extends GenericDaoImpl<HarSet,Long> implements HarSetDao{
 
     @Override
-    @Transactional()
     public boolean saveHarSets(List<HarSet> sets) {
-        Session session = sf.getCurrentSession();
        try
        {
         for(HarSet set:sets)
         {
-            session.save(set);
+           if(!createNew(set))
+               return false;
         }
       return true;
        }catch(Exception e)
