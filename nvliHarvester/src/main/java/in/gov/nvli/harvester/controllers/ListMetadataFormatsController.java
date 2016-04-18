@@ -5,18 +5,10 @@
  */
 package in.gov.nvli.harvester.controllers;
 
-import in.gov.nvli.harvester.OAIPMH_beans.ListSetsType;
-import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
-import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
-import in.gov.nvli.harvester.OAIPMH_beans.SetType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
-import in.gov.nvli.harvester.services.ListSetsService;
-import in.gov.nvli.harvester.servicesImpl.ListMetadataFormatsServiceImpl;
-import in.gov.nvli.harvester.servicesImpl.ListSetsServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -33,12 +25,11 @@ import org.springframework.web.servlet.ModelAndView;
 public class ListMetadataFormatsController {
     
     
-    //@Autowired
+    @Autowired
     private ListMetadataFormatsService service;
     @RequestMapping("/listMetadataFormats")
     public ModelAndView listSets(String baseURL)
     {
-       service=new ListMetadataFormatsServiceImpl();
        baseURL=baseURL+"?verb="+VerbType.LIST_METADATA_FORMATS.value();
         ModelAndView mv=new ModelAndView("ListMetadataFormats");
         try {
@@ -46,9 +37,9 @@ public class ListMetadataFormatsController {
            mv.addObject("status",status);
             if(!(status<0))
             {
-                List<MetadataFormatType> metaDataFormats=service.getListMetadataFormats();
-                
-                mv.addObject("metaDataFormats",metaDataFormats);
+                //List<MetadataFormatType> metaDataFormats=service.getListMetadataFormats();
+                service.saveListOfMetadataFormats();
+              //  mv.addObject("metaDataFormats",metaDataFormats);
             }
             
         } catch (MalformedURLException ex) {

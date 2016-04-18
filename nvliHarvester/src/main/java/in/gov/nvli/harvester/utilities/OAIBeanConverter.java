@@ -5,7 +5,9 @@
  */
 package in.gov.nvli.harvester.utilities;
 
+import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
+import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarSet;
 
 /**
@@ -24,4 +26,11 @@ public class OAIBeanConverter {
        return obj;
     }
     
+    public static HarMetadataType metadataFormatTypeToHarMetadataType(MetadataFormatType metadataFormatType)
+    {
+        HarMetadataType obj=new HarMetadataType(metadataFormatType.getMetadataPrefix(), metadataFormatType.getSchema(), metadataFormatType.getMetadataNamespace());
+      
+       return obj;
+    }
+
 }

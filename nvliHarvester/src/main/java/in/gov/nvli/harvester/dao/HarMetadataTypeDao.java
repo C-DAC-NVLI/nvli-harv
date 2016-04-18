@@ -6,13 +6,15 @@
 package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarMetadataType;
+import java.util.List;
 
 /**
  *
- * @author richa
+ * @author vootla
  */
-public interface HarMetadataTypeDao {
+public interface HarMetadataTypeDao  extends GenericDao<HarMetadataType, Short> {
   
   public HarMetadataType getMetadataType(Short metadataId);
-  
+  public boolean saveHarMetadataTypes(List<HarMetadataType> metadataTypes);
+   public HarMetadataType getMetadataTypeByMetadatPrefix(String metaPrefix);
 }
