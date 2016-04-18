@@ -7,13 +7,12 @@ package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarSet;
 import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author vootla
  */
-public interface HarSetDao {
+public interface HarSetDao extends GenericDao<HarSet, Long>{
     
     public boolean saveHarSets(List<HarSet> sets);
     
