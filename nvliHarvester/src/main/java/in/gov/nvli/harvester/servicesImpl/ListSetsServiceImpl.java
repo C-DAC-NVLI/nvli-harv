@@ -5,7 +5,6 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
-import in.gov.nvli.harvester.OAIPMH_beans.ListSetsType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
 import in.gov.nvli.harvester.beans.HarSet;
@@ -31,7 +30,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ListSetsServiceImpl implements ListSetsService{
       
-     @Autowired
+    @Autowired
     public HarSetDao harSetDao;
     private HttpURLConnection connection;
    
@@ -62,6 +61,6 @@ public class ListSetsServiceImpl implements ListSetsService{
         {
             sets.add(OAIBeanConverter.setTypeToHarSet(setTemp));
         }
-       return harSetDao.saveHarSets(sets);
+        return harSetDao.saveHarSets(sets);
     }
 }
