@@ -12,10 +12,14 @@ import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
+import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.beans.HarSet;
+import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
+import in.gov.nvli.harvester.dao.HarSetDao;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
@@ -59,6 +63,9 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   @Autowired
   private HarMetadataTypeDao metadataTypeDao;
+  
+  @Autowired
+  private HarSetDao harSetDao;
 
   ResumptionTokenType resumptionToken;
 
@@ -66,6 +73,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   HarRecordMetadataDc recordMetadataDc;
   List<HarRecord> harRecords;
   List<HarRecordMetadataDc> recordMetadataDcs;
+  HarSetRecord harSetRecord;
+  HarSet harSet;
   
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
@@ -113,6 +122,16 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         harRecord.setAbout(temp);
 
         harRecords.add(harRecord);
+        
+        List<String> setSpecs=record.getHeader().getSetSpec();
+        for (String setSpec : setSpecs) {
+          harSet=harSetDao.getHarSet(setSpec);
+          
+          harSetRecord=new HarSetRecord();
+          harSetRecord.setSetId(harSet);
+          harSetRecord.setRecordId(harRecord);
+          harSetRecord.setRepoId(new HarRepo());
+        }
 
         recordMetadataDc = new HarRecordMetadataDc();
         recordMetadataDc.setRecordId(harRecord);
