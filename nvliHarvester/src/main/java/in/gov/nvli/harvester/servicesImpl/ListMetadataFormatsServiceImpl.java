@@ -9,24 +9,37 @@ import in.gov.nvli.harvester.OAIPMH_beans.ListSetsType;
 import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
+import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.beans.HarSet;
+import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
+import in.gov.nvli.harvester.utilities.OAIBeanConverter;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
 import in.gov.nvli.harvester.utilities.UnmarshalUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author vootla
  */
+@Service
 public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsService{
       
        private HttpURLConnection connection;
+       
+       @Autowired
+       private HarMetadataTypeDao harMetadataTypeDao;
+       
+       
     @Override
    public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException
    {
@@ -45,5 +58,15 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
        String response=OAIResponseUtil.createResponseFromXML(connection);
         OAIPMHtype obj= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response); 
         return obj.getListMetadataFormats().getMetadataFormat();
+    }
+
+    @Override
+    public boolean saveListOfMetadataFormats() throws IOException, JAXBException {
+   List<HarMetadataType> metadatFormts=new ArrayList<>();
+        for(MetadataFormatType metadataFormatType:getListMetadataFormats())
+        {
+            metadatFormts.add(OAIBeanConverter.metadataFormatTypeToHarMetadataType(metadataFormatType));
+        }
+        return harMetadataTypeDao.saveHarMetadataTypes(metadatFormts);
     }
 }
