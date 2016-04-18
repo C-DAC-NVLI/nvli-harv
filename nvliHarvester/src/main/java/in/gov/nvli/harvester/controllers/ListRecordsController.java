@@ -32,8 +32,6 @@ public class ListRecordsController {
 
   @RequestMapping("/listrecords")
   public String listRecord(@RequestParam("baseURL") String baseURL,@RequestParam("metadataPrefix") String metadataPrefix) {
-    baseURL="http://export.arxiv.org/oai2";
-    metadataPrefix="oai_dc";
     String requestURL = baseURL+"?verb="+VerbType.LIST_RECORDS.value()+"&metadataPrefix="+metadataPrefix;
     System.err.println("base url" + requestURL);
     try {

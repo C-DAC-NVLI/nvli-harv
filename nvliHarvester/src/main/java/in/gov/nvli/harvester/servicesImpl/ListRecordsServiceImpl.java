@@ -48,6 +48,7 @@ import org.springframework.stereotype.Service;
 public class ListRecordsServiceImpl implements ListRecordsService {
 
   private static int i = 0;
+  private static int interval = 1000;
 
   private HttpURLConnection connection;
   @Autowired
@@ -64,10 +65,12 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
+    System.out.println("url================" + baseUrl);
     connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
     int responseCode = connection.getResponseCode();
-
+    System.out.println("response code " + responseCode);
     if (responseCode == 200) {
+
       String response = OAIResponseUtil.createResponseFromXML(connection);
 
       OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
@@ -109,19 +112,25 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       }
       recordDao.saveListHarRecord(harRecords);
       metadataDcDao.saveList(recordMetadataDcs);
-      System.out.println("Saved======================== "+harRecords.size()+" metadata "+recordMetadataDcs.size());
+      System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
       System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
       if (getRecordObj.getListRecords().getResumptionToken() != null) {
-        try {
-          Thread.sleep(1000);
-          String urlSubtr[] = baseUrl.split("&");
-          String requestUrl = urlSubtr[0] + "&resumptionToken=" + getRecordObj.getListRecords().getResumptionToken().getValue();
-          System.out.println("Called func "+(++i));
-          getListRecord(requestUrl);
-        } catch (InterruptedException ex) {
-          Logger.getLogger(ListRecordsServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        String urlSubtr[] = baseUrl.split("&");
+        String requestUrl = urlSubtr[0] + "&resumptionToken=" + getRecordObj.getListRecords().getResumptionToken().getValue();
+        getListRecord(requestUrl);
 
+      }
+
+    } else {
+      i = i + 1;
+      try {
+        Thread.sleep(interval);
+        System.out.println("i "+i);
+        if (i <= 3) {
+          getListRecord(baseUrl);
+        }
+      } catch (InterruptedException ex) {
+        Logger.getLogger(ListRecordsServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
       }
 
     }
