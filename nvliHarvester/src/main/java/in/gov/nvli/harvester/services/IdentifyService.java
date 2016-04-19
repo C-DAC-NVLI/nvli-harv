@@ -19,6 +19,6 @@ public interface IdentifyService {
     
     public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException;
     public HarRepo getRepositoryInformation() throws IOException,JAXBException;
-    
+    public HarRepo getRepositoryInformation(String baseURL) throws MalformedURLException,IOException,JAXBException;
     
 }

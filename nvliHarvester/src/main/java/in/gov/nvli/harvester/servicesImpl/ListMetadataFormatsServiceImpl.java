@@ -5,15 +5,11 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
-import in.gov.nvli.harvester.OAIPMH_beans.ListSetsType;
 import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
-import in.gov.nvli.harvester.OAIPMH_beans.SetType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
-import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
-import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIBeanConverter;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
@@ -68,5 +64,32 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
             metadatFormts.add(OAIBeanConverter.metadataFormatTypeToHarMetadataType(metadataFormatType));
         }
         return harMetadataTypeDao.saveHarMetadataTypes(metadatFormts);
+    }
+
+    @Override
+    public List<MetadataFormatType> getListMetadataFormats(String baseUrl) throws MalformedURLException, IOException, JAXBException {
+        connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+        if(connection.getResponseCode()!=200)
+       {
+           connection.disconnect();
+           return null;
+       }else
+          {
+              return getListMetadataFormats();
+          }
+    
+    }
+
+    @Override
+    public boolean saveListOfMetadataFormats(String baseUrl) throws MalformedURLException, IOException, JAXBException {
+       connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+        if(connection.getResponseCode()!=200)
+       {
+           connection.disconnect();
+           return false;
+       }else
+          {
+              return saveListOfMetadataFormats();
+          }
     }
 }

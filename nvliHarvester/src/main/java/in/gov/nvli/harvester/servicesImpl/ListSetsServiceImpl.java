@@ -63,4 +63,33 @@ public class ListSetsServiceImpl implements ListSetsService{
         }
         return harSetDao.saveHarSets(sets);
     }
+
+    @Override
+    public List<SetType> getListSets(String baseUrl) throws MalformedURLException, IOException, JAXBException {
+      connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+        
+      if(connection.getResponseCode()!=200)
+       {
+           connection.disconnect();
+           return null;
+       }else
+          {
+              return getListSets();   
+          }
+      
+     
+    }
+
+    @Override
+    public boolean saveListSets(String baseUrl) throws MalformedURLException, IOException, JAXBException {
+        connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+       if(connection.getResponseCode()!=200)
+       {
+           connection.disconnect();
+           return false;
+       }else
+          {
+              return saveListSets();   
+          } 
+    }
 }
