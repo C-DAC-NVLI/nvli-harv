@@ -29,9 +29,10 @@ public class RepositoryDaoImpl implements RepositoryDao{
     public HarRepo addRepository(HarRepo repositoryObject) {
         Session session = sf.getCurrentSession();
         try {
-            return (HarRepo) session.save(repositoryObject);
+            
+            return new HarRepo((Integer) session.save(repositoryObject));
         } catch (Exception e) {
-            return new HarRepo();
+            return null;
         }
     }
     

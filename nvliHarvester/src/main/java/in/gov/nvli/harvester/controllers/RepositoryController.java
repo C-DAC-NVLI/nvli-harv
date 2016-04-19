@@ -15,9 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  *
@@ -26,20 +28,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class RepositoryController {
 
-    //@Autowired
+    @Autowired
     RepositoryService repositoryService;
 
     @RequestMapping("/addrepository")
-    public boolean addRepository(@RequestBody HarRepo repositoryObject) {
+    public ModelAndView addRepository(HarRepo repositoryObject) {
+        System.out.println("in.gov.nvli.harvester.controllers.RepositoryController.addRepository()");
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        String earliestTimeString = "1111-22-33 44:55:66";
-        String regDateString = "6666-55-44 33:22:11";
-        String lastSynchString = "1111-22-33 44:55:66";
-        String activationString = "6666-55-44 33:22:11";
-        short repositoryTypeId = 7;
-        short statusid = 8;
+        String earliestTimeString = "2000-12-03 14:55:56";
+        String regDateString = "2000-05-04 13:22:11";
+        String lastSynchString = "2000-12-30 14:55:06";
+        String activationString = "2016-05-04 03:22:11";
+        short repositoryTypeId = 1;
+        short statusid = 1;
+        ModelAndView mv = new ModelAndView("added_repository");
         try {
-            repositoryService = new RepositoryServiceImpl();
+            //repositoryService = new RepositoryServiceImpl();
             HarRepo repObject = new HarRepo();
             repositoryObject.setRepoName("Name");
             repositoryObject.setRepoBaseUrl("baseurl");
@@ -52,7 +56,7 @@ public class RepositoryController {
             repositoryObject.setRepoGranularityDate("granularitydate");
             repositoryObject.setRepoDeletionMode("deletionmode");
             repositoryObject.setRepoEmail("email");
-            repositoryObject.setRepolDesc("description");
+            repositoryObject.setRepoDesc("description");
             repositoryObject.setRepoCompression("compression");
 
             Date regDateDate = formatter.parse(regDateString);
@@ -74,14 +78,14 @@ public class RepositoryController {
             repositoryObject.setRepoActivationDate(activationDate);
 
             if (repositoryService.addRepository(repositoryObject) != null) {
-                return true;
+                return mv;
             }
         } catch (ParseException e) {
             Logger.getLogger(RepositoryController.class.getName()).log(Level.SEVERE, null, e);
         } catch (Exception e) {
             Logger.getLogger(RepositoryController.class.getName()).log(Level.SEVERE, null, e);
         }
-        return false;
+        return mv;
     }
 
     public static void main(String args[]){

@@ -62,69 +62,69 @@ public class HarRecordMetadataDc implements Serializable {
     @Basic(optional = false)
     @Column(name = "record_metadata_dc_id")
     private Long recordMetadataDcId;
-    @Basic(optional = false)
-    @Column(name = "created")
+    
+    @Column(name = "created",nullable = false,columnDefinition="TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-    @Basic(optional = false)
+    
     @Column(name = "udpated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date udpated;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "title")
     private String title;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 2000)
     @Column(name = "creator")
     private String creator;
-    @Basic(optional = false)
+
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "subject")
     private String subject;
-    @Basic(optional = false)
+
     @Lob
     @Size(min = 1, max = 65535)
     @Column(name = "description")
     private String description;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "publisher")
     private String publisher;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "contributor")
     private String contributor;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "type")
     private String type;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "format")
     private String format;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "identifier")
     private String identifier;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "source")
     private String source;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "language")
     private String language;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "relation")
     private String relation;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "coverage")
     private String coverage;
-    @Basic(optional = false)
+
     @Size(min = 1, max = 500)
     @Column(name = "rights")
     private String rights;
