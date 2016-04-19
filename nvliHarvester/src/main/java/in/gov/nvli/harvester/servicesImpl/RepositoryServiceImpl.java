@@ -6,18 +6,24 @@
 package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.RepositoryService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 /**
  *
  * @author ankit
  */
+@Service
 public class RepositoryServiceImpl implements RepositoryService {
 
+    @Autowired
+    RepositoryDao repositoryDaoObject;
+            
     @Override
     public HarRepo addRepository(HarRepo repositoryObject) {
-        RepositoryService repositoryServiceObject =  new RepositoryServiceImpl();
-        return repositoryServiceObject.addRepository(repositoryObject);
+        return repositoryDaoObject.addRepository(repositoryObject);
         
     }
 
