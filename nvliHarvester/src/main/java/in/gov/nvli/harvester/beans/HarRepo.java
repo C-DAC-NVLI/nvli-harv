@@ -6,10 +6,8 @@
 package in.gov.nvli.harvester.beans;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,14 +18,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -45,6 +41,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HarRepo.findByRepoEarliestTimestamp", query = "SELECT h FROM HarRepo h WHERE h.repoEarliestTimestamp = :repoEarliestTimestamp"),
     @NamedQuery(name = "HarRepo.findByRepoGranularityDate", query = "SELECT h FROM HarRepo h WHERE h.repoGranularityDate = :repoGranularityDate"),
     @NamedQuery(name = "HarRepo.findByRepoDeletionMode", query = "SELECT h FROM HarRepo h WHERE h.repoDeletionMode = :repoDeletionMode"),
+    @NamedQuery(name = "HarRepo.findByRepoEmail", query = "SELECT h FROM HarRepo h WHERE h.repoEmail = :repoEmail"),
+    @NamedQuery(name = "HarRepo.findByRepoCompression", query = "SELECT h FROM HarRepo h WHERE h.repoCompression = :repoCompression"),
     @NamedQuery(name = "HarRepo.findByRepoRegistrationDate", query = "SELECT h FROM HarRepo h WHERE h.repoRegistrationDate = :repoRegistrationDate"),
     @NamedQuery(name = "HarRepo.findByRepoLink", query = "SELECT h FROM HarRepo h WHERE h.repoLink = :repoLink"),
     @NamedQuery(name = "HarRepo.findByRepoSiteUrl", query = "SELECT h FROM HarRepo h WHERE h.repoSiteUrl = :repoSiteUrl"),
@@ -55,24 +53,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HarRepo.findByRepoLatitude", query = "SELECT h FROM HarRepo h WHERE h.repoLatitude = :repoLatitude"),
     @NamedQuery(name = "HarRepo.findByRepoLongitude", query = "SELECT h FROM HarRepo h WHERE h.repoLongitude = :repoLongitude")})
 public class HarRepo implements Serializable {
-
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "repo_email")
-    private String repoEmail;
-    @Lob
-    @Size(max = 65535)
-    @Column(name = "repol_desc")
-    private String repolDesc;
-    @Size(max = 500)
-    @Column(name = "repo_compression")
-    private String repoCompression;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "repo_logo")
-    private byte[] repoLogo;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -90,93 +70,66 @@ public class HarRepo implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "repo_base_url")
     private String repoBaseUrl;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_protocol_version")
     private String repoProtocolVersion;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "repo_earliest_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoEarliestTimestamp;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_granularity_date")
     private String repoGranularityDate;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_deletion_mode")
     private String repoDeletionMode;
+    @Size(max = 255)
+    @Column(name = "repo_email")
+    private String repoEmail;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "repo_desc")
+    private String repoDesc;
+    @Size(max = 500)
+    @Column(name = "repo_compression")
+    private String repoCompression;
     @Basic(optional = false)
     @NotNull
     @Column(name = "repo_registration_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoRegistrationDate;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_link")
     private String repoLink;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_site_url")
     private String repoSiteUrl;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_permanent_link")
     private String repoPermanentLink;
-    @Basic(optional = false)
-    @NotNull
+    @Lob
+    @Column(name = "repo_logo")
+    private byte[] repoLogo;
     @Column(name = "repo_last_sync_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoLastSyncDate;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "repo_activation_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoActivationDate;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "repo_row_update_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoRowUpdateTime;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_latitude")
     private String repoLatitude;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     @Column(name = "repo_longitude")
     private String repoLongitude;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarLog> harLogCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarRepoDetail> harRepoDetailCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarMetadataTypeRepository> harMetadataTypeRepositoryCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarTask> harTaskCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarRepoGroup> harRepoGroupCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarRepoLanguage> harRepoLanguageCollection;
     @JoinColumn(name = "repo_status_id", referencedColumnName = "repo_status_id")
     @ManyToOne(optional = false)
     private HarRepoStatus repoStatusId;
     @JoinColumn(name = "repo_type_id", referencedColumnName = "repo_type_id")
     @ManyToOne(optional = false)
     private HarRepoType repoTypeId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarSetRepository> harSetRepositoryCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
-    private Collection<HarSetRecord> harSetRecordCollection;
 
     public HarRepo() {
     }
@@ -185,24 +138,11 @@ public class HarRepo implements Serializable {
         this.repoId = repoId;
     }
 
-    public HarRepo(Integer repoId, String repoName, String repoBaseUrl, String repoProtocolVersion, Date repoEarliestTimestamp, String repoGranularityDate, String repoDeletionMode, Date repoRegistrationDate, String repoLink, String repoSiteUrl, String repoPermanentLink, byte[] repoLogo, Date repoLastSyncDate, Date repoActivationDate, Date repoRowUpdateTime, String repoLatitude, String repoLongitude) {
+    public HarRepo(Integer repoId, String repoName, String repoBaseUrl, Date repoRegistrationDate) {
         this.repoId = repoId;
         this.repoName = repoName;
         this.repoBaseUrl = repoBaseUrl;
-        this.repoProtocolVersion = repoProtocolVersion;
-        this.repoEarliestTimestamp = repoEarliestTimestamp;
-        this.repoGranularityDate = repoGranularityDate;
-        this.repoDeletionMode = repoDeletionMode;
         this.repoRegistrationDate = repoRegistrationDate;
-        this.repoLink = repoLink;
-        this.repoSiteUrl = repoSiteUrl;
-        this.repoPermanentLink = repoPermanentLink;
-        this.repoLogo = repoLogo;
-        this.repoLastSyncDate = repoLastSyncDate;
-        this.repoActivationDate = repoActivationDate;
-        this.repoRowUpdateTime = repoRowUpdateTime;
-        this.repoLatitude = repoLatitude;
-        this.repoLongitude = repoLongitude;
     }
 
     public Integer getRepoId() {
@@ -259,6 +199,30 @@ public class HarRepo implements Serializable {
 
     public void setRepoDeletionMode(String repoDeletionMode) {
         this.repoDeletionMode = repoDeletionMode;
+    }
+
+    public String getRepoEmail() {
+        return repoEmail;
+    }
+
+    public void setRepoEmail(String repoEmail) {
+        this.repoEmail = repoEmail;
+    }
+
+    public String getRepoDesc() {
+        return repoDesc;
+    }
+
+    public void setRepoDesc(String repoDesc) {
+        this.repoDesc = repoDesc;
+    }
+
+    public String getRepoCompression() {
+        return repoCompression;
+    }
+
+    public void setRepoCompression(String repoCompression) {
+        this.repoCompression = repoCompression;
     }
 
     public Date getRepoRegistrationDate() {
@@ -341,60 +305,6 @@ public class HarRepo implements Serializable {
         this.repoLongitude = repoLongitude;
     }
 
-    @XmlTransient
-    public Collection<HarLog> getHarLogCollection() {
-        return harLogCollection;
-    }
-
-    public void setHarLogCollection(Collection<HarLog> harLogCollection) {
-        this.harLogCollection = harLogCollection;
-    }
-
-    @XmlTransient
-    public Collection<HarRepoDetail> getHarRepoDetailCollection() {
-        return harRepoDetailCollection;
-    }
-
-    public void setHarRepoDetailCollection(Collection<HarRepoDetail> harRepoDetailCollection) {
-        this.harRepoDetailCollection = harRepoDetailCollection;
-    }
-
-    @XmlTransient
-    public Collection<HarMetadataTypeRepository> getHarMetadataTypeRepositoryCollection() {
-        return harMetadataTypeRepositoryCollection;
-    }
-
-    public void setHarMetadataTypeRepositoryCollection(Collection<HarMetadataTypeRepository> harMetadataTypeRepositoryCollection) {
-        this.harMetadataTypeRepositoryCollection = harMetadataTypeRepositoryCollection;
-    }
-
-    @XmlTransient
-    public Collection<HarTask> getHarTaskCollection() {
-        return harTaskCollection;
-    }
-
-    public void setHarTaskCollection(Collection<HarTask> harTaskCollection) {
-        this.harTaskCollection = harTaskCollection;
-    }
-
-    @XmlTransient
-    public Collection<HarRepoGroup> getHarRepoGroupCollection() {
-        return harRepoGroupCollection;
-    }
-
-    public void setHarRepoGroupCollection(Collection<HarRepoGroup> harRepoGroupCollection) {
-        this.harRepoGroupCollection = harRepoGroupCollection;
-    }
-
-    @XmlTransient
-    public Collection<HarRepoLanguage> getHarRepoLanguageCollection() {
-        return harRepoLanguageCollection;
-    }
-
-    public void setHarRepoLanguageCollection(Collection<HarRepoLanguage> harRepoLanguageCollection) {
-        this.harRepoLanguageCollection = harRepoLanguageCollection;
-    }
-
     public HarRepoStatus getRepoStatusId() {
         return repoStatusId;
     }
@@ -409,24 +319,6 @@ public class HarRepo implements Serializable {
 
     public void setRepoTypeId(HarRepoType repoTypeId) {
         this.repoTypeId = repoTypeId;
-    }
-
-    @XmlTransient
-    public Collection<HarSetRepository> getHarSetRepositoryCollection() {
-        return harSetRepositoryCollection;
-    }
-
-    public void setHarSetRepositoryCollection(Collection<HarSetRepository> harSetRepositoryCollection) {
-        this.harSetRepositoryCollection = harSetRepositoryCollection;
-    }
-
-    @XmlTransient
-    public Collection<HarSetRecord> getHarSetRecordCollection() {
-        return harSetRecordCollection;
-    }
-
-    public void setHarSetRecordCollection(Collection<HarSetRecord> harSetRecordCollection) {
-        this.harSetRecordCollection = harSetRecordCollection;
     }
 
     @Override
@@ -453,28 +345,5 @@ public class HarRepo implements Serializable {
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRepo[ repoId=" + repoId + " ]";
     }
-
-    public String getRepoEmail() {
-        return repoEmail;
-    }
-
-    public void setRepoEmail(String repoEmail) {
-        this.repoEmail = repoEmail;
-    }
-
-    public String getRepolDesc() {
-        return repolDesc;
-    }
-
-    public void setRepolDesc(String repolDesc) {
-        this.repolDesc = repolDesc;
-    }
-
-    public String getRepoCompression() {
-        return repoCompression;
-    }
-
-    public void setRepoCompression(String repoCompression) {
-        this.repoCompression = repoCompression;
-    }    
+    
 }
