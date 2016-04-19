@@ -8,20 +8,16 @@ package in.gov.nvli.harvester.servicesImpl;
 import in.gov.nvli.harvester.OAIPMH_beans.IdentifyType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.beans.HarRepo;
-import in.gov.nvli.harvester.beans.HarRepoDetail;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.services.IdentifyService;
+import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
 import in.gov.nvli.harvester.utilities.UnmarshalUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +25,7 @@ import org.springframework.stereotype.Service;
  *
  * @author vootla
  */
+@Service
 public class IdentifyServiceImpl implements IdentifyService{
 
   
@@ -49,26 +46,25 @@ public class IdentifyServiceImpl implements IdentifyService{
         repo.setRepoName(identifyObj.getRepositoryName());
         repo.setRepoBaseUrl(identifyObj.getBaseURL());
         repo.setRepoProtocolVersion(identifyObj.getProtocolVersion());
-//        System.out.println("dd"+identifyObj.getGranularity().value());
-//        SimpleDateFormat formatter = new SimpleDateFormat(identifyObj.getGranularity().value());
-//	
-//
-//	try {
-//
-//		Date date = formatter.parse(identifyObj.getEarliestDatestamp());
-//		 repo.setRepoEarliestTimestamp(date);
-//                System.out.println(date);
-//		System.out.println(formatter.format(date));
-//
-//	} catch (ParseException e) {
-//		e.printStackTrace();
-//	}
-//        
-   
+        Date d=DatesRelatedUtil.convertDateToGranularityFormat(identifyObj.getGranularity().value(), identifyObj.getEarliestDatestamp());
+        repo.setRepoEarliestTimestamp(d);  
         repo.setRepoGranularityDate(identifyObj.getGranularity().value());
         repo.setRepoDeletionMode(identifyObj.getDeletedRecord().value());
-
-        System.out.println("identifyObj.getRepositoryName()"+identifyObj.getRepositoryName());
+      StringBuilder compressions=null;
+      boolean tempflag=true;
+       for(String temp:identifyObj.getCompression())
+       {
+           if(tempflag)
+           {
+               compressions=new StringBuilder(temp);
+               tempflag=false;
+           }else
+           {
+              compressions.append(CommonConstants.COLUMNVALUESEPARARTOR+temp);
+           }
+       }
+        repo.setRepoCompression(compressions.toString());
+        
         return repo;
     }
    @Override
@@ -82,6 +78,20 @@ public class IdentifyServiceImpl implements IdentifyService{
        }
        return status;
    }
+
+    @Override
+    public HarRepo getRepositoryInformation(String baseURL) throws MalformedURLException,IOException, JAXBException 
+    {
+         connection = HttpURLConnectionUtil.getConnection(baseURL, "GET", "", "");
+        if(connection.getResponseCode()!=200)
+       {
+           connection.disconnect();
+           return null;
+       }else
+          {
+              return getRepositoryInformation();
+          }
+    }
 }
     
 
