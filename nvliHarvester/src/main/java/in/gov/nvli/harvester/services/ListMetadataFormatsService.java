@@ -19,4 +19,6 @@ public interface ListMetadataFormatsService {
       public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException;
       public List<MetadataFormatType> getListMetadataFormats() throws IOException,JAXBException;
        public boolean saveListOfMetadataFormats() throws IOException, JAXBException;
+        public List<MetadataFormatType> getListMetadataFormats(String baseUrl) throws MalformedURLException,IOException,JAXBException;
+       public boolean saveListOfMetadataFormats(String baseUrl) throws MalformedURLException,IOException, JAXBException;
 }
