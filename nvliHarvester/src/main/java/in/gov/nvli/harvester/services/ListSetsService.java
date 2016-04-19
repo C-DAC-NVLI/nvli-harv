@@ -5,14 +5,11 @@
  */
 package in.gov.nvli.harvester.services;
 
-import in.gov.nvli.harvester.OAIPMH_beans.ListSetsType;
-import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
-import org.springframework.stereotype.Service;
 
 /**
  *
@@ -22,5 +19,7 @@ import org.springframework.stereotype.Service;
 public interface ListSetsService {
       public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException;
       public List<SetType> getListSets() throws IOException,JAXBException;
-        public boolean saveListSets() throws IOException, JAXBException; 
+      public boolean saveListSets() throws IOException, JAXBException; 
+      public List<SetType> getListSets(String baseUrl) throws MalformedURLException,IOException,JAXBException;
+      public boolean saveListSets(String baseUrl) throws MalformedURLException,IOException, JAXBException; 
 }
