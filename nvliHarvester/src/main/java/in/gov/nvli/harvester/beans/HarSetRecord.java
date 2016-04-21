@@ -37,9 +37,6 @@ public class HarSetRecord implements Serializable {
     @Basic(optional = false)
     @Column(name = "set_record_id")
     private Long setRecordId;
-    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
-    @ManyToOne(optional = false)
-    private HarRepo repoId;
     @JoinColumn(name = "record_id", referencedColumnName = "record_id")
     @ManyToOne(optional = false)
     private HarRecord recordId;
@@ -60,14 +57,6 @@ public class HarSetRecord implements Serializable {
 
     public void setSetRecordId(Long setRecordId) {
         this.setRecordId = setRecordId;
-    }
-
-    public HarRepo getRepoId() {
-        return repoId;
-    }
-
-    public void setRepoId(HarRepo repoId) {
-        this.repoId = repoId;
     }
 
     public HarRecord getRecordId() {

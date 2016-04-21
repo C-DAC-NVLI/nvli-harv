@@ -6,6 +6,8 @@
 package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
+import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.servicesImpl.GetRecordServiceImpl;
 import java.io.IOException;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 /**
  *
  * @author richa
@@ -31,12 +32,18 @@ public class GetRecordController {
   @Autowired
   public GetRecordService getRecordService;
 
+  @Autowired
+  RepositoryDao repositoryDao;
+
   @RequestMapping("/getrecord")
-  public String getRecord(@RequestParam("baseURL") String baseURL,@RequestParam("identifier") String identifier,@RequestParam("metadataPrefix") String metadataPrefix) {
-    
-    String requestURL = baseURL+"?verb="+VerbType.GET_RECORD.value()+"&identifier="+identifier+"&metadataPrefix="+metadataPrefix;
+  public String getRecord(@RequestParam("baseURL") String baseURL, @RequestParam("identifier") String identifier, @RequestParam("metadataPrefix") String metadataPrefix) {
+
+    String requestURL = baseURL + "?verb=" + VerbType.GET_RECORD.value() + "&identifier=" + identifier + "&metadataPrefix=" + metadataPrefix;
     System.err.println("request url" + requestURL);
+    HarRepo harRepo = repositoryDao.getRepository(baseURL);
     try {
+      getRecordService.setHarRepo(harRepo);
+      getRecordService.setMetadataPrefix(metadataPrefix);
       getRecordService.getRecord(requestURL);
     } catch (MalformedURLException ex) {
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
