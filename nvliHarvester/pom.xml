@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>in.gov.nvli</groupId>
     <artifactId>harvester</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-
     <name>harvester</name>
 
     <properties>
@@ -18,7 +16,7 @@
     </properties>
     
     <dependencies>
-         <!--J2EE Web Dependency-->
+        <!--J2EE Web Dependency-->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
@@ -38,7 +36,7 @@
             <scope>provided</scope>
         </dependency>
         <!--Spring Dependency-->
-         <dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
@@ -59,85 +57,112 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-                		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
-
-        <!--Hibernate Dependency-->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate-core.version}</version>
-            <type>jar</type>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
         </dependency>
-        <!--Other-->
+        <!-- logging dependancy -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <scope>provided</scope>
-            <version>1.1.2</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>                 
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
-            <version>1.1.2</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.21</version>
         </dependency>
-  
-        <!--logging-->
-         <dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
-        <!--DataBase-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.18</version>
-        </dependency>
-        <!--Junit-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-    <groupId>commons-dbcp</groupId>
-    <artifactId>commons-dbcp</artifactId>
-    <version>1.4</version>
-</dependency>
-    </dependencies>
+   
+    <!--Hibernate Dependency-->
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate-core.version}</version>
+        <type>jar</type>
+    </dependency>
+    <!--Other-->
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <scope>provided</scope>
+        <version>1.1.2</version>
+    </dependency>
+    <dependency>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+        <version>1.1.2</version>
+    </dependency>
+  
+    <!--logging-->
+<!--    <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.17</version>
+    </dependency>-->
+    <!--DataBase-->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.18</version>
+    </dependency>
+    <!--Junit-->
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.10</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>commons-dbcp</groupId>
+        <artifactId>commons-dbcp</artifactId>
+        <version>1.4</version>
+    </dependency>
+</dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
-                    </compilerArguments>
-                     <proc>none</proc>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version>
+            <configuration>
+                <source>1.7</source>
+                <target>1.7</target>
+                <compilerArguments>
+                    <endorseddirs>${endorsed.dir}</endorseddirs>
+                </compilerArguments>
+                <proc>none</proc>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.3</version>
+            <configuration>
+                <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -189,11 +214,11 @@ online-through url
          <schemaDirectory>src/main/java/in/gov/nvli/harvester/schemas/</schemaDirectory>
          <schemaFiles>OAI-PMH.xsd</schemaFiles>
         
-              <generateDirectory>src/main/java/</generateDirectory>
-              <generatePackage>in.gov.nvli.harvester.OAIPMH_beans</generatePackage> 
-          </configuration>
-      </plugin>-->
-    </plugins>
-  </build>
+                    <generateDirectory>src/main/java/</generateDirectory>
+                    <generatePackage>in.gov.nvli.harvester.OAIPMH_beans</generatePackage> 
+                </configuration>
+            </plugin>-->
+        </plugins>
+    </build>
 
 </project>

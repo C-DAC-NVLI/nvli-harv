@@ -6,39 +6,49 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 		
 		
-	<!-- Activates various annotations to be detected in beans -->
-	<!-- enables @AutoWired -->
-	<mvc:annotation-driven />
-	<context:annotation-config />
-	<!-- To specify to spring container to search for spring components supply 
-		comma separated list of packages -->
-                <context:component-scan base-package="in.gov.nvli.harvester"></context:component-scan>
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
-		<property name="prefix" value="/WEB-INF/pages/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
+    <!-- Activates various annotations to be detected in beans -->
+    <!-- enables @AutoWired -->
+    <mvc:annotation-driven />
+    <context:annotation-config />
+    <context:property-placeholder location="/WEB-INF/db.properties" ignore-unresolvable="true"/>
+    <context:property-placeholder location="/WEB-INF/logfile.properties" />
+    <!-- setting a system variable -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetClass" value="java.lang.System" />
+                <property name="targetMethod" value="getProperties" />
+            </bean>
+        </property>
+        <property name="targetMethod" value="putAll" />
+        <property name="arguments">
+            <util:properties>
+                <prop key="logfilepath">${log.file.path}</prop>
+            </util:properties>
+        </property>
+    </bean>
+    <!-- To specify to spring container to search for spring components supply  comma separated list of packages -->
+    <context:component-scan base-package="in.gov.nvli.harvester"></context:component-scan>
+    <bean id="viewResolver"  class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+        <property name="prefix" value="/WEB-INF/pages/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
 
-	
-
-	
-	
-	 <import resource="hibernate-persistence.xml" />
-	<mvc:interceptors>
-		<bean
-			class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
-			<property name="sessionFactory" ref="sessionFactory" />
-
-		</bean>
-	</mvc:interceptors> 
-	
+    <import resource="hibernate-persistence.xml" />
+    <mvc:interceptors>
+        <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
+            <property name="sessionFactory" ref="sessionFactory" />
+        </bean>
+    </mvc:interceptors> 
 </beans>
