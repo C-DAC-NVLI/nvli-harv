@@ -10,6 +10,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
@@ -20,6 +21,7 @@ import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
 import in.gov.nvli.harvester.dao.HarSetDao;
+import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
@@ -67,6 +69,9 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   @Autowired
   private HarSetDao harSetDao;
 
+  @Autowired
+  HarSetRecordDao harSetRecordDao;
+
   ResumptionTokenType resumptionToken;
 
   HarRecord harRecord;
@@ -75,6 +80,13 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   List<HarRecordMetadataDc> recordMetadataDcs;
   HarSetRecord harSetRecord;
   HarSet harSet;
+  HarMetadataTypeRepository harMetadataTypeRepository;
+  HarRepo harRepo;
+  String metadataPrefix;
+  List<HarSetRecord> harSetRecords;
+
+  public ListRecordsServiceImpl() {
+  }
 
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
@@ -102,7 +114,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
       harRecords = new ArrayList<>();
       recordMetadataDcs = new ArrayList<>();
-      HarMetadataType metadataType = metadataTypeDao.getMetadataType(CommonConstants.OAIDC);
+      harSetRecords = new ArrayList<>();
+      HarMetadataType metadataType = metadataTypeDao.getMetadataTypeByMetadatPrefix(metadataPrefix);
       for (RecordType record : records) {
 
         harRecord = new HarRecord();
@@ -120,6 +133,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
           }
         }
         harRecord.setAbout(temp);
+        harRecord.setRepoId(harRepo);
 
         harRecords.add(harRecord);
 
@@ -130,18 +144,22 @@ public class ListRecordsServiceImpl implements ListRecordsService {
             harSetRecord = new HarSetRecord();
             harSetRecord.setSetId(harSet);
             harSetRecord.setRecordId(harRecord);
-            harSetRecord.setRepoId(new HarRepo());
+            harSetRecords.add(harSetRecord);
           }
         }
 
         recordMetadataDc = new HarRecordMetadataDc();
         recordMetadataDc.setRecordId(harRecord);
+
         getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
 
         recordMetadataDcs.add(recordMetadataDc);
 
       }
       recordDao.saveListHarRecord(harRecords);
+      if (harSetRecords.size() != 0) {
+        harSetRecordDao.saveHarSetRecords(harSetRecords);
+      }
       metadataDcDao.saveList(recordMetadataDcs);
       System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
       System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
@@ -149,8 +167,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       if (resumptionToken != null) {
         String urlSubtr[] = baseUrl.split("&");
         String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
-        getListRecord(requestUrl);
-
+        //getListRecord(requestUrl);
       }
 
     } else {
@@ -161,6 +178,14 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       }
     }
 
+  }
+
+  public void setHarRepo(HarRepo harRepo) {
+    this.harRepo = harRepo;
+  }
+
+  public void setMetadataPrefix(String metadataPrefix) {
+    this.metadataPrefix = metadataPrefix;
   }
 
 }

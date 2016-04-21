@@ -12,11 +12,16 @@ import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
+import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.beans.HarSet;
+import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
+import in.gov.nvli.harvester.dao.HarSetDao;
+import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import in.gov.nvli.harvester.daoImpl.HarRecordDaoImpl;
 import in.gov.nvli.harvester.daoImpl.HarRecordMetadataDcDaoImpl;
 import in.gov.nvli.harvester.services.GetRecordService;
@@ -29,6 +34,7 @@ import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +59,17 @@ public class GetRecordServiceImpl implements GetRecordService {
 
   @Autowired
   private HarMetadataTypeDao metadataTypeDao;
+  HarSet harSet;
+
+  @Autowired
+  private HarSetDao harSetDao;
+
+  @Autowired
+  HarSetRecordDao harSetRecordDao;
+  
+  HarRepo harRepo;
+  
+  String metadataPrefix;
 
   @Override
   public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
@@ -71,7 +88,8 @@ public class GetRecordServiceImpl implements GetRecordService {
     DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
     Date sourceDate = formatter.parse(recordType.getHeader().getDatestamp());
     record.setSoureDatestamp(sourceDate);
-    record.setMetadataTypeId(metadataTypeDao.getMetadataType(CommonConstants.OAIDC));
+    record.setMetadataTypeId(metadataTypeDao.getMetadataTypeByMetadatPrefix(metadataPrefix));
+    record.setRepoId(harRepo);
     List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
     String temp = "";
 
@@ -84,6 +102,24 @@ public class GetRecordServiceImpl implements GetRecordService {
     //save record object in db
     recordDao.saveHarRecord(record);
     //end
+
+    List<String> setSpecs = recordType.getHeader().getSetSpec();
+    HarSetRecord harSetRecord;
+    List<HarSetRecord> harSetRecords = new ArrayList<>();
+    for (String setSpec : setSpecs) {
+      harSet = harSetDao.getHarSet(setSpec);
+      System.out.println("sets===" + harSet.getName());
+      if (harSet != null) {
+        harSetRecord = new HarSetRecord();
+        harSetRecord.setSetId(harSet);
+        harSetRecord.setRecordId(record);
+        harSetRecords.add(harSetRecord);
+      }
+    }
+
+    if (harSetRecords.size() != 0) {
+      harSetRecordDao.saveHarSetRecords(harSetRecords);
+    }
 
     HarRecordMetadataDc recordMetadataDc = new HarRecordMetadataDc();
     recordMetadataDc.setRecordId(record);
@@ -183,4 +219,15 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     return columnValue;
   }
+
+  public void setHarRepo(HarRepo harRepo) {
+    this.harRepo = harRepo;
+  }
+
+  public void setMetadataPrefix(String metadataPrefix) {
+    this.metadataPrefix = metadataPrefix;
+  }
+  
+  
+  
 }
