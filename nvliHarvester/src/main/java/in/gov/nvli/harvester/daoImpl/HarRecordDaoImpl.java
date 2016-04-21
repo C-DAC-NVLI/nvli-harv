@@ -47,10 +47,6 @@ public class HarRecordDaoImpl implements HarRecordDao {
       session = sessionFactory.getCurrentSession();
       for (HarRecord record : records) {
         session.save(record);
-        if ((records.indexOf(record) + 1) % 10 == 0) {
-          session.flush();
-          session.clear();
-        }
       }
 
     } catch (Exception e) {
