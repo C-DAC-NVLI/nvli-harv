@@ -58,6 +58,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     if (harRepos != null) {
       for (HarRepo harRepo : harRepos) {
         listSetsService.saveListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
+        listMetadataFormatsService.setRepository(harRepo);
         listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
 
         listRecordsService.setHarRepo(harRepo);
