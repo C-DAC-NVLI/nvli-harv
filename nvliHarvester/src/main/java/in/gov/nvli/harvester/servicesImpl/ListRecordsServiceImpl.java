@@ -21,6 +21,7 @@ import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
 import in.gov.nvli.harvester.dao.HarSetDao;
+import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
@@ -67,6 +68,9 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   @Autowired
   private HarSetDao harSetDao;
+  
+  @Autowired
+  HarSetRecordDao harSetRecordDao;
 
   ResumptionTokenType resumptionToken;
 
@@ -77,6 +81,12 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   HarSetRecord harSetRecord;
   HarSet harSet;
   HarMetadataTypeRepository harMetadataTypeRepository;
+  HarRepo harRepo;
+  String metadataPrefix;
+  List<HarSetRecord> harSetRecords;
+
+  public ListRecordsServiceImpl() {
+  }
 
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
@@ -104,7 +114,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
       harRecords = new ArrayList<>();
       recordMetadataDcs = new ArrayList<>();
-      HarMetadataType metadataType = metadataTypeDao.getMetadataTypeByMetadatPrefix("oai_dc");
+      HarMetadataType metadataType = metadataTypeDao.getMetadataTypeByMetadatPrefix(metadataPrefix);
       for (RecordType record : records) {
 
         harRecord = new HarRecord();
@@ -122,22 +132,29 @@ public class ListRecordsServiceImpl implements ListRecordsService {
           }
         }
         harRecord.setAbout(temp);
+        harRecord.setRepoId(harRepo);
 
         harRecords.add(harRecord);
 
         List<String> setSpecs = record.getHeader().getSetSpec();
+        harSetRecords = new ArrayList<>();
         for (String setSpec : setSpecs) {
           harSet = harSetDao.getHarSet(setSpec);
           if (harSet != null) {
             harSetRecord = new HarSetRecord();
             harSetRecord.setSetId(harSet);
             harSetRecord.setRecordId(harRecord);
-            harSetRecord.setRepoId(new HarRepo());
+            harSetRecords.add(harSetRecord);
           }
+        }
+
+        if (harRecords.size() != 0) {
+          harSetRecordDao.saveHarSetRecords(harSetRecords);
         }
 
         recordMetadataDc = new HarRecordMetadataDc();
         recordMetadataDc.setRecordId(harRecord);
+        System.out.println("Metadata "+record.getMetadata());
         getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
 
         recordMetadataDcs.add(recordMetadataDc);
@@ -162,6 +179,14 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       }
     }
 
+  }
+
+  public void setHarRepo(HarRepo harRepo) {
+    this.harRepo = harRepo;
+  }
+
+  public void setMetadataPrefix(String metadataPrefix) {
+    this.metadataPrefix = metadataPrefix;
   }
 
 }

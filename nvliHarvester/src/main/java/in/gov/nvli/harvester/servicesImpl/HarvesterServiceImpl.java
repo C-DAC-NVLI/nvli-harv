@@ -60,6 +60,8 @@ public class HarvesterServiceImpl implements HarvesterService {
         listSetsService.saveListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
         listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
 
+        listRecordsService.setHarRepo(harRepo);
+        listRecordsService.setMetadataPrefix("oai_dc");
         listRecordsService.getListRecord(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
       }
     }

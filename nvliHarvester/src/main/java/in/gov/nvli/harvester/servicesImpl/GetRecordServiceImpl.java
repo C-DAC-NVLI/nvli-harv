@@ -71,7 +71,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
     Date sourceDate = formatter.parse(recordType.getHeader().getDatestamp());
     record.setSoureDatestamp(sourceDate);
-    record.setMetadataTypeId(metadataTypeDao.getMetadataType(CommonConstants.OAIDC));
+    record.setMetadataTypeId(metadataTypeDao.getMetadataTypeByMetadatPrefix("oai_dc"));
     List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
     String temp = "";
 

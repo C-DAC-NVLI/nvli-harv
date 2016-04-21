@@ -6,6 +6,8 @@
 package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
+import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.servicesImpl.ListRecordsServiceImpl;
 import java.io.IOException;                                                                                                                                                                                                                                             
@@ -29,12 +31,18 @@ public class ListRecordsController {
   @Autowired
   public ListRecordsService listRecordsService;
   
+  @Autowired
+  RepositoryDao repositoryDao;
+  
 
   @RequestMapping("/listrecords")
   public String listRecord(@RequestParam("baseURL") String baseURL,@RequestParam("metadataPrefix") String metadataPrefix) {
     String requestURL = baseURL+"?verb="+VerbType.LIST_RECORDS.value()+"&metadataPrefix="+metadataPrefix;
     System.err.println("base url" + requestURL);
+    HarRepo harRepo=repositoryDao.getRepository(baseURL);
     try {
+      listRecordsService.setHarRepo(harRepo);
+      listRecordsService.setMetadataPrefix(metadataPrefix);
       listRecordsService.getListRecord(requestURL);
     } catch (MalformedURLException ex) {
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
