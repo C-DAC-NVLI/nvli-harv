@@ -6,6 +6,8 @@
 package in.gov.nvli.harvester.services;
 
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
+import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.beans.HarSet;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -21,5 +23,6 @@ public interface ListSetsService {
       public List<SetType> getListSets() throws IOException,JAXBException;
       public boolean saveListSets() throws IOException, JAXBException; 
       public List<SetType> getListSets(String baseUrl) throws MalformedURLException,IOException,JAXBException;
-      public boolean saveListSets(String baseUrl) throws MalformedURLException,IOException, JAXBException; 
+      public boolean saveListSets(String baseUrl) throws MalformedURLException,IOException, JAXBException;
+      public HarSet getHarSetType(String name,String setSpec);
 }
