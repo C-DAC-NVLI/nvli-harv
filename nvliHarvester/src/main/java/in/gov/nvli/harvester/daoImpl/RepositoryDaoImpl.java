@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.dao.RepositoryDao;
+import java.io.Serializable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +20,27 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class RepositoryDaoImpl implements RepositoryDao{
+public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo,Integer> implements RepositoryDao{
 
-    @Autowired
-    SessionFactory sf;
+
+
+    public RepositoryDaoImpl() {
+        super(HarRepo.class);
+    }
     
     @Override
-    @Transactional
     public HarRepo addRepository(HarRepo repositoryObject) {
-        Session session = sf.getCurrentSession();
         try {
             
-            return new HarRepo((Integer) session.save(repositoryObject));
+            return null;
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public HarRepo getRepository(int repositoryId) {
+       return get(repositoryId);
     }
     
 }
