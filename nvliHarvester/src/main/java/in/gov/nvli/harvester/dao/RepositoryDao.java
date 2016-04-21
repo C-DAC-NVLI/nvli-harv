@@ -6,7 +6,7 @@
 package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarRepo;
-import java.io.Serializable;
+import java.util.List;
 
 /**
  *
@@ -14,5 +14,7 @@ import java.io.Serializable;
  */
 public interface RepositoryDao extends GenericDao<HarRepo, Integer>{
     public HarRepo addRepository(HarRepo repositoryObject);
-     public HarRepo getRepository(int repositoryId);
+    public List<HarRepo> getRepositories();
+    public HarRepo getRepository(String baseURL);
+    public HarRepo getRepository(int repositoryId);
 }
