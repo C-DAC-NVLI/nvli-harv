@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.services;
 
 import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
+import in.gov.nvli.harvester.beans.HarRepo;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -21,4 +22,5 @@ public interface ListMetadataFormatsService {
        public boolean saveListOfMetadataFormats() throws IOException, JAXBException;
         public List<MetadataFormatType> getListMetadataFormats(String baseUrl) throws MalformedURLException,IOException,JAXBException;
        public boolean saveListOfMetadataFormats(String baseUrl) throws MalformedURLException,IOException, JAXBException;
+        public void setRepository(HarRepo repository);
 }
