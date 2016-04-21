@@ -46,10 +46,6 @@ public class HarRecordMetadataDcDaoImpl implements HarRecordMetadataDcDao {
       session = sessionFactory.getCurrentSession();
       for (HarRecordMetadataDc metadataDc : metadataDcs) {
         session.save(metadataDc);
-        if ((metadataDcs.indexOf(metadataDc) + 1) % 10 == 0) {
-          session.flush();
-          session.clear();
-        }
       }
     } catch (Exception e) {
       e.printStackTrace();
