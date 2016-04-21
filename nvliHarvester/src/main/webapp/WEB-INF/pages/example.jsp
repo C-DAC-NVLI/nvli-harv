@@ -35,9 +35,12 @@ http://oar.icrisat.org/cgi/oai2 <br>
 </p>
 		
 		
-        
-       Defualt Base URL : <input type="text" id="baseUrlInput" value="http://dspace.library.iitb.ac.in/oai/request" style="width: 500px;"/>
-       <input type="button" id="btn" value="update" onclick="update();">
+<form action="${pageContext.servletContext.contextPath}/harvester" >
+       Defualt Base URL : <input type="text" id="baseUrlInput" name="baseURL" value="http://dspace.library.iitb.ac.in/oai/request" style="width: 500px;"/>
+<!--       <input type="button" id="btn" value="update" onclick="update();">-->
+<input type="submit" value="Harvest"/>
+ <input type="button" id="btn" value="update" onclick="update();">
+</form>
         <br>
         <br>
         <a href="${pageContext.servletContext.contextPath}/identify?baseURL=http://dspace.library.iitb.ac.in/oai/request" id="identify">identify</a><br>
