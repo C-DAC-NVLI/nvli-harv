@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarRepo;
+import java.util.List;
 
 /**
  *
@@ -13,4 +14,6 @@ import in.gov.nvli.harvester.beans.HarRepo;
  */
 public interface RepositoryDao {
     public HarRepo addRepository(HarRepo repositoryObject);
+    public List<HarRepo> getRepositories();
+    public HarRepo getRepository(String baseURL);
 }

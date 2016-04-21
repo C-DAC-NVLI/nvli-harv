@@ -7,8 +7,10 @@ package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.dao.RepositoryDao;
+import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,5 +37,29 @@ public class RepositoryDaoImpl implements RepositoryDao{
             return null;
         }
     }
+
+  @Override
+  public List<HarRepo> getRepositories() {
+    Session session = sf.getCurrentSession();
+    List<HarRepo> harRepos=null;
+    try{
+      harRepos=session.createCriteria(HarRepo.class).list();
+    }catch(Exception e){
+      
+    }
+    return harRepos;
+  }
+
+  @Override
+  public HarRepo getRepository(String baseURL) {
+    Session session = sf.getCurrentSession();
+    HarRepo harRepo=null;
+    try{
+      harRepo=(HarRepo) session.createCriteria(HarRepo.class).add(Restrictions.eq("repoBaseUrl", baseURL)).uniqueResult();
+    }catch(Exception e){
+      
+    }
+    return harRepo;
+  }
     
 }

@@ -5,7 +5,6 @@
  */
 package in.gov.nvli.harvester.controllers;
 
-
 import in.gov.nvli.harvester.services.HarvesterService;
 import java.io.IOException;
 import java.text.ParseException;
@@ -23,18 +22,17 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class HarvesterController {
-  
+
   @Autowired
   HarvesterService harvesterService;
-    
-    @RequestMapping("/")
-    public String exampleMethod()
-    {
-        return "example";
-    }
-    @RequestMapping("/harvester")
-    public String harvestRepository(@RequestParam("baseURL") String baseURL)
-    {
+
+  @RequestMapping("/")
+  public String exampleMethod() {
+    return "example";
+  }
+
+  @RequestMapping("/harvester")
+  public String harvestRepository(@RequestParam("baseURL") String baseURL) {
     try {
       harvesterService.harvestReposiotires(baseURL);
     } catch (IOException ex) {
@@ -44,7 +42,21 @@ public class HarvesterController {
     } catch (ParseException ex) {
       Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
     }
-        return "example";
+    return "example";
+  }
+
+  @RequestMapping("/harvestall")
+  public String harvestAll() {
+    try {
+      harvesterService.harvestAllRepositories();
+    } catch (IOException ex) {
+      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (JAXBException ex) {
+      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (ParseException ex) {
+      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
     }
-    
+    return "example";
+  }
+
 }

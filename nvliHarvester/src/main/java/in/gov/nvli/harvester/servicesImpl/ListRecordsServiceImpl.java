@@ -10,6 +10,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
@@ -75,6 +76,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   List<HarRecordMetadataDc> recordMetadataDcs;
   HarSetRecord harSetRecord;
   HarSet harSet;
+  HarMetadataTypeRepository harMetadataTypeRepository;
 
   @Override
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
@@ -102,7 +104,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
       harRecords = new ArrayList<>();
       recordMetadataDcs = new ArrayList<>();
-      HarMetadataType metadataType = metadataTypeDao.getMetadataType(CommonConstants.OAIDC);
+      HarMetadataType metadataType = metadataTypeDao.getMetadataTypeByMetadatPrefix("oai_dc");
       for (RecordType record : records) {
 
         harRecord = new HarRecord();
@@ -149,8 +151,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       if (resumptionToken != null) {
         String urlSubtr[] = baseUrl.split("&");
         String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
-        getListRecord(requestUrl);
-
+        //getListRecord(requestUrl);
       }
 
     } else {
