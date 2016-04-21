@@ -68,7 +68,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   @Autowired
   private HarSetDao harSetDao;
-  
+
   @Autowired
   HarSetRecordDao harSetRecordDao;
 
@@ -114,6 +114,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
       harRecords = new ArrayList<>();
       recordMetadataDcs = new ArrayList<>();
+      harSetRecords = new ArrayList<>();
       HarMetadataType metadataType = metadataTypeDao.getMetadataTypeByMetadatPrefix(metadataPrefix);
       for (RecordType record : records) {
 
@@ -137,7 +138,6 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         harRecords.add(harRecord);
 
         List<String> setSpecs = record.getHeader().getSetSpec();
-        harSetRecords = new ArrayList<>();
         for (String setSpec : setSpecs) {
           harSet = harSetDao.getHarSet(setSpec);
           if (harSet != null) {
@@ -148,19 +148,18 @@ public class ListRecordsServiceImpl implements ListRecordsService {
           }
         }
 
-        if (harRecords.size() != 0) {
-          harSetRecordDao.saveHarSetRecords(harSetRecords);
-        }
-
         recordMetadataDc = new HarRecordMetadataDc();
         recordMetadataDc.setRecordId(harRecord);
-        System.out.println("Metadata "+record.getMetadata());
+
         getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
 
         recordMetadataDcs.add(recordMetadataDc);
 
       }
       recordDao.saveListHarRecord(harRecords);
+      if (harSetRecords.size() != 0) {
+        harSetRecordDao.saveHarSetRecords(harSetRecords);
+      }
       metadataDcDao.saveList(recordMetadataDcs);
       System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
       System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());

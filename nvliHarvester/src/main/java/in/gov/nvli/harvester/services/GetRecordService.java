@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.services;
 
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
+import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.OAIDC;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,5 +21,7 @@ public interface GetRecordService {
   
   public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException,ParseException;
   public HarRecordMetadataDc getMetadataFromObj(OAIDC oaiDC, HarRecordMetadataDc recordMetadataDc); 
+  public void setHarRepo(HarRepo harRepo);
+  public void setMetadataPrefix(String metadataPrefix);
   
 }
