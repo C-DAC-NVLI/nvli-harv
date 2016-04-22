@@ -51,7 +51,7 @@ public class HarSetDaoImpl extends GenericDaoImpl<HarSet, Long> implements HarSe
 
         HarSet harSet = null;
         try {
-            harSet = (HarSet) currentSession().createCriteria(HarSet.class).add(Restrictions.eq("name", set)).uniqueResult();
+            harSet = (HarSet) currentSession().createCriteria(HarSet.class).add(Restrictions.eq("set_spec", set)).uniqueResult();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
