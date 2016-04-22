@@ -6,12 +6,16 @@
 package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.dao.IdentifyDao;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
  *
  * @author vootla
  */
+@Repository
+@Transactional(readOnly = true)
 public class IdentifyDaoImpl implements IdentifyDao{
 
     @Override

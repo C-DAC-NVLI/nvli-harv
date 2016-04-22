@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,6 +43,7 @@ public class HarvesterServiceImpl implements HarvesterService {
   RepositoryDao repositoryDao;
 
   @Override
+  @Async
   public void harvestReposiotires(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException {
 
     HarRepo harRepo = repositoryDao.getRepository(baseURL);
@@ -58,6 +60,7 @@ public class HarvesterServiceImpl implements HarvesterService {
   }
 
   @Override
+  @Async
   public void harvestAllRepositories() throws MalformedURLException, IOException, JAXBException, ParseException {
     List<HarRepo> harRepos = repositoryDao.getRepositories();
     if (harRepos != null) {

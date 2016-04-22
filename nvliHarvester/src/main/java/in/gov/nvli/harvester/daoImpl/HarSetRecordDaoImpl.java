@@ -9,12 +9,14 @@ import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author richa
  */
 @Repository
+@Transactional(readOnly = true)
 public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> implements HarSetRecordDao {
 
   public HarSetRecordDaoImpl() {

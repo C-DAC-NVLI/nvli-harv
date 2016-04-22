@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -89,6 +90,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   }
 
   @Override
+  @Async
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
     System.out.println("url================" + baseUrl);
     System.setProperty("http.keepAlive", "true");

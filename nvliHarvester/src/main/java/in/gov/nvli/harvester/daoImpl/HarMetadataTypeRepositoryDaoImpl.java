@@ -14,12 +14,14 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author vootla
  */
 @Repository
+@Transactional(readOnly = true)
 public class HarMetadataTypeRepositoryDaoImpl extends GenericDaoImpl<HarMetadataTypeRepository, Short> implements HarMetadataTypeRepositoryDao {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(HarMetadataTypeRepositoryDaoImpl.class);

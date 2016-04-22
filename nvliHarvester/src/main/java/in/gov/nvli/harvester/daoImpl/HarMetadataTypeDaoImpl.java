@@ -10,12 +10,14 @@ import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author vootla
  */
 @Repository
+@Transactional(readOnly = true)
 public class HarMetadataTypeDaoImpl extends GenericDaoImpl<HarMetadataType, Short> implements HarMetadataTypeDao {
 
     public HarMetadataTypeDaoImpl() {
