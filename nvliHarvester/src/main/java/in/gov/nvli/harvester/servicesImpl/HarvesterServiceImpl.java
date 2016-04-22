@@ -44,10 +44,15 @@ public class HarvesterServiceImpl implements HarvesterService {
   @Override
   public void harvestReposiotires(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException {
 
+    HarRepo harRepo = repositoryDao.getRepository(baseURL);
+
     listSetsService.saveListSets(baseURL + "?verb=" + VerbType.LIST_SETS.value());
-
+    
+    listMetadataFormatsService.setRepository(harRepo);
     listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
-
+    
+    listRecordsService.setHarRepo(harRepo);
+    listRecordsService.setMetadataPrefix("oai_dc");
     listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
 
   }
@@ -58,6 +63,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     if (harRepos != null) {
       for (HarRepo harRepo : harRepos) {
         listSetsService.saveListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
+        
         listMetadataFormatsService.setRepository(harRepo);
         listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
 
