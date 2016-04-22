@@ -169,7 +169,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       if (resumptionToken != null) {
         String urlSubtr[] = baseUrl.split("&");
         String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
-        //getListRecord(requestUrl);
+        getListRecord(requestUrl);
       }
 
     } else {
