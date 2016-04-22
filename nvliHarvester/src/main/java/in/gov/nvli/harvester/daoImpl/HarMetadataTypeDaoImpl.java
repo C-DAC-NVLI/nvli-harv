@@ -38,6 +38,7 @@ public class HarMetadataTypeDaoImpl extends GenericDaoImpl<HarMetadataType, Shor
   }
 
     @Override
+    @Transactional
     public boolean saveHarMetadataTypes(List<HarMetadataType> metadataTypes) {
    try
        {

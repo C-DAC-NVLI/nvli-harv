@@ -8,9 +8,8 @@ package in.gov.nvli.harvester.controllers;
 import in.gov.nvli.harvester.services.HarvesterService;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
@@ -25,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @EnableAsync
 public class HarvesterController {
 
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HarvesterController.class);
+  
   @Autowired
   HarvesterService harvesterService;
 
@@ -38,11 +39,11 @@ public class HarvesterController {
     try {
       harvesterService.harvestReposiotires(baseURL);
     } catch (IOException ex) {
-      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);
     } catch (JAXBException ex) {
-      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     } catch (ParseException ex) {
-      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     }
     return "example";
   }
@@ -52,11 +53,11 @@ public class HarvesterController {
     try {
       harvesterService.harvestAllRepositories();
     } catch (IOException ex) {
-      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     } catch (JAXBException ex) {
-      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     } catch (ParseException ex) {
-      Logger.getLogger(HarvesterController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     }
     return "example";
   }

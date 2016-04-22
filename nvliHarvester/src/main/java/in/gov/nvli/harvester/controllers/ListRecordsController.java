@@ -9,13 +9,12 @@ import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListRecordsService;
-import in.gov.nvli.harvester.servicesImpl.ListRecordsServiceImpl;
 import java.io.IOException;                                                                                                                                                                                                                                             
 import java.net.MalformedURLException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
@@ -29,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @EnableAsync
 public class ListRecordsController {
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(ListRecordsController.class);
   
   @Autowired
   public ListRecordsService listRecordsService;
@@ -47,13 +48,13 @@ public class ListRecordsController {
       listRecordsService.setMetadataPrefix(metadataPrefix);
       listRecordsService.getListRecord(requestURL);
     } catch (MalformedURLException ex) {
-      Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);
     } catch (IOException ex) {
-      Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     } catch (JAXBException ex) {
-      Logger.getLogger(GetRecordController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     } catch (ParseException ex) {
-      Logger.getLogger(ListRecordsController.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.error(ex.getMessage(),ex);;
     }
     return "example";
   }

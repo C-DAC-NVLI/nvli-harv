@@ -29,6 +29,7 @@ public class HarSetDaoImpl extends GenericDaoImpl<HarSet, Long> implements HarSe
     }
 
     @Override
+    @Transactional
     public boolean saveHarSets(List<HarSet> sets) {
         try {
             for (HarSet set : sets) {

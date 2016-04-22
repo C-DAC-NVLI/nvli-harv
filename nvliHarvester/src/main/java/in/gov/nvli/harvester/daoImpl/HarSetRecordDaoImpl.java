@@ -24,6 +24,7 @@ public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> impl
   }
 
   @Override
+  @Transactional
   public boolean saveHarSetRecords(List<HarSetRecord> setRecords) {
     try {
       for (HarSetRecord setRecord : setRecords) {

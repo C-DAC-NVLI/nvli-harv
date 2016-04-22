@@ -31,6 +31,7 @@ public class HarMetadataTypeRepositoryDaoImpl extends GenericDaoImpl<HarMetadata
     }
     
     @Override
+    @Transactional
     public boolean saveHarMetadataTypesOfRepository(List<HarMetadataTypeRepository> metadataTypesOfRepo) {
         try {
             for (HarMetadataTypeRepository metadata : metadataTypesOfRepo) {

@@ -90,7 +90,6 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   }
 
   @Override
-  @Async
   public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
     System.out.println("url================" + baseUrl);
     System.setProperty("http.keepAlive", "true");

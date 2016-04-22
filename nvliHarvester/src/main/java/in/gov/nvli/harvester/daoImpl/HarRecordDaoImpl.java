@@ -11,6 +11,8 @@ import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional(readOnly = true)
 public class HarRecordDaoImpl implements HarRecordDao {
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(HarRecordDaoImpl.class);
+
 
   @Autowired
   private SessionFactory sessionFactory;
@@ -35,7 +40,7 @@ public class HarRecordDaoImpl implements HarRecordDao {
       session.save(record);
 
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.error(e.getMessage(),e);
     }
   }
 
@@ -50,7 +55,7 @@ public class HarRecordDaoImpl implements HarRecordDao {
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
+      LOGGER.error(e.getMessage(),e);
     }
   }
 
