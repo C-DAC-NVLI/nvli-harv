@@ -12,6 +12,8 @@ package in.gov.nvli.harvester.constants;
 public class CommonConstants {
   
   public static String COLUMNVALUESEPARARTOR="<>";   
+  public  static Short RECORDNOTDELETED=0;
+  public  static Short RECORDDELETED=1;
     
   
 }

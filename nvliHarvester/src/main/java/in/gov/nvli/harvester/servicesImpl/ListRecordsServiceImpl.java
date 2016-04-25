@@ -9,6 +9,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.AboutType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
+import in.gov.nvli.harvester.OAIPMH_beans.StatusType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRecord;
@@ -136,6 +137,12 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         harRecord.setRecordAbout(temp);
         harRecord.setRepoId(harRepo);
 
+        if(record.getHeader().getStatus() != StatusType.DELETED){
+          harRecord.setRecordStatus(CommonConstants.RECORDNOTDELETED);
+        }else{
+          harRecord.setRecordStatus(CommonConstants.RECORDDELETED);
+        }
+        
         harRecords.add(harRecord);
 
         List<String> setSpecs = record.getHeader().getSetSpec();
@@ -151,7 +158,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         
         recordMetadataDc = new HarRecordMetadataDc();
         recordMetadataDc.setRecordId(harRecord);
-        if(record.getMetadata() != null){
+        if(record.getHeader().getStatus() != StatusType.DELETED){
             getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
         }
         
@@ -162,11 +169,13 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       if (harSetRecords.size() != 0) {
         harSetRecordDao.saveHarSetRecords(harSetRecords);
       }
+      
       metadataDcDao.saveList(recordMetadataDcs);
+      
       System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
       System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
       resumptionToken = getRecordObj.getListRecords().getResumptionToken();
-      if (resumptionToken != null) {
+      if (resumptionToken.getValue()!=null && resumptionToken.getValue()!="" && !resumptionToken.getValue().isEmpty()) {
         String urlSubtr[] = baseUrl.split("&");
         String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
         getListRecord(requestUrl);
