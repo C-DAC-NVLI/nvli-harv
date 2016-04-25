@@ -35,12 +35,12 @@ public class HarRepoLanguage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "repo_language_id")
+    @Column(name = "repo_language_id", nullable = false)
     private Integer repoLanguageId;
-    @JoinColumn(name = "language_id", referencedColumnName = "language_id")
+    @JoinColumn(name = "language_id", referencedColumnName = "language_id", nullable = false)
     @ManyToOne(optional = false)
     private HarLanguage languageId;
-    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
+    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepo repoId;
 

@@ -6,9 +6,7 @@
 package in.gov.nvli.harvester.beans;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,10 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -39,36 +35,28 @@ public class HarMetadataTypeRepository implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "metadata_type_repo_id")
-    private Short metadataTypeRepoId;
-    @JoinColumn(name = "metadata_type_id", referencedColumnName = "metadata_id")
-    @ManyToOne(optional = false)
-    private HarMetadataType metadataTypeId;
-    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
+    @Column(name = "metadata_type_repo_id", nullable = false)
+    private Integer metadataTypeRepoId;
+    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepo repoId;
+    @JoinColumn(name = "metadata_type_id", referencedColumnName = "metadata_id", nullable = false)
+    @ManyToOne(optional = false)
+    private HarMetadataType metadataTypeId;
 
     public HarMetadataTypeRepository() {
     }
 
-    public HarMetadataTypeRepository(Short metadataTypeRepoId) {
+    public HarMetadataTypeRepository(Integer metadataTypeRepoId) {
         this.metadataTypeRepoId = metadataTypeRepoId;
     }
 
-    public Short getMetadataTypeRepoId() {
+    public Integer getMetadataTypeRepoId() {
         return metadataTypeRepoId;
     }
 
-    public void setMetadataTypeRepoId(Short metadataTypeRepoId) {
+    public void setMetadataTypeRepoId(Integer metadataTypeRepoId) {
         this.metadataTypeRepoId = metadataTypeRepoId;
-    }
-
-    public HarMetadataType getMetadataTypeId() {
-        return metadataTypeId;
-    }
-
-    public void setMetadataTypeId(HarMetadataType metadataTypeId) {
-        this.metadataTypeId = metadataTypeId;
     }
 
     public HarRepo getRepoId() {
@@ -77,6 +65,14 @@ public class HarMetadataTypeRepository implements Serializable {
 
     public void setRepoId(HarRepo repoId) {
         this.repoId = repoId;
+    }
+
+    public HarMetadataType getMetadataTypeId() {
+        return metadataTypeId;
+    }
+
+    public void setMetadataTypeId(HarMetadataType metadataTypeId) {
+        this.metadataTypeId = metadataTypeId;
     }
 
     @Override

@@ -35,12 +35,12 @@ public class HarSetRecord implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "set_record_id")
+    @Column(name = "set_record_id", nullable = false)
     private Long setRecordId;
-    @JoinColumn(name = "record_id", referencedColumnName = "record_id")
+    @JoinColumn(name = "record_id", referencedColumnName = "record_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRecord recordId;
-    @JoinColumn(name = "set_id", referencedColumnName = "set_id")
+    @JoinColumn(name = "set_id", referencedColumnName = "set_id", nullable = false)
     @ManyToOne(optional = false)
     private HarSet setId;
 

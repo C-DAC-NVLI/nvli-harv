@@ -37,171 +37,164 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "har_record")
 @XmlRootElement
 @NamedQueries({
-  @NamedQuery(name = "HarRecord.findAll", query = "SELECT h FROM HarRecord h"),
-  @NamedQuery(name = "HarRecord.findByRecordId", query = "SELECT h FROM HarRecord h WHERE h.recordId = :recordId"),
-  @NamedQuery(name = "HarRecord.findByIdentifier", query = "SELECT h FROM HarRecord h WHERE h.identifier = :identifier"),
-  @NamedQuery(name = "HarRecord.findBySoureDatestamp", query = "SELECT h FROM HarRecord h WHERE h.soureDatestamp = :soureDatestamp")})
+    @NamedQuery(name = "HarRecord.findAll", query = "SELECT h FROM HarRecord h"),
+    @NamedQuery(name = "HarRecord.findByRecordId", query = "SELECT h FROM HarRecord h WHERE h.recordId = :recordId"),
+    @NamedQuery(name = "HarRecord.findByRecordIdentifier", query = "SELECT h FROM HarRecord h WHERE h.recordIdentifier = :recordIdentifier"),
+    @NamedQuery(name = "HarRecord.findByRecordSoureDatestamp", query = "SELECT h FROM HarRecord h WHERE h.recordSoureDatestamp = :recordSoureDatestamp")})
 public class HarRecord implements Serializable {
 
-  private static final long serialVersionUID = 1L;
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Basic(optional = false)
-  @Column(name = "record_id")
-  private Long recordId;
-  @Basic(optional = false)
-  @NotNull
-  @Size(min = 1, max = 100)
-  @Column(name = "identifier")
-  private String identifier;
-  @Basic(optional = false)
-  @NotNull
-  @Column(name = "soure_datestamp")
-  @Temporal(TemporalType.TIMESTAMP)
-  private Date soureDatestamp;
-//    @Basic(optional = false)
-//    @Lob
-//    @Size(min = 1, max = 65535)
-  @Column(name = "about")
-  private String about;
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
-  private Collection<HarRecordMetadataDc> harRecordMetadataDcCollection;
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
-  private Collection<HarRecordOriginalxml> harRecordOriginalxmlCollection;
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
-  private Collection<HarRecordLanguage> harRecordLanguageCollection;
-  @JoinColumn(name = "metadata_type_id", referencedColumnName = "metadata_id")
-  @ManyToOne(optional = false)
-  private HarMetadataType metadataTypeId;
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
-  private Collection<HarSetRecord> harSetRecordCollection;
-  @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
-  @ManyToOne(optional = false)
-  private HarRepo repoId;
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "record_id", nullable = false)
+    private Long recordId;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "record_identifier", nullable = false, length = 255)
+    private String recordIdentifier;
+    @Column(name = "record_soure_datestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date recordSoureDatestamp;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "record_about", length = 65535)
+    private String recordAbout;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
+    private Collection<HarRecordMetadataDc> harRecordMetadataDcCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
+    private Collection<HarRecordOriginalxml> harRecordOriginalxmlCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
+    private Collection<HarRecordLanguage> harRecordLanguageCollection;
+    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id", nullable = false)
+    @ManyToOne(optional = false)
+    private HarRepo repoId;
+    @JoinColumn(name = "metadata_type_id", referencedColumnName = "metadata_id", nullable = false)
+    @ManyToOne(optional = false)
+    private HarMetadataType metadataTypeId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
+    private Collection<HarSetRecord> harSetRecordCollection;
 
-  public HarRecord() {
-  }
-
-  public HarRecord(Long recordId) {
-    this.recordId = recordId;
-  }
-
-  public HarRecord(Long recordId, String identifier, Date soureDatestamp, String about) {
-    this.recordId = recordId;
-    this.identifier = identifier;
-    this.soureDatestamp = soureDatestamp;
-    this.about = about;
-  }
-
-  public Long getRecordId() {
-    return recordId;
-  }
-
-  public void setRecordId(Long recordId) {
-    this.recordId = recordId;
-  }
-
-  public String getIdentifier() {
-    return identifier;
-  }
-
-  public void setIdentifier(String identifier) {
-    this.identifier = identifier;
-  }
-
-  public Date getSoureDatestamp() {
-    return soureDatestamp;
-  }
-
-  public void setSoureDatestamp(Date soureDatestamp) {
-    this.soureDatestamp = soureDatestamp;
-  }
-
-  public String getAbout() {
-    return about;
-  }
-
-  public void setAbout(String about) {
-    this.about = about;
-  }
-
-  @XmlTransient
-  public Collection<HarRecordMetadataDc> getHarRecordMetadataDcCollection() {
-    return harRecordMetadataDcCollection;
-  }
-
-  public void setHarRecordMetadataDcCollection(Collection<HarRecordMetadataDc> harRecordMetadataDcCollection) {
-    this.harRecordMetadataDcCollection = harRecordMetadataDcCollection;
-  }
-
-  @XmlTransient
-  public Collection<HarRecordOriginalxml> getHarRecordOriginalxmlCollection() {
-    return harRecordOriginalxmlCollection;
-  }
-
-  public void setHarRecordOriginalxmlCollection(Collection<HarRecordOriginalxml> harRecordOriginalxmlCollection) {
-    this.harRecordOriginalxmlCollection = harRecordOriginalxmlCollection;
-  }
-
-  @XmlTransient
-  public Collection<HarRecordLanguage> getHarRecordLanguageCollection() {
-    return harRecordLanguageCollection;
-  }
-
-  public void setHarRecordLanguageCollection(Collection<HarRecordLanguage> harRecordLanguageCollection) {
-    this.harRecordLanguageCollection = harRecordLanguageCollection;
-  }
-
-  public HarMetadataType getMetadataTypeId() {
-    return metadataTypeId;
-  }
-
-  public void setMetadataTypeId(HarMetadataType metadataTypeId) {
-    this.metadataTypeId = metadataTypeId;
-  }
-
-  @XmlTransient
-  public Collection<HarSetRecord> getHarSetRecordCollection() {
-    return harSetRecordCollection;
-  }
-
-  public void setHarSetRecordCollection(Collection<HarSetRecord> harSetRecordCollection) {
-    this.harSetRecordCollection = harSetRecordCollection;
-  }
-
-  public HarRepo getRepoId() {
-    return repoId;
-  }
-
-  public void setRepoId(HarRepo repoId) {
-    this.repoId = repoId;
-  }
-  
-  
-
-  @Override
-  public int hashCode() {
-    int hash = 0;
-    hash += (recordId != null ? recordId.hashCode() : 0);
-    return hash;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    // TODO: Warning - this method won't work in the case the id fields are not set
-    if (!(object instanceof HarRecord)) {
-      return false;
+    public HarRecord() {
     }
-    HarRecord other = (HarRecord) object;
-    if ((this.recordId == null && other.recordId != null) || (this.recordId != null && !this.recordId.equals(other.recordId))) {
-      return false;
+
+    public HarRecord(Long recordId) {
+        this.recordId = recordId;
     }
-    return true;
-  }
 
-  @Override
-  public String toString() {
-    return "in.gov.nvli.harvester.beans.HarRecord[ recordId=" + recordId + " ]";
-  }
+    public HarRecord(Long recordId, String recordIdentifier) {
+        this.recordId = recordId;
+        this.recordIdentifier = recordIdentifier;
+    }
 
+    public Long getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(Long recordId) {
+        this.recordId = recordId;
+    }
+
+    public String getRecordIdentifier() {
+        return recordIdentifier;
+    }
+
+    public void setRecordIdentifier(String recordIdentifier) {
+        this.recordIdentifier = recordIdentifier;
+    }
+
+    public Date getRecordSoureDatestamp() {
+        return recordSoureDatestamp;
+    }
+
+    public void setRecordSoureDatestamp(Date recordSoureDatestamp) {
+        this.recordSoureDatestamp = recordSoureDatestamp;
+    }
+
+    public String getRecordAbout() {
+        return recordAbout;
+    }
+
+    public void setRecordAbout(String recordAbout) {
+        this.recordAbout = recordAbout;
+    }
+
+    @XmlTransient
+    public Collection<HarRecordMetadataDc> getHarRecordMetadataDcCollection() {
+        return harRecordMetadataDcCollection;
+    }
+
+    public void setHarRecordMetadataDcCollection(Collection<HarRecordMetadataDc> harRecordMetadataDcCollection) {
+        this.harRecordMetadataDcCollection = harRecordMetadataDcCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarRecordOriginalxml> getHarRecordOriginalxmlCollection() {
+        return harRecordOriginalxmlCollection;
+    }
+
+    public void setHarRecordOriginalxmlCollection(Collection<HarRecordOriginalxml> harRecordOriginalxmlCollection) {
+        this.harRecordOriginalxmlCollection = harRecordOriginalxmlCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarRecordLanguage> getHarRecordLanguageCollection() {
+        return harRecordLanguageCollection;
+    }
+
+    public void setHarRecordLanguageCollection(Collection<HarRecordLanguage> harRecordLanguageCollection) {
+        this.harRecordLanguageCollection = harRecordLanguageCollection;
+    }
+
+    public HarRepo getRepoId() {
+        return repoId;
+    }
+
+    public void setRepoId(HarRepo repoId) {
+        this.repoId = repoId;
+    }
+
+    public HarMetadataType getMetadataTypeId() {
+        return metadataTypeId;
+    }
+
+    public void setMetadataTypeId(HarMetadataType metadataTypeId) {
+        this.metadataTypeId = metadataTypeId;
+    }
+
+    @XmlTransient
+    public Collection<HarSetRecord> getHarSetRecordCollection() {
+        return harSetRecordCollection;
+    }
+
+    public void setHarSetRecordCollection(Collection<HarSetRecord> harSetRecordCollection) {
+        this.harSetRecordCollection = harSetRecordCollection;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (recordId != null ? recordId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof HarRecord)) {
+            return false;
+        }
+        HarRecord other = (HarRecord) object;
+        if ((this.recordId == null && other.recordId != null) || (this.recordId != null && !this.recordId.equals(other.recordId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "in.gov.nvli.harvester.beans.HarRecord[ recordId=" + recordId + " ]";
+    }
+    
 }

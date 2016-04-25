@@ -41,16 +41,16 @@ public class HarLanguage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "language_id")
-    private Short languageId;
+    @Column(name = "language_id", nullable = false)
+    private Integer languageId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
-    @Column(name = "language_code")
+    @Column(name = "language_code", nullable = false, length = 10)
     private String languageCode;
     @Lob
     @Size(max = 65535)
-    @Column(name = "language_desc")
+    @Column(name = "language_desc", length = 65535)
     private String languageDesc;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "languageId")
     private Collection<HarRecordLanguage> harRecordLanguageCollection;
@@ -60,20 +60,20 @@ public class HarLanguage implements Serializable {
     public HarLanguage() {
     }
 
-    public HarLanguage(Short languageId) {
+    public HarLanguage(Integer languageId) {
         this.languageId = languageId;
     }
 
-    public HarLanguage(Short languageId, String languageCode) {
+    public HarLanguage(Integer languageId, String languageCode) {
         this.languageId = languageId;
         this.languageCode = languageCode;
     }
 
-    public Short getLanguageId() {
+    public Integer getLanguageId() {
         return languageId;
     }
 
-    public void setLanguageId(Short languageId) {
+    public void setLanguageId(Integer languageId) {
         this.languageId = languageId;
     }
 

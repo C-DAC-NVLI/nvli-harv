@@ -37,35 +37,35 @@ public class HarContentType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "content_type_id")
-    private Short contentTypeId;
+    @Column(name = "content_type_id", nullable = false)
+    private Integer contentTypeId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "content_type_name")
+    @Size(min = 1, max = 500)
+    @Column(name = "content_type_name", nullable = false, length = 500)
     private String contentTypeName;
     @Lob
     @Size(max = 65535)
-    @Column(name = "content_type_desc")
+    @Column(name = "content_type_desc", length = 65535)
     private String contentTypeDesc;
 
     public HarContentType() {
     }
 
-    public HarContentType(Short contentTypeId) {
+    public HarContentType(Integer contentTypeId) {
         this.contentTypeId = contentTypeId;
     }
 
-    public HarContentType(Short contentTypeId, String contentTypeName) {
+    public HarContentType(Integer contentTypeId, String contentTypeName) {
         this.contentTypeId = contentTypeId;
         this.contentTypeName = contentTypeName;
     }
 
-    public Short getContentTypeId() {
+    public Integer getContentTypeId() {
         return contentTypeId;
     }
 
-    public void setContentTypeId(Short contentTypeId) {
+    public void setContentTypeId(Integer contentTypeId) {
         this.contentTypeId = contentTypeId;
     }
 

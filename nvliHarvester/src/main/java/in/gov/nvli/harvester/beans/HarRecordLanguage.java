@@ -35,14 +35,14 @@ public class HarRecordLanguage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "record_language_id")
+    @Column(name = "record_language_id", nullable = false)
     private Long recordLanguageId;
-    @JoinColumn(name = "record_id", referencedColumnName = "record_id")
-    @ManyToOne(optional = false)
-    private HarRecord recordId;
-    @JoinColumn(name = "language_id", referencedColumnName = "language_id")
+    @JoinColumn(name = "language_id", referencedColumnName = "language_id", nullable = false)
     @ManyToOne(optional = false)
     private HarLanguage languageId;
+    @JoinColumn(name = "record_id", referencedColumnName = "record_id", nullable = false)
+    @ManyToOne(optional = false)
+    private HarRecord recordId;
 
     public HarRecordLanguage() {
     }
@@ -59,20 +59,20 @@ public class HarRecordLanguage implements Serializable {
         this.recordLanguageId = recordLanguageId;
     }
 
-    public HarRecord getRecordId() {
-        return recordId;
-    }
-
-    public void setRecordId(HarRecord recordId) {
-        this.recordId = recordId;
-    }
-
     public HarLanguage getLanguageId() {
         return languageId;
     }
 
     public void setLanguageId(HarLanguage languageId) {
         this.languageId = languageId;
+    }
+
+    public HarRecord getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(HarRecord recordId) {
+        this.recordId = recordId;
     }
 
     @Override

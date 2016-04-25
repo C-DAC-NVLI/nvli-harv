@@ -37,35 +37,35 @@ public class HarCategory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "category_id")
-    private Short categoryId;
+    @Column(name = "category_id", nullable = false)
+    private Integer categoryId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "category_name")
+    @Size(min = 1, max = 500)
+    @Column(name = "category_name", nullable = false, length = 500)
     private String categoryName;
     @Lob
     @Size(max = 65535)
-    @Column(name = "category_desc")
+    @Column(name = "category_desc", length = 65535)
     private String categoryDesc;
 
     public HarCategory() {
     }
 
-    public HarCategory(Short categoryId) {
+    public HarCategory(Integer categoryId) {
         this.categoryId = categoryId;
     }
 
-    public HarCategory(Short categoryId, String categoryName) {
+    public HarCategory(Integer categoryId, String categoryName) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
     }
 
-    public Short getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Short categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 

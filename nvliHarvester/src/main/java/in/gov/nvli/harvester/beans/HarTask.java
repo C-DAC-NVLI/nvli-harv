@@ -51,68 +51,65 @@ public class HarTask implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "task_id")
-    private Integer taskId;
+    @Column(name = "task_id", nullable = false)
+    private Long taskId;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "task_start_time")
+    @Column(name = "task_start_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date taskStartTime;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "task_status")
+    @Column(name = "task_status", nullable = false)
     private Character taskStatus;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "task_end_time")
+    @Column(name = "task_end_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date taskEndTime;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "task_priority")
+    @Column(name = "task_priority", nullable = false)
     private short taskPriority;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "task_error")
+    @Size(max = 255)
+    @Column(name = "task_error", length = 255)
     private String taskError;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "task_type")
+    @Column(name = "task_type", nullable = false)
     private short taskType;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private int userId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "taskId")
     private Collection<HarLog> harLogCollection;
-    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
+    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepo repoId;
 
     public HarTask() {
     }
 
-    public HarTask(Integer taskId) {
+    public HarTask(Long taskId) {
         this.taskId = taskId;
     }
 
-    public HarTask(Integer taskId, Date taskStartTime, Character taskStatus, Date taskEndTime, short taskPriority, String taskError, short taskType, int userId) {
+    public HarTask(Long taskId, Date taskStartTime, Character taskStatus, Date taskEndTime, short taskPriority, short taskType, int userId) {
         this.taskId = taskId;
         this.taskStartTime = taskStartTime;
         this.taskStatus = taskStatus;
         this.taskEndTime = taskEndTime;
         this.taskPriority = taskPriority;
-        this.taskError = taskError;
         this.taskType = taskType;
         this.userId = userId;
     }
 
-    public Integer getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(Integer taskId) {
+    public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
 

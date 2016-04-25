@@ -33,19 +33,18 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "HarRecordOriginalxml.findByRecordorginalXMLid", query = "SELECT h FROM HarRecordOriginalxml h WHERE h.recordorginalXMLid = :recordorginalXMLid")})
 public class HarRecordOriginalxml implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Column(name = "xml")
-    private byte[] xml;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "record_orginalXML_id")
+    @Column(name = "record_orginalXML_id", nullable = false)
     private Long recordorginalXMLid;
-    @JoinColumn(name = "record_id", referencedColumnName = "record_id")
+    @Basic(optional = false)
+    @NotNull
+    @Lob
+    @Column(name = "record_xml_file", nullable = false)
+    private byte[] recordXmlFile;
+    @JoinColumn(name = "record_id", referencedColumnName = "record_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRecord recordId;
 
@@ -56,9 +55,9 @@ public class HarRecordOriginalxml implements Serializable {
         this.recordorginalXMLid = recordorginalXMLid;
     }
 
-    public HarRecordOriginalxml(Long recordorginalXMLid, byte[] xml) {
+    public HarRecordOriginalxml(Long recordorginalXMLid, byte[] recordXmlFile) {
         this.recordorginalXMLid = recordorginalXMLid;
-        this.xml = xml;
+        this.recordXmlFile = recordXmlFile;
     }
 
     public Long getRecordorginalXMLid() {
@@ -69,6 +68,13 @@ public class HarRecordOriginalxml implements Serializable {
         this.recordorginalXMLid = recordorginalXMLid;
     }
 
+    public byte[] getRecordXmlFile() {
+        return recordXmlFile;
+    }
+
+    public void setRecordXmlFile(byte[] recordXmlFile) {
+        this.recordXmlFile = recordXmlFile;
+    }
 
     public HarRecord getRecordId() {
         return recordId;
@@ -101,14 +107,6 @@ public class HarRecordOriginalxml implements Serializable {
     @Override
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRecordOriginalxml[ recordorginalXMLid=" + recordorginalXMLid + " ]";
-    }
-
-    public byte[] getXml() {
-        return xml;
-    }
-
-    public void setXml(byte[] xml) {
-        this.xml = xml;
     }
     
 }

@@ -41,22 +41,22 @@ public class HarLog implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "log_id")
+    @Column(name = "log_id", nullable = false)
     private Long logId;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "log_start_time")
+    @Column(name = "log_start_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date logStartTime;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "log_end_time")
+    @Column(name = "log_end_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date logEndTime;
-    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
+    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepo repoId;
-    @JoinColumn(name = "task_id", referencedColumnName = "task_id")
+    @JoinColumn(name = "task_id", referencedColumnName = "task_id", nullable = false)
     @ManyToOne(optional = false)
     private HarTask taskId;
 

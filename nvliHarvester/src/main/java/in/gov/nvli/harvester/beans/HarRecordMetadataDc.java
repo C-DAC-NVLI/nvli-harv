@@ -21,7 +21,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -35,130 +34,91 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "HarRecordMetadataDc.findAll", query = "SELECT h FROM HarRecordMetadataDc h"),
     @NamedQuery(name = "HarRecordMetadataDc.findByRecordMetadataDcId", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.recordMetadataDcId = :recordMetadataDcId"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByCreated", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.created = :created"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByUdpated", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.udpated = :udpated"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByTitle", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.title = :title"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByCreator", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.creator = :creator"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByPublisher", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.publisher = :publisher"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByContributor", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.contributor = :contributor"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByDate", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.date = :date"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByType", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.type = :type"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByFormat", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.format = :format"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByIdentifier", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.identifier = :identifier"),
-    @NamedQuery(name = "HarRecordMetadataDc.findBySource", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.source = :source"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByLanguage", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.language = :language"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByRelation", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.relation = :relation"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByCoverage", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.coverage = :coverage"),
-    @NamedQuery(name = "HarRecordMetadataDc.findByRights", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.rights = :rights")})
+    @NamedQuery(name = "HarRecordMetadataDc.findByRowAdded", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.rowAdded = :rowAdded"),
+    @NamedQuery(name = "HarRecordMetadataDc.findByRowUdpated", query = "SELECT h FROM HarRecordMetadataDc h WHERE h.rowUdpated = :rowUdpated")})
 public class HarRecordMetadataDc implements Serializable {
-
-    @Size(max = 500)
-    @Column(name = "date")
-    private String date;
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "record_metadata_dc_id")
+    @Column(name = "record_metadata_dc_id", nullable = false)
     private Long recordMetadataDcId;
-    
-    @Column(name = "created",nullable = false,columnDefinition="TIMESTAMP default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP")
+    @Column(name = "row_added")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
-    
-    @Column(name = "udpated")
+    private Date rowAdded;
+    @Column(name = "row_udpated")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date udpated;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "title")
-    private String title;
-
-    @Size(min = 1, max = 2000)
-    @Column(name = "creator")
-    private String creator;
-
+    private Date rowUdpated;
     @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "subject")
-    private String subject;
-
+    @Size(max = 65535)
+    @Column(name = "dc_title", length = 65535)
+    private String dcTitle;
     @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "description")
-    private String description;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "publisher")
-    private String publisher;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "contributor")
-    private String contributor;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "type")
-    private String type;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "format")
-    private String format;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "identifier")
-    private String identifier;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "source")
-    private String source;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "language")
-    private String language;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "relation")
-    private String relation;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "coverage")
-    private String coverage;
-
-    @Size(min = 1, max = 500)
-    @Column(name = "rights")
-    private String rights;
-    @JoinColumn(name = "record_id", referencedColumnName = "record_id")
+    @Size(max = 65535)
+    @Column(name = "dc_creator", length = 65535)
+    private String dcCreator;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_subject", length = 65535)
+    private String dcSubject;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_description", length = 65535)
+    private String dcDescription;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_publisher", length = 65535)
+    private String dcPublisher;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_contributor", length = 65535)
+    private String dcContributor;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_date", length = 65535)
+    private String dcDate;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_type", length = 65535)
+    private String dcType;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_format", length = 65535)
+    private String dcFormat;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_identifier", length = 65535)
+    private String dcIdentifier;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_source", length = 65535)
+    private String dcSource;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_language", length = 65535)
+    private String dcLanguage;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_relation", length = 65535)
+    private String dcRelation;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_coverage", length = 65535)
+    private String dcCoverage;
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "dc_rights", length = 65535)
+    private String dcRights;
+    @JoinColumn(name = "record_id", referencedColumnName = "record_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRecord recordId;
-    
 
     public HarRecordMetadataDc() {
     }
 
     public HarRecordMetadataDc(Long recordMetadataDcId) {
         this.recordMetadataDcId = recordMetadataDcId;
-    }
-
-    public HarRecordMetadataDc(Long recordMetadataDcId, Date created, Date udpated, String title, String creator, String subject, String description, String publisher, String contributor, String date, String type, String format, String identifier, String source, String language, String relation, String coverage, String rights) {
-        this.recordMetadataDcId = recordMetadataDcId;
-        this.created = created;
-        this.udpated = udpated;
-        this.title = title;
-        this.creator = creator;
-        this.subject = subject;
-        this.description = description;
-        this.publisher = publisher;
-        this.contributor = contributor;
-        this.date = date;
-        this.type = type;
-        this.format = format;
-        this.identifier = identifier;
-        this.source = source;
-        this.language = language;
-        this.relation = relation;
-        this.coverage = coverage;
-        this.rights = rights;
     }
 
     public Long getRecordMetadataDcId() {
@@ -169,133 +129,140 @@ public class HarRecordMetadataDc implements Serializable {
         this.recordMetadataDcId = recordMetadataDcId;
     }
 
-    public Date getCreated() {
-        return created;
+    public Date getRowAdded() {
+        return rowAdded;
     }
 
-    public void setCreated(Date created) {
-        this.created = created;
+    public void setRowAdded(Date rowAdded) {
+        this.rowAdded = rowAdded;
     }
 
-    public Date getUdpated() {
-        return udpated;
+    public Date getRowUdpated() {
+        return rowUdpated;
     }
 
-    public void setUdpated(Date udpated) {
-        this.udpated = udpated;
+    public void setRowUdpated(Date rowUdpated) {
+        this.rowUdpated = rowUdpated;
     }
 
-    public String getTitle() {
-        return title;
+    public String getDcTitle() {
+        return dcTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setDcTitle(String dcTitle) {
+        this.dcTitle = dcTitle;
     }
 
-    public String getCreator() {
-        return creator;
+    public String getDcCreator() {
+        return dcCreator;
     }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
+    public void setDcCreator(String dcCreator) {
+        this.dcCreator = dcCreator;
     }
 
-    public String getSubject() {
-        return subject;
+    public String getDcSubject() {
+        return dcSubject;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setDcSubject(String dcSubject) {
+        this.dcSubject = dcSubject;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDcDescription() {
+        return dcDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDcDescription(String dcDescription) {
+        this.dcDescription = dcDescription;
     }
 
-    public String getPublisher() {
-        return publisher;
+    public String getDcPublisher() {
+        return dcPublisher;
     }
 
-    public void setPublisher(String publisher) {
-        this.publisher = publisher;
+    public void setDcPublisher(String dcPublisher) {
+        this.dcPublisher = dcPublisher;
     }
 
-    public String getContributor() {
-        return contributor;
+    public String getDcContributor() {
+        return dcContributor;
     }
 
-    public void setContributor(String contributor) {
-        this.contributor = contributor;
+    public void setDcContributor(String dcContributor) {
+        this.dcContributor = dcContributor;
     }
 
-
-    public String getType() {
-        return type;
+    public String getDcDate() {
+        return dcDate;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setDcDate(String dcDate) {
+        this.dcDate = dcDate;
     }
 
-    public String getFormat() {
-        return format;
+    public String getDcType() {
+        return dcType;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setDcType(String dcType) {
+        this.dcType = dcType;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public String getDcFormat() {
+        return dcFormat;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setDcFormat(String dcFormat) {
+        this.dcFormat = dcFormat;
     }
 
-    public String getSource() {
-        return source;
+    public String getDcIdentifier() {
+        return dcIdentifier;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setDcIdentifier(String dcIdentifier) {
+        this.dcIdentifier = dcIdentifier;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getDcSource() {
+        return dcSource;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setDcSource(String dcSource) {
+        this.dcSource = dcSource;
     }
 
-    public String getRelation() {
-        return relation;
+    public String getDcLanguage() {
+        return dcLanguage;
     }
 
-    public void setRelation(String relation) {
-        this.relation = relation;
+    public void setDcLanguage(String dcLanguage) {
+        this.dcLanguage = dcLanguage;
     }
 
-    public String getCoverage() {
-        return coverage;
+    public String getDcRelation() {
+        return dcRelation;
     }
 
-    public void setCoverage(String coverage) {
-        this.coverage = coverage;
+    public void setDcRelation(String dcRelation) {
+        this.dcRelation = dcRelation;
     }
 
-    public String getRights() {
-        return rights;
+    public String getDcCoverage() {
+        return dcCoverage;
     }
 
-    public void setRights(String rights) {
-        this.rights = rights;
+    public void setDcCoverage(String dcCoverage) {
+        this.dcCoverage = dcCoverage;
+    }
+
+    public String getDcRights() {
+        return dcRights;
+    }
+
+    public void setDcRights(String dcRights) {
+        this.dcRights = dcRights;
     }
 
     public HarRecord getRecordId() {
@@ -329,14 +296,6 @@ public class HarRecordMetadataDc implements Serializable {
     @Override
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRecordMetadataDc[ recordMetadataDcId=" + recordMetadataDcId + " ]";
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
     
 }

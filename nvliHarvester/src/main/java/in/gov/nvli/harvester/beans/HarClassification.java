@@ -41,16 +41,16 @@ public class HarClassification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "classification_id")
-    private Short classificationId;
+    @Column(name = "classification_id", nullable = false)
+    private Integer classificationId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "classification_name")
+    @Size(min = 1, max = 500)
+    @Column(name = "classification_name", nullable = false, length = 500)
     private String classificationName;
     @Lob
     @Size(max = 65535)
-    @Column(name = "classification_desc")
+    @Column(name = "classification_desc", length = 65535)
     private String classificationDesc;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoClassificationId")
     private Collection<HarRepoDetail> harRepoDetailCollection;
@@ -58,20 +58,20 @@ public class HarClassification implements Serializable {
     public HarClassification() {
     }
 
-    public HarClassification(Short classificationId) {
+    public HarClassification(Integer classificationId) {
         this.classificationId = classificationId;
     }
 
-    public HarClassification(Short classificationId, String classificationName) {
+    public HarClassification(Integer classificationId, String classificationName) {
         this.classificationId = classificationId;
         this.classificationName = classificationName;
     }
 
-    public Short getClassificationId() {
+    public Integer getClassificationId() {
         return classificationId;
     }
 
-    public void setClassificationId(Short classificationId) {
+    public void setClassificationId(Integer classificationId) {
         this.classificationId = classificationId;
     }
 

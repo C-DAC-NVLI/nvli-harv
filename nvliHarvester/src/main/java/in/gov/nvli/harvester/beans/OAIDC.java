@@ -150,4 +150,10 @@ public class OAIDC implements Serializable{
     public void setRights(List<String> Rights) {
         this.Rights = Rights;
     }
+
+    @Override
+    public String toString() {
+        return "OAIDC{" + "title=" + title + ", creator=" + creator + ", subject=" + subject + ", description=" + description + ", date=" + date + ", Publisher=" + Publisher + ", Contributor=" + Contributor + ", Type=" + Type + ", Format=" + Format + ", Identifier=" + Identifier + ", Source=" + Source + ", Language=" + Language + ", Relation=" + Relation + ", Coverage=" + Coverage + ", Rights=" + Rights + '}';
+    }
+    
 }

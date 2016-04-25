@@ -41,16 +41,16 @@ public class HarRepoStatus implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "repo_status_id")
+    @Column(name = "repo_status_id", nullable = false)
     private Short repoStatusId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "repo_status_name")
+    @Column(name = "repo_status_name", nullable = false, length = 255)
     private String repoStatusName;
     @Lob
     @Size(max = 65535)
-    @Column(name = "repo_status_desc")
+    @Column(name = "repo_status_desc", length = 65535)
     private String repoStatusDesc;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoStatusId")
     private Collection<HarRepo> harRepoCollection;

@@ -18,7 +18,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,38 +33,34 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "HarMetadataType.findAll", query = "SELECT h FROM HarMetadataType h"),
     @NamedQuery(name = "HarMetadataType.findByMetadataId", query = "SELECT h FROM HarMetadataType h WHERE h.metadataId = :metadataId"),
-    @NamedQuery(name = "HarMetadataType.findByMetadataPrefix", query = "SELECT h FROM HarMetadataType h WHERE h.metadataPrefix = :metadataPrefix")})
+    @NamedQuery(name = "HarMetadataType.findByMetadataPrefix", query = "SELECT h FROM HarMetadataType h WHERE h.metadataPrefix = :metadataPrefix"),
+    @NamedQuery(name = "HarMetadataType.findByMetadataSchema", query = "SELECT h FROM HarMetadataType h WHERE h.metadataSchema = :metadataSchema"),
+    @NamedQuery(name = "HarMetadataType.findByMetadataNamespace", query = "SELECT h FROM HarMetadataType h WHERE h.metadataNamespace = :metadataNamespace")})
 public class HarMetadataType implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "metadata_id")
+    @Column(name = "metadata_id", nullable = false)
     private Short metadataId;
-   
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "metadata_prefix",unique=true)
+    @Column(name = "metadata_prefix", nullable = false, length = 100)
     private String metadataPrefix;
-   
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
-    @Column(name = "metadata_schema")
+    @Column(name = "metadata_schema", nullable = false, length = 500)
     private String metadataSchema;
-    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
-    @Column(name = "metadata_namespace")
+    @Column(name = "metadata_namespace", nullable = false, length = 500)
     private String metadataNamespace;
-    
-   
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadataTypeId")
     private Collection<HarMetadataTypeRepository> harMetadataTypeRepositoryCollection;
-    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadataTypeId")
     private Collection<HarRecord> harRecordCollection;
 
@@ -76,17 +71,20 @@ public class HarMetadataType implements Serializable {
         this.metadataId = metadataId;
     }
 
-    public HarMetadataType(Short metadataId, String metadataPrefix, String metadataSchema,String metadataNamespace) {
+    public HarMetadataType(String metadataPrefix, String metadataSchema, String metadataNamespace) {
         this.metadataId = metadataId;
         this.metadataPrefix = metadataPrefix;
         this.metadataSchema = metadataSchema;
         this.metadataNamespace = metadataNamespace;
     }
-    public HarMetadataType( String metadataPrefix, String metadataSchema,String metadataNamespace) {
+    
+    public HarMetadataType(Short metadataId, String metadataPrefix, String metadataSchema, String metadataNamespace) {
+        this.metadataId = metadataId;
         this.metadataPrefix = metadataPrefix;
         this.metadataSchema = metadataSchema;
         this.metadataNamespace = metadataNamespace;
     }
+
     public Short getMetadataId() {
         return metadataId;
     }
@@ -118,8 +116,6 @@ public class HarMetadataType implements Serializable {
     public void setMetadataNamespace(String metadataNamespace) {
         this.metadataNamespace = metadataNamespace;
     }
-
-   
 
     @XmlTransient
     public Collection<HarMetadataTypeRepository> getHarMetadataTypeRepositoryCollection() {

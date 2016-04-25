@@ -41,16 +41,16 @@ public class HarGroup implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "group_id")
-    private Short groupId;
+    @Column(name = "group_id", nullable = false)
+    private Integer groupId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "group_name")
+    @Size(min = 1, max = 500)
+    @Column(name = "group_name", nullable = false, length = 500)
     private String groupName;
     @Lob
     @Size(max = 65535)
-    @Column(name = "group_desc")
+    @Column(name = "group_desc", length = 65535)
     private String groupDesc;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "groupId")
     private Collection<HarRepoGroup> harRepoGroupCollection;
@@ -58,20 +58,20 @@ public class HarGroup implements Serializable {
     public HarGroup() {
     }
 
-    public HarGroup(Short groupId) {
+    public HarGroup(Integer groupId) {
         this.groupId = groupId;
     }
 
-    public HarGroup(Short groupId, String groupName) {
+    public HarGroup(Integer groupId, String groupName) {
         this.groupId = groupId;
         this.groupName = groupName;
     }
 
-    public Short getGroupId() {
+    public Integer getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(Short groupId) {
+    public void setGroupId(Integer groupId) {
         this.groupId = groupId;
     }
 

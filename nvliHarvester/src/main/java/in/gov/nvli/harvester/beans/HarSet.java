@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "HarSet.findAll", query = "SELECT h FROM HarSet h"),
     @NamedQuery(name = "HarSet.findBySetId", query = "SELECT h FROM HarSet h WHERE h.setId = :setId"),
-    @NamedQuery(name = "HarSet.findByName", query = "SELECT h FROM HarSet h WHERE h.name = :name"),
+    @NamedQuery(name = "HarSet.findBySetName", query = "SELECT h FROM HarSet h WHERE h.setName = :setName"),
     @NamedQuery(name = "HarSet.findBySetSpec", query = "SELECT h FROM HarSet h WHERE h.setSpec = :setSpec")})
 public class HarSet implements Serializable {
 
@@ -42,21 +42,21 @@ public class HarSet implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "set_id")
+    @Column(name = "set_id", nullable = false)
     private Long setId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "name")
-    private String name;
-   // @Lob
+    @Size(min = 1, max = 500)
+    @Column(name = "set_name", nullable = false, length = 500)
+    private String setName;
+    @Lob
     @Size(max = 65535)
-    @Column(name = "description")
-    private String description;
+    @Column(name = "set_desc", length = 65535)
+    private String setDesc;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "set_spec")
+    @Column(name = "set_spec", nullable = false, length = 100)
     private String setSpec;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "setId")
     private Collection<HarSetRepository> harSetRepositoryCollection;
@@ -66,18 +66,19 @@ public class HarSet implements Serializable {
     public HarSet() {
     }
 
-    public HarSet(String name,String setSpec) {
-        this.name = name;
-        this.setSpec = setSpec;
-    }
-
     public HarSet(Long setId) {
         this.setId = setId;
     }
 
-    public HarSet(Long setId, String name, String setSpec) {
+    public HarSet(String setName, String setSpec) {
         this.setId = setId;
-        this.name = name;
+        this.setName = setName;
+        this.setSpec = setSpec;
+    }
+    
+    public HarSet(Long setId, String setName, String setSpec) {
+        this.setId = setId;
+        this.setName = setName;
         this.setSpec = setSpec;
     }
 
@@ -89,20 +90,20 @@ public class HarSet implements Serializable {
         this.setId = setId;
     }
 
-    public String getName() {
-        return name;
+    public String getSetName() {
+        return setName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSetName(String setName) {
+        this.setName = setName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSetDesc() {
+        return setDesc;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSetDesc(String setDesc) {
+        this.setDesc = setDesc;
     }
 
     public String getSetSpec() {

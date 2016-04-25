@@ -6,8 +6,10 @@
 package in.gov.nvli.harvester.beans;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,12 +20,14 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -58,53 +62,53 @@ public class HarRepo implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "repo_id")
+    @Column(name = "repo_id", nullable = false)
     private Integer repoId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 400)
-    @Column(name = "repo_name")
+    @Size(min = 1, max = 500)
+    @Column(name = "repo_name", nullable = false, length = 500)
     private String repoName;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "repo_base_url")
+    @Column(name = "repo_base_url", nullable = false, length = 255)
     private String repoBaseUrl;
     @Size(max = 255)
-    @Column(name = "repo_protocol_version")
+    @Column(name = "repo_protocol_version", length = 255)
     private String repoProtocolVersion;
     @Column(name = "repo_earliest_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoEarliestTimestamp;
     @Size(max = 255)
-    @Column(name = "repo_granularity_date")
+    @Column(name = "repo_granularity_date", length = 255)
     private String repoGranularityDate;
     @Size(max = 255)
-    @Column(name = "repo_deletion_mode")
+    @Column(name = "repo_deletion_mode", length = 255)
     private String repoDeletionMode;
-    @Size(max = 255)
-    @Column(name = "repo_email")
+    @Size(max = 500)
+    @Column(name = "repo_email", length = 500)
     private String repoEmail;
     @Lob
     @Size(max = 65535)
-    @Column(name = "repo_desc")
+    @Column(name = "repo_desc", length = 65535)
     private String repoDesc;
     @Size(max = 500)
-    @Column(name = "repo_compression")
+    @Column(name = "repo_compression", length = 500)
     private String repoCompression;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "repo_registration_date")
+    @Column(name = "repo_registration_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoRegistrationDate;
     @Size(max = 255)
-    @Column(name = "repo_link")
+    @Column(name = "repo_link", length = 255)
     private String repoLink;
     @Size(max = 255)
-    @Column(name = "repo_site_url")
+    @Column(name = "repo_site_url", length = 255)
     private String repoSiteUrl;
     @Size(max = 255)
-    @Column(name = "repo_permanent_link")
+    @Column(name = "repo_permanent_link", length = 255)
     private String repoPermanentLink;
     @Lob
     @Column(name = "repo_logo")
@@ -119,17 +123,33 @@ public class HarRepo implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoRowUpdateTime;
     @Size(max = 255)
-    @Column(name = "repo_latitude")
+    @Column(name = "repo_latitude", length = 255)
     private String repoLatitude;
     @Size(max = 255)
-    @Column(name = "repo_longitude")
+    @Column(name = "repo_longitude", length = 255)
     private String repoLongitude;
-    @JoinColumn(name = "repo_status_id", referencedColumnName = "repo_status_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarLog> harLogCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarRepoDetail> harRepoDetailCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarMetadataTypeRepository> harMetadataTypeRepositoryCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarTask> harTaskCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarRepoGroup> harRepoGroupCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarRepoLanguage> harRepoLanguageCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarRecord> harRecordCollection;
+    @JoinColumn(name = "repo_status_id", referencedColumnName = "repo_status_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepoStatus repoStatusId;
-    @JoinColumn(name = "repo_type_id", referencedColumnName = "repo_type_id")
+    @JoinColumn(name = "repo_type_id", referencedColumnName = "repo_type_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepoType repoTypeId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarSetRepository> harSetRepositoryCollection;
 
     public HarRepo() {
     }
@@ -305,6 +325,69 @@ public class HarRepo implements Serializable {
         this.repoLongitude = repoLongitude;
     }
 
+    @XmlTransient
+    public Collection<HarLog> getHarLogCollection() {
+        return harLogCollection;
+    }
+
+    public void setHarLogCollection(Collection<HarLog> harLogCollection) {
+        this.harLogCollection = harLogCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarRepoDetail> getHarRepoDetailCollection() {
+        return harRepoDetailCollection;
+    }
+
+    public void setHarRepoDetailCollection(Collection<HarRepoDetail> harRepoDetailCollection) {
+        this.harRepoDetailCollection = harRepoDetailCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarMetadataTypeRepository> getHarMetadataTypeRepositoryCollection() {
+        return harMetadataTypeRepositoryCollection;
+    }
+
+    public void setHarMetadataTypeRepositoryCollection(Collection<HarMetadataTypeRepository> harMetadataTypeRepositoryCollection) {
+        this.harMetadataTypeRepositoryCollection = harMetadataTypeRepositoryCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarTask> getHarTaskCollection() {
+        return harTaskCollection;
+    }
+
+    public void setHarTaskCollection(Collection<HarTask> harTaskCollection) {
+        this.harTaskCollection = harTaskCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarRepoGroup> getHarRepoGroupCollection() {
+        return harRepoGroupCollection;
+    }
+
+    public void setHarRepoGroupCollection(Collection<HarRepoGroup> harRepoGroupCollection) {
+        this.harRepoGroupCollection = harRepoGroupCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarRepoLanguage> getHarRepoLanguageCollection() {
+        return harRepoLanguageCollection;
+    }
+
+    public void setHarRepoLanguageCollection(Collection<HarRepoLanguage> harRepoLanguageCollection) {
+        this.harRepoLanguageCollection = harRepoLanguageCollection;
+    }
+
+    @XmlTransient
+    public Collection<HarRecord> getHarRecordCollection() {
+        return harRecordCollection;
+    }
+
+    public void setHarRecordCollection(Collection<HarRecord> harRecordCollection) {
+        this.harRecordCollection = harRecordCollection;
+    }
+
     public HarRepoStatus getRepoStatusId() {
         return repoStatusId;
     }
@@ -319,6 +402,15 @@ public class HarRepo implements Serializable {
 
     public void setRepoTypeId(HarRepoType repoTypeId) {
         this.repoTypeId = repoTypeId;
+    }
+
+    @XmlTransient
+    public Collection<HarSetRepository> getHarSetRepositoryCollection() {
+        return harSetRepositoryCollection;
+    }
+
+    public void setHarSetRepositoryCollection(Collection<HarSetRepository> harSetRepositoryCollection) {
+        this.harSetRepositoryCollection = harSetRepositoryCollection;
     }
 
     @Override

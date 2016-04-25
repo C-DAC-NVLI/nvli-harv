@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -32,39 +31,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "HarRepoDetail.findAll", query = "SELECT h FROM HarRepoDetail h"),
     @NamedQuery(name = "HarRepoDetail.findByRepoDetailId", query = "SELECT h FROM HarRepoDetail h WHERE h.repoDetailId = :repoDetailId"),
-    @NamedQuery(name = "HarRepoDetail.findByRepoDetailEmail", query = "SELECT h FROM HarRepoDetail h WHERE h.repoDetailEmail = :repoDetailEmail"),
-    @NamedQuery(name = "HarRepoDetail.findByRepoDetailCompression", query = "SELECT h FROM HarRepoDetail h WHERE h.repoDetailCompression = :repoDetailCompression")})
+    @NamedQuery(name = "HarRepoDetail.findByRepoDetailCompression", query = "SELECT h FROM HarRepoDetail h WHERE h.repoDetailCompression = :repoDetailCompression"),
+    @NamedQuery(name = "HarRepoDetail.findByRepoDetailEmail", query = "SELECT h FROM HarRepoDetail h WHERE h.repoDetailEmail = :repoDetailEmail")})
 public class HarRepoDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "repo_detail_id")
+    @Column(name = "repo_detail_id", nullable = false)
     private Integer repoDetailId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "repo_detail_email")
-    private String repoDetailEmail;
-    @Basic(optional = false)
-    @NotNull
-    @Lob
-    @Size(min = 1, max = 65535)
-    @Column(name = "repo_detail_desc")
-    private String repoDetailDesc;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "repo_detail_compression")
+    @Size(max = 500)
+    @Column(name = "repo_detail_compression", length = 500)
     private String repoDetailCompression;
-    @JoinColumn(name = "repo_classification_id", referencedColumnName = "classification_id")
+    @Lob
+    @Size(max = 65535)
+    @Column(name = "repo_detail_desc", length = 65535)
+    private String repoDetailDesc;
+    @Size(max = 500)
+    @Column(name = "repo_detail_email", length = 500)
+    private String repoDetailEmail;
+    @JoinColumn(name = "repo_classification_id", referencedColumnName = "classification_id", nullable = false)
     @ManyToOne(optional = false)
     private HarClassification repoClassificationId;
-    @JoinColumn(name = "repo_type_id", referencedColumnName = "repo_type_id")
+    @JoinColumn(name = "repo_type_id", referencedColumnName = "repo_type_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepoType repoTypeId;
-    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
+    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepo repoId;
 
@@ -75,13 +68,6 @@ public class HarRepoDetail implements Serializable {
         this.repoDetailId = repoDetailId;
     }
 
-    public HarRepoDetail(Integer repoDetailId, String repoDetailEmail, String repoDetailDesc, String repoDetailCompression) {
-        this.repoDetailId = repoDetailId;
-        this.repoDetailEmail = repoDetailEmail;
-        this.repoDetailDesc = repoDetailDesc;
-        this.repoDetailCompression = repoDetailCompression;
-    }
-
     public Integer getRepoDetailId() {
         return repoDetailId;
     }
@@ -90,12 +76,12 @@ public class HarRepoDetail implements Serializable {
         this.repoDetailId = repoDetailId;
     }
 
-    public String getRepoDetailEmail() {
-        return repoDetailEmail;
+    public String getRepoDetailCompression() {
+        return repoDetailCompression;
     }
 
-    public void setRepoDetailEmail(String repoDetailEmail) {
-        this.repoDetailEmail = repoDetailEmail;
+    public void setRepoDetailCompression(String repoDetailCompression) {
+        this.repoDetailCompression = repoDetailCompression;
     }
 
     public String getRepoDetailDesc() {
@@ -106,12 +92,12 @@ public class HarRepoDetail implements Serializable {
         this.repoDetailDesc = repoDetailDesc;
     }
 
-    public String getRepoDetailCompression() {
-        return repoDetailCompression;
+    public String getRepoDetailEmail() {
+        return repoDetailEmail;
     }
 
-    public void setRepoDetailCompression(String repoDetailCompression) {
-        this.repoDetailCompression = repoDetailCompression;
+    public void setRepoDetailEmail(String repoDetailEmail) {
+        this.repoDetailEmail = repoDetailEmail;
     }
 
     public HarClassification getRepoClassificationId() {

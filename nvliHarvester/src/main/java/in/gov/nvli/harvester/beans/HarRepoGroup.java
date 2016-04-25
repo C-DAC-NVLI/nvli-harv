@@ -35,12 +35,12 @@ public class HarRepoGroup implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "repo_group_id")
+    @Column(name = "repo_group_id", nullable = false)
     private Integer repoGroupId;
-    @JoinColumn(name = "group_id", referencedColumnName = "group_id")
+    @JoinColumn(name = "group_id", referencedColumnName = "group_id", nullable = false)
     @ManyToOne(optional = false)
     private HarGroup groupId;
-    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id")
+    @JoinColumn(name = "repo_id", referencedColumnName = "repo_id", nullable = false)
     @ManyToOne(optional = false)
     private HarRepo repoId;
 

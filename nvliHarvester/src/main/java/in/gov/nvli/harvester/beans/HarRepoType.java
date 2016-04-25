@@ -41,16 +41,16 @@ public class HarRepoType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "repo_type_id")
-    private Short repoTypeId;
+    @Column(name = "repo_type_id", nullable = false)
+    private Integer repoTypeId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "repo_type_name")
+    @Size(min = 1, max = 500)
+    @Column(name = "repo_type_name", nullable = false, length = 500)
     private String repoTypeName;
     @Lob
     @Size(max = 65535)
-    @Column(name = "repo_type_desc")
+    @Column(name = "repo_type_desc", length = 65535)
     private String repoTypeDesc;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoTypeId")
     private Collection<HarRepoDetail> harRepoDetailCollection;
@@ -60,20 +60,20 @@ public class HarRepoType implements Serializable {
     public HarRepoType() {
     }
 
-    public HarRepoType(Short repoTypeId) {
+    public HarRepoType(Integer repoTypeId) {
         this.repoTypeId = repoTypeId;
     }
 
-    public HarRepoType(Short repoTypeId, String repoTypeName) {
+    public HarRepoType(Integer repoTypeId, String repoTypeName) {
         this.repoTypeId = repoTypeId;
         this.repoTypeName = repoTypeName;
     }
 
-    public Short getRepoTypeId() {
+    public Integer getRepoTypeId() {
         return repoTypeId;
     }
 
-    public void setRepoTypeId(Short repoTypeId) {
+    public void setRepoTypeId(Integer repoTypeId) {
         this.repoTypeId = repoTypeId;
     }
 
