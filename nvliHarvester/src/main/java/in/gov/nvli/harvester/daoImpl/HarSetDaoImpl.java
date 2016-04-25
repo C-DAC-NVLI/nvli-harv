@@ -33,7 +33,7 @@ public class HarSetDaoImpl extends GenericDaoImpl<HarSet, Long> implements HarSe
     public boolean saveHarSets(List<HarSet> sets) {
         try {
             for (HarSet set : sets) {
-               if(getHarSetType(set.getName(),set.getSetSpec())!=null)
+               if(getHarSetType(set.getSetName(),set.getSetSpec())!=null)
                    continue;
                 if (!createNew(set)) {
                     return false;
@@ -62,7 +62,7 @@ public class HarSetDaoImpl extends GenericDaoImpl<HarSet, Long> implements HarSe
     public HarSet getHarSetType(String name, String setSpec) {
         HarSet harSet = null;
         try {
-            harSet = (HarSet) currentSession().createCriteria(HarSet.class).add(Restrictions.and(Restrictions.eq("name", name), Restrictions.eq("setSpec", setSpec))).uniqueResult();
+            harSet = (HarSet) currentSession().createCriteria(HarSet.class).add(Restrictions.and(Restrictions.eq("setName", name), Restrictions.eq("setSpec", setSpec))).uniqueResult();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
