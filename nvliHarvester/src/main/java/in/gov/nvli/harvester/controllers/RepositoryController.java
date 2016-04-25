@@ -39,7 +39,7 @@ public class RepositoryController {
         String regDateString = "2000-05-04 13:22:11";
         String lastSynchString = "2000-12-30 14:55:06";
         String activationString = "2016-05-04 03:22:11";
-        short repositoryTypeId = 1;
+        int repositoryTypeId = 1;
         short statusid = 1;
         ModelAndView mv = new ModelAndView("added_repository");
         try {
