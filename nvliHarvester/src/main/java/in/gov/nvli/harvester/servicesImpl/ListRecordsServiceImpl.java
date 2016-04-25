@@ -120,10 +120,10 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       for (RecordType record : records) {
 
         harRecord = new HarRecord();
-        harRecord.setIdentifier(record.getHeader().getIdentifier());
+        harRecord.setRecordIdentifier(record.getHeader().getIdentifier());
         DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
         Date sourceDate = formatter.parse(record.getHeader().getDatestamp());
-        harRecord.setSoureDatestamp(sourceDate);
+        harRecord.setRecordSoureDatestamp(sourceDate);
         harRecord.setMetadataTypeId(metadataType);
         List<AboutType> aboutTypes = record.getAbout();
         String temp = "";
@@ -133,7 +133,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
             temp += about;
           }
         }
-        harRecord.setAbout(temp);
+        harRecord.setRecordAbout(temp);
         harRecord.setRepoId(harRepo);
 
         harRecords.add(harRecord);
@@ -148,12 +148,13 @@ public class ListRecordsServiceImpl implements ListRecordsService {
             harSetRecords.add(harSetRecord);
           }
         }
-
+        
         recordMetadataDc = new HarRecordMetadataDc();
         recordMetadataDc.setRecordId(harRecord);
-
-        getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
-
+        if(record.getMetadata() != null){
+            getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
+        }
+        
         recordMetadataDcs.add(recordMetadataDc);
 
       }
