@@ -84,10 +84,10 @@ public class GetRecordServiceImpl implements GetRecordService {
     RecordType recordType = getRecordObj.getGetRecord().getRecord();
 
     HarRecord record = new HarRecord();
-    record.setIdentifier(recordType.getHeader().getIdentifier());
+    record.setRecordIdentifier(recordType.getHeader().getIdentifier());
     DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
     Date sourceDate = formatter.parse(recordType.getHeader().getDatestamp());
-    record.setSoureDatestamp(sourceDate);
+    record.setRecordSoureDatestamp(sourceDate);
     record.setMetadataTypeId(metadataTypeDao.getMetadataTypeByMetadatPrefix(metadataPrefix));
     record.setRepoId(harRepo);
     List<AboutType> aboutTypes = getRecordObj.getGetRecord().getRecord().getAbout();
@@ -98,7 +98,7 @@ public class GetRecordServiceImpl implements GetRecordService {
         temp += about;
       }
     }
-    record.setAbout(temp);
+    record.setRecordAbout(temp);
     //save record object in db
     recordDao.saveHarRecord(record);
     //end
@@ -108,7 +108,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     List<HarSetRecord> harSetRecords = new ArrayList<>();
     for (String setSpec : setSpecs) {
       harSet = harSetDao.getHarSet(setSpec);
-      System.out.println("sets===" + harSet.getName());
+      System.out.println("sets===" + harSet.getSetName());
       if (harSet != null) {
         harSetRecord = new HarSetRecord();
         harSetRecord.setSetId(harSet);
@@ -130,9 +130,9 @@ public class GetRecordServiceImpl implements GetRecordService {
     //end
 
   }
-
+  @Override
   public HarRecordMetadataDc getMetadataFromObj(OAIDC oaiDC, HarRecordMetadataDc recordMetadataDc) {
-    List<String> titles = oaiDC.getTitle();
+      List<String> titles = oaiDC.getTitle();
     List<String> creators = oaiDC.getCreator();
     List<String> subjects = oaiDC.getSubject();
     List<String> descriptions = oaiDC.getDescription();
@@ -149,63 +149,63 @@ public class GetRecordServiceImpl implements GetRecordService {
     List<String> formats = oaiDC.getFormat();
 
     if (titles != null) {
-      recordMetadataDc.setTitle(getMetadataTagValueSeparatedBySpecialChar(titles));
+      recordMetadataDc.setDcTitle(getMetadataTagValueSeparatedBySpecialChar(titles));
     }
 
     if (creators != null) {
-      recordMetadataDc.setCreator(getMetadataTagValueSeparatedBySpecialChar(creators));
+      recordMetadataDc.setDcCreator(getMetadataTagValueSeparatedBySpecialChar(creators));
     }
 
     if (subjects != null) {
-      recordMetadataDc.setSubject(getMetadataTagValueSeparatedBySpecialChar(subjects));
+      recordMetadataDc.setDcSubject(getMetadataTagValueSeparatedBySpecialChar(subjects));
     }
 
     if (descriptions != null) {
-      recordMetadataDc.setDescription(getMetadataTagValueSeparatedBySpecialChar(descriptions));
+      recordMetadataDc.setDcDescription(getMetadataTagValueSeparatedBySpecialChar(descriptions));
     }
 
     if (dates != null) {
-      recordMetadataDc.setDate(getMetadataTagValueSeparatedBySpecialChar(dates));
+      recordMetadataDc.setDcDate(getMetadataTagValueSeparatedBySpecialChar(dates));
     }
 
     if (types != null) {
-      recordMetadataDc.setType(getMetadataTagValueSeparatedBySpecialChar(types));
+      recordMetadataDc.setDcType(getMetadataTagValueSeparatedBySpecialChar(types));
     }
-
+      
     if (identifiers != null) {
-      recordMetadataDc.setIdentifier(getMetadataTagValueSeparatedBySpecialChar(identifiers));
+      recordMetadataDc.setDcIdentifier(getMetadataTagValueSeparatedBySpecialChar(identifiers));
     }
 
     if (contributors != null) {
-      recordMetadataDc.setContributor(getMetadataTagValueSeparatedBySpecialChar(contributors));
+      recordMetadataDc.setDcContributor(getMetadataTagValueSeparatedBySpecialChar(contributors));
     }
 
     if (coverages != null) {
-      recordMetadataDc.setCoverage(getMetadataTagValueSeparatedBySpecialChar(coverages));
+      recordMetadataDc.setDcCoverage(getMetadataTagValueSeparatedBySpecialChar(coverages));
     }
 
     if (languages != null) {
-      recordMetadataDc.setLanguage(getMetadataTagValueSeparatedBySpecialChar(languages));
+      recordMetadataDc.setDcLanguage(getMetadataTagValueSeparatedBySpecialChar(languages));
     }
 
     if (publishers != null) {
-      recordMetadataDc.setPublisher(getMetadataTagValueSeparatedBySpecialChar(publishers));
+      recordMetadataDc.setDcPublisher(getMetadataTagValueSeparatedBySpecialChar(publishers));
     }
 
     if (relations != null) {
-      recordMetadataDc.setRelation(getMetadataTagValueSeparatedBySpecialChar(relations));
+      recordMetadataDc.setDcRelation(getMetadataTagValueSeparatedBySpecialChar(relations));
     }
 
     if (rights != null) {
-      recordMetadataDc.setRights(getMetadataTagValueSeparatedBySpecialChar(rights));
+      recordMetadataDc.setDcRights(getMetadataTagValueSeparatedBySpecialChar(rights));
     }
 
     if (sources != null) {
-      recordMetadataDc.setSource(getMetadataTagValueSeparatedBySpecialChar(sources));
+      recordMetadataDc.setDcSource(getMetadataTagValueSeparatedBySpecialChar(sources));
     }
 
     if (formats != null) {
-      recordMetadataDc.setFormat(getMetadataTagValueSeparatedBySpecialChar(formats));
+      recordMetadataDc.setDcFormat(getMetadataTagValueSeparatedBySpecialChar(formats));
     }
     return recordMetadataDc;
   }
