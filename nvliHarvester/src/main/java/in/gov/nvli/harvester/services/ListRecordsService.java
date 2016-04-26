@@ -22,4 +22,6 @@ public interface ListRecordsService {
   public void setHarRepo(HarRepo harRepo);
 
   public void setMetadataPrefix(String metadataPrefix);
+  
+  public void setIncrementalUpdateFlag(boolean incrementalUpdateFlag);
 }

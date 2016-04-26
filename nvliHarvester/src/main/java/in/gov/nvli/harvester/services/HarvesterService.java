@@ -16,7 +16,9 @@ import javax.xml.bind.JAXBException;
  */
 public interface HarvesterService {
   
-  public void harvestReposiotires(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException;
+  public void harvestRepository(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException;
   public void harvestAllRepositories() throws MalformedURLException, IOException, JAXBException, ParseException;
+  public void harvestRepositoryIncremental(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException;
+  public void harvestAllRepositoriesIncremental() throws MalformedURLException, IOException, JAXBException, ParseException;
   
 }

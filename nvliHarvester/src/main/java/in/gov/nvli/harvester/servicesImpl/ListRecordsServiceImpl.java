@@ -86,6 +86,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   HarRepo harRepo;
   String metadataPrefix;
   List<HarSetRecord> harSetRecords;
+  private boolean incrementalUpdateFlag = false;
 
   public ListRecordsServiceImpl() {
   }
@@ -165,13 +166,20 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         recordMetadataDcs.add(recordMetadataDc);
 
       }
-      recordDao.saveListHarRecord(harRecords);
-      if (harSetRecords.size() != 0) {
-        harSetRecordDao.saveHarSetRecords(harSetRecords);
+      if(incrementalUpdateFlag){
+        recordDao.saveOrUpdateListHarRecord(harRecords);
+        if (harSetRecords.size() != 0) {
+            harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecords);
+        }
+        metadataDcDao.saveOrUpdateList(recordMetadataDcs);
+      }else{
+        recordDao.saveListHarRecord(harRecords);
+        if (harSetRecords.size() != 0) {
+          harSetRecordDao.saveHarSetRecords(harSetRecords);
+        }
+
+        metadataDcDao.saveList(recordMetadataDcs);
       }
-      
-      metadataDcDao.saveList(recordMetadataDcs);
-      
       System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
       System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
       resumptionToken = getRecordObj.getListRecords().getResumptionToken();
@@ -199,4 +207,9 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     this.metadataPrefix = metadataPrefix;
   }
 
+    public void setIncrementalUpdateFlag(boolean incrementalUpdateFlag) {
+        this.incrementalUpdateFlag = incrementalUpdateFlag;
+    }
+  
+ 
 }

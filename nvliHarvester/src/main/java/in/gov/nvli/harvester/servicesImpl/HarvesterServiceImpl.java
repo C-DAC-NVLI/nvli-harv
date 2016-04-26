@@ -30,51 +30,87 @@ import org.springframework.stereotype.Service;
 @Service
 public class HarvesterServiceImpl implements HarvesterService {
 
-  @Autowired
-  ListSetsService listSetsService;
+    @Autowired
+    ListSetsService listSetsService;
 
-  @Autowired
-  ListMetadataFormatsService listMetadataFormatsService;
+    @Autowired
+    ListMetadataFormatsService listMetadataFormatsService;
 
-  @Autowired
-  ListRecordsService listRecordsService;
+    @Autowired
+    ListRecordsService listRecordsService;
 
-  @Autowired
-  RepositoryDao repositoryDao;
+    @Autowired
+    RepositoryDao repositoryDao;
 
-  @Override
-  @Async
-  public void harvestReposiotires(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException {
+    @Override
+    @Async
+    public void harvestRepository(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException {
 
-    HarRepo harRepo = repositoryDao.getRepository(baseURL);
+        HarRepo harRepo = repositoryDao.getRepository(baseURL);
 
-    listSetsService.saveListSets(baseURL + "?verb=" + VerbType.LIST_SETS.value());
-    
-    listMetadataFormatsService.setRepository(harRepo);
-    listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
-    
-    listRecordsService.setHarRepo(harRepo);
-    listRecordsService.setMetadataPrefix("oai_dc");
-    listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+        listSetsService.saveListSets(baseURL + "?verb=" + VerbType.LIST_SETS.value());
 
-  }
-
-  @Override
-  @Async
-  public void harvestAllRepositories() throws MalformedURLException, IOException, JAXBException, ParseException {
-    List<HarRepo> harRepos = repositoryDao.getRepositories();
-    if (harRepos != null) {
-      for (HarRepo harRepo : harRepos) {
-        listSetsService.saveListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
-        
         listMetadataFormatsService.setRepository(harRepo);
-        listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+        listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
 
         listRecordsService.setHarRepo(harRepo);
         listRecordsService.setMetadataPrefix("oai_dc");
-        listRecordsService.getListRecord(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
-      }
+        listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+
     }
-  }
+
+    @Override
+    @Async
+    public void harvestAllRepositories() throws MalformedURLException, IOException, JAXBException, ParseException {
+        List<HarRepo> harRepos = repositoryDao.getRepositories();
+        if (harRepos != null) {
+            for (HarRepo harRepo : harRepos) {
+              listSetsService.saveListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
+
+              listMetadataFormatsService.setRepository(harRepo);
+              listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+
+              listRecordsService.setHarRepo(harRepo);
+              listRecordsService.setMetadataPrefix("oai_dc");
+              listRecordsService.getListRecord(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+            }
+        }
+    }
+
+    @Override
+    @Async
+    public void harvestRepositoryIncremental(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException {
+        
+        HarRepo harRepo = repositoryDao.getRepository(baseURL);
+
+        listSetsService.saveOrUpdateListSets(baseURL + "?verb=" + VerbType.LIST_SETS.value());
+
+        listMetadataFormatsService.setRepository(harRepo);
+        listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+
+        listRecordsService.setHarRepo(harRepo);
+        listRecordsService.setMetadataPrefix("oai_dc");
+        listRecordsService.setIncrementalUpdateFlag(true);
+        listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+    }
+
+    @Override
+    @Async
+    public void harvestAllRepositoriesIncremental() throws MalformedURLException, IOException, JAXBException, ParseException {
+        List<HarRepo> harRepos = repositoryDao.getRepositories();
+        if (harRepos != null) {
+            for (HarRepo harRepo : harRepos) {
+                listSetsService.saveOrUpdateListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
+
+                listMetadataFormatsService.setRepository(harRepo);
+                listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+
+                listRecordsService.setHarRepo(harRepo);
+                listRecordsService.setMetadataPrefix("oai_dc");
+                listRecordsService.setIncrementalUpdateFlag(true);
+                listRecordsService.getListRecord(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+            }
+        }
+    }
 
 }
