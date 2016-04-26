@@ -37,7 +37,7 @@ public class HarvesterController {
   @RequestMapping("/harvester")
   public String harvestRepository(@RequestParam("baseURL") String baseURL) {
     try {
-      harvesterService.harvestReposiotires(baseURL);
+      harvesterService.harvestRepository(baseURL);
     } catch (IOException ex) {
       LOGGER.error(ex.getMessage(),ex);
     } catch (JAXBException ex) {
@@ -61,5 +61,32 @@ public class HarvesterController {
     }
     return "example";
   }
-
+  
+  @RequestMapping("/harvester_incremental")
+  public String harvestRepositoryIncremental(@RequestParam("baseURL") String baseURL) {
+    try {
+      harvesterService.harvestRepositoryIncremental(baseURL);
+    } catch (IOException ex) {
+      LOGGER.error(ex.getMessage(),ex);
+    } catch (JAXBException ex) {
+      LOGGER.error(ex.getMessage(),ex);;
+    } catch (ParseException ex) {
+      LOGGER.error(ex.getMessage(),ex);;
+    }
+    return "example";
+  }
+  
+  @RequestMapping("/harvest_all_incremental")
+  public String harvestAllRepositoriesIncremental() {
+    try {
+      harvesterService.harvestAllRepositoriesIncremental();
+    } catch (IOException ex) {
+      LOGGER.error(ex.getMessage(),ex);;
+    } catch (JAXBException ex) {
+      LOGGER.error(ex.getMessage(),ex);;
+    } catch (ParseException ex) {
+      LOGGER.error(ex.getMessage(),ex);;
+    }
+    return "example";
+  }
 }
