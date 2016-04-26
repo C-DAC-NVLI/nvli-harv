@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.dao.RepositoryDao;
+import in.gov.nvli.harvester.daoImpl.RepositoryDaoImpl;
 import in.gov.nvli.harvester.services.RepositoryService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Autowired
     RepositoryDao repositoryDaoObject;
+    
+    
             
     @Override
     public HarRepo addRepository(HarRepo repositoryObject) {
@@ -29,7 +32,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Override
     public List<HarRepo> getAllRepositories() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return repositoryDaoObject.getRepositories();
     }
 
     @Override
