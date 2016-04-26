@@ -17,5 +17,7 @@ public interface HarSetDao extends GenericDao<HarSet, Long>{
     public boolean saveHarSets(List<HarSet> sets);
     public HarSet getHarSet(String set);
     public HarSet getHarSetType(String name,String setSpec);
+    public HarSet getHarSetType(String setSpec);
+    public boolean saveOrUpdateHarSets(List<HarSet> sets);
     
 }

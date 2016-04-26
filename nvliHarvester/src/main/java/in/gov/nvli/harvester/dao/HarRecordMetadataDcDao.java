@@ -5,6 +5,7 @@
  */
 package in.gov.nvli.harvester.dao;
 
+import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import java.util.List;
 
@@ -16,5 +17,6 @@ public interface HarRecordMetadataDcDao {
   
   public void save(HarRecordMetadataDc metadataDc);
   public void saveList(List<HarRecordMetadataDc> metadataDcs);
-  
+  public boolean saveOrUpdateList(List<HarRecordMetadataDc> metadataDcs);
+  public HarRecordMetadataDc GetByHarRecord(HarRecord harRecord);
 }
