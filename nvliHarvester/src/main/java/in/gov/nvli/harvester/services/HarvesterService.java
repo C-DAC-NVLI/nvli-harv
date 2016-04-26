@@ -5,10 +5,9 @@
  */
 package in.gov.nvli.harvester.services;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.ParseException;
-import javax.xml.bind.JAXBException;
+import javax.servlet.ServletContext;
+
+
 
 /**
  *
@@ -16,7 +15,7 @@ import javax.xml.bind.JAXBException;
  */
 public interface HarvesterService {
   
-  public void harvestReposiotires(String baseURL) throws MalformedURLException, IOException, JAXBException, ParseException;
-  public void harvestAllRepositories() throws MalformedURLException, IOException, JAXBException, ParseException;
+  public void harvestReposiotires(String baseURL,ServletContext servletContext);
+  public void harvestAllRepositories(ServletContext servletContext);
   
 }
