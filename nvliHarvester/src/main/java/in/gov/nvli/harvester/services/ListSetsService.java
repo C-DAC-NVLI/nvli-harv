@@ -25,4 +25,5 @@ public interface ListSetsService {
       public List<SetType> getListSets(String baseUrl) throws MalformedURLException,IOException,JAXBException;
       public boolean saveListSets(String baseUrl) throws MalformedURLException,IOException, JAXBException;
       public HarSet getHarSetType(String name,String setSpec);
+      public boolean saveOrUpdateListSets(String baseUrl) throws MalformedURLException,IOException, JAXBException;
 }
