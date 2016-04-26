@@ -6,10 +6,7 @@
 package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.services.HarvesterService;
-import java.io.IOException;
-import java.text.ParseException;
-import javax.xml.bind.JAXBException;
-import org.slf4j.LoggerFactory;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
@@ -24,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @EnableAsync
 public class HarvesterController {
 
-  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HarvesterController.class);
-  
   @Autowired
   HarvesterService harvesterService;
 
@@ -35,30 +30,15 @@ public class HarvesterController {
   }
 
   @RequestMapping("/harvester")
-  public String harvestRepository(@RequestParam("baseURL") String baseURL) {
-    try {
-      harvesterService.harvestReposiotires(baseURL);
-    } catch (IOException ex) {
-      LOGGER.error(ex.getMessage(),ex);
-    } catch (JAXBException ex) {
-      LOGGER.error(ex.getMessage(),ex);;
-    } catch (ParseException ex) {
-      LOGGER.error(ex.getMessage(),ex);;
-    }
+  public String harvestRepository(@RequestParam("baseURL") String baseURL, HttpServletRequest servletRequest) {
+    harvesterService.harvestReposiotires(baseURL, servletRequest.getSession());
+
     return "example";
   }
 
   @RequestMapping("/harvestall")
-  public String harvestAll() {
-    try {
-      harvesterService.harvestAllRepositories();
-    } catch (IOException ex) {
-      LOGGER.error(ex.getMessage(),ex);;
-    } catch (JAXBException ex) {
-      LOGGER.error(ex.getMessage(),ex);;
-    } catch (ParseException ex) {
-      LOGGER.error(ex.getMessage(),ex);;
-    }
+  public String harvestAll(HttpServletRequest servletRequest) {
+    harvesterService.harvestAllRepositories(servletRequest.getSession());
     return "example";
   }
 

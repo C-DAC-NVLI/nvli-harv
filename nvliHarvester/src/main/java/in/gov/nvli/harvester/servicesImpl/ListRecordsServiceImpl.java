@@ -28,11 +28,8 @@ import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
 import in.gov.nvli.harvester.utilities.UnmarshalUtils;
-import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,10 +37,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  *
@@ -51,6 +51,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ListRecordsServiceImpl implements ListRecordsService {
+  
+  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ListRecordsServiceImpl.class);
 
   private static int i = 0;
   private static int interval = 60000;
@@ -86,109 +88,121 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   HarRepo harRepo;
   String metadataPrefix;
   List<HarSetRecord> harSetRecords;
+  HttpSession session;
 
   public ListRecordsServiceImpl() {
   }
 
   @Override
-  public void getListRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
+  public void getListRecord(String baseUrl) {
     System.out.println("url================" + baseUrl);
     System.setProperty("http.keepAlive", "true");
 
     try {
-      if (i > 0) {
+      if (session.getAttribute(baseUrl) != null) {
         Thread.sleep(interval);
       }
-      connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
-    } catch (InterruptedException ex) {
-      Logger.getLogger(ListRecordsServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-    }
+        connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
 
-    int responseCode = connection.getResponseCode();
-    System.out.println("response code " + responseCode);
-    if (responseCode == 200) {
+        int responseCode = connection.getResponseCode();
+        System.out.println("response code " + responseCode);
+        if (responseCode == 200) {
 
-      String response = OAIResponseUtil.createResponseFromXML(connection);
+          String response = OAIResponseUtil.createResponseFromXML(connection);
 
-      OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
+          OAIPMHtype getRecordObj = UnmarshalUtils.xmlToOaipmh(response);
 
-      List<RecordType> records = getRecordObj.getListRecords().getRecord();
+          List<RecordType> records = getRecordObj.getListRecords().getRecord();
 
-      harRecords = new ArrayList<>();
-      recordMetadataDcs = new ArrayList<>();
-      harSetRecords = new ArrayList<>();
-      HarMetadataType metadataType = metadataTypeDao.getMetadataTypeByMetadatPrefix(metadataPrefix);
-      for (RecordType record : records) {
+          harRecords = new ArrayList<>();
+          recordMetadataDcs = new ArrayList<>();
+          harSetRecords = new ArrayList<>();
+          HarMetadataType metadataType = metadataTypeDao.getMetadataTypeByMetadatPrefix(metadataPrefix);
+          for (RecordType record : records) {
 
-        harRecord = new HarRecord();
-        harRecord.setRecordIdentifier(record.getHeader().getIdentifier());
-        DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
-        Date sourceDate = formatter.parse(record.getHeader().getDatestamp());
-        harRecord.setRecordSoureDatestamp(sourceDate);
-        harRecord.setMetadataTypeId(metadataType);
-        List<AboutType> aboutTypes = record.getAbout();
-        String temp = "";
+            harRecord = new HarRecord();
+            harRecord.setRecordIdentifier(record.getHeader().getIdentifier());
+            DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
+            Date sourceDate = formatter.parse(record.getHeader().getDatestamp());
+            harRecord.setRecordSoureDatestamp(sourceDate);
+            harRecord.setMetadataTypeId(metadataType);
+            List<AboutType> aboutTypes = record.getAbout();
+            String temp = "";
 
-        if (aboutTypes != null) {
-          for (AboutType about : aboutTypes) {
-            temp += about;
+            if (aboutTypes != null) {
+              for (AboutType about : aboutTypes) {
+                temp += about;
+              }
+            }
+            harRecord.setRecordAbout(temp);
+            harRecord.setRepoId(harRepo);
+
+            if (record.getHeader().getStatus() != StatusType.DELETED) {
+              harRecord.setRecordStatus(CommonConstants.RECORDNOTDELETED);
+            } else {
+              harRecord.setRecordStatus(CommonConstants.RECORDDELETED);
+            }
+
+            harRecords.add(harRecord);
+
+            List<String> setSpecs = record.getHeader().getSetSpec();
+            for (String setSpec : setSpecs) {
+              harSet = harSetDao.getHarSet(setSpec);
+              if (harSet != null) {
+                harSetRecord = new HarSetRecord();
+                harSetRecord.setSetId(harSet);
+                harSetRecord.setRecordId(harRecord);
+                harSetRecords.add(harSetRecord);
+              }
+            }
+
+            recordMetadataDc = new HarRecordMetadataDc();
+            recordMetadataDc.setRecordId(harRecord);
+            if (record.getHeader().getStatus() != StatusType.DELETED) {
+              getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
+            }
+
+            recordMetadataDcs.add(recordMetadataDc);
+
+          }
+          recordDao.saveListHarRecord(harRecords);
+          if (harSetRecords.size() != 0) {
+            harSetRecordDao.saveHarSetRecords(harSetRecords);
+          }
+
+          metadataDcDao.saveList(recordMetadataDcs);
+
+          System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
+          System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
+          resumptionToken = getRecordObj.getListRecords().getResumptionToken();
+          if (resumptionToken.getValue() != null && resumptionToken.getValue() != "" && !resumptionToken.getValue().isEmpty()) {
+            String urlSubtr[] = baseUrl.split("&");
+            String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
+            getListRecord(requestUrl);
+          }
+
+        } else {
+          int tmpCnt = 0;
+          if (session.getAttribute(baseUrl) == null) {
+            session.setAttribute(baseUrl, 1);
+          } else {
+            tmpCnt=(int)session.getAttribute(baseUrl);
+            session.setAttribute(baseUrl, (++tmpCnt));
+          }
+          if (((int)session.getAttribute(baseUrl)) <= 3) {
+            getListRecord(baseUrl);
           }
         }
-        harRecord.setRecordAbout(temp);
-        harRecord.setRepoId(harRepo);
-
-        if(record.getHeader().getStatus() != StatusType.DELETED){
-          harRecord.setRecordStatus(CommonConstants.RECORDNOTDELETED);
-        }else{
-          harRecord.setRecordStatus(CommonConstants.RECORDDELETED);
-        }
-        
-        harRecords.add(harRecord);
-
-        List<String> setSpecs = record.getHeader().getSetSpec();
-        for (String setSpec : setSpecs) {
-          harSet = harSetDao.getHarSet(setSpec);
-          if (harSet != null) {
-            harSetRecord = new HarSetRecord();
-            harSetRecord.setSetId(harSet);
-            harSetRecord.setRecordId(harRecord);
-            harSetRecords.add(harSetRecord);
-          }
-        }
-        
-        recordMetadataDc = new HarRecordMetadataDc();
-        recordMetadataDc.setRecordId(harRecord);
-        if(record.getHeader().getStatus() != StatusType.DELETED){
-            getRecordService.getMetadataFromObj(record.getMetadata().getOaidc(), recordMetadataDc);
-        }
-        
-        recordMetadataDcs.add(recordMetadataDc);
-
-      }
-      recordDao.saveListHarRecord(harRecords);
-      if (harSetRecords.size() != 0) {
-        harSetRecordDao.saveHarSetRecords(harSetRecords);
-      }
-      
-      metadataDcDao.saveList(recordMetadataDcs);
-      
-      System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
-      System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
-      resumptionToken = getRecordObj.getListRecords().getResumptionToken();
-      if (resumptionToken.getValue()!=null && resumptionToken.getValue()!="" && !resumptionToken.getValue().isEmpty()) {
-        String urlSubtr[] = baseUrl.split("&");
-        String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
-        getListRecord(requestUrl);
-      }
-
-    } else {
-      i = i + 1;
-      System.out.println("i " + i);
-      if (i <= 3) {
-        getListRecord(baseUrl);
-      }
+    } catch (Exception ex) {
+      LOGGER.error(ex.getMessage(),ex);
+      ex.printStackTrace();
     }
 
+  }
+
+  public ServletContext getServletContext() {
+    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+    return attr.getRequest().getServletContext();
   }
 
   public void setHarRepo(HarRepo harRepo) {
@@ -199,4 +213,9 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     this.metadataPrefix = metadataPrefix;
   }
 
+  public void setSession(HttpSession session) {
+    this.session = session;
+  }
+
+  
 }
