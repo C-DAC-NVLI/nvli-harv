@@ -171,6 +171,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
           }
 
           metadataDcDao.saveList(recordMetadataDcs);
+          session.removeAttribute(baseUrl);
 
           System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
           System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
