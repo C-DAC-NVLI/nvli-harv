@@ -88,7 +88,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   HarRepo harRepo;
   String metadataPrefix;
   List<HarSetRecord> harSetRecords;
-  HttpSession session;
+  ServletContext servletContext;
 
   public ListRecordsServiceImpl() {
   }
@@ -99,7 +99,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     System.setProperty("http.keepAlive", "true");
 
     try {
-      if (session.getAttribute(baseUrl) != null) {
+      if (servletContext.getAttribute(baseUrl) != null) {
         Thread.sleep(interval);
       }
         connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
@@ -171,7 +171,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
           }
 
           metadataDcDao.saveList(recordMetadataDcs);
-          session.removeAttribute(baseUrl);
+          servletContext.removeAttribute(baseUrl);
 
           System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
           System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
@@ -184,13 +184,13 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
         } else {
           int tmpCnt = 0;
-          if (session.getAttribute(baseUrl) == null) {
-            session.setAttribute(baseUrl, 1);
+          if (servletContext.getAttribute(baseUrl) == null) {
+            servletContext.setAttribute(baseUrl, 1);
           } else {
-            tmpCnt=(int)session.getAttribute(baseUrl);
-            session.setAttribute(baseUrl, (++tmpCnt));
+            tmpCnt=(int)servletContext.getAttribute(baseUrl);
+            servletContext.setAttribute(baseUrl, (++tmpCnt));
           }
-          if (((int)session.getAttribute(baseUrl)) <= 3) {
+          if (((int)servletContext.getAttribute(baseUrl)) <= 3) {
             getListRecord(baseUrl);
           }
         }
@@ -214,9 +214,10 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     this.metadataPrefix = metadataPrefix;
   }
 
-  public void setSession(HttpSession session) {
-    this.session = session;
+  public void setServletContext(ServletContext servletContext) {
+    this.servletContext = servletContext;
   }
 
+  
   
 }

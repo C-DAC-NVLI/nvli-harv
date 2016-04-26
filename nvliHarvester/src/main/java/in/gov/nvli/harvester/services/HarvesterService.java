@@ -5,7 +5,8 @@
  */
 package in.gov.nvli.harvester.services;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
+
 
 
 /**
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpSession;
  */
 public interface HarvesterService {
   
-  public void harvestReposiotires(String baseURL,HttpSession session);
-  public void harvestAllRepositories(HttpSession session);
+  public void harvestReposiotires(String baseURL,ServletContext servletContext);
+  public void harvestAllRepositories(ServletContext servletContext);
   
 }

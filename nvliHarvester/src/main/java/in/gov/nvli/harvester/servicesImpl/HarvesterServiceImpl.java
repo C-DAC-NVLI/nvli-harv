@@ -13,6 +13,7 @@ import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import java.util.List;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 
   @Override
   @Async
-  public void harvestReposiotires(String baseURL, HttpSession session) {
+  public void harvestReposiotires(String baseURL, ServletContext servletContext) {
 
     HarRepo harRepo = repositoryDao.getRepository(baseURL);
     try {
@@ -51,7 +52,7 @@ public class HarvesterServiceImpl implements HarvesterService {
       listMetadataFormatsService.setRepository(harRepo);
       listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
 
-      listRecordsService.setSession(session);
+      listRecordsService.setServletContext(servletContext);
       listRecordsService.setHarRepo(harRepo);
       listRecordsService.setMetadataPrefix("oai_dc");
       listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
@@ -64,7 +65,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 
   @Override
   @Async
-  public void harvestAllRepositories(HttpSession session) {
+  public void harvestAllRepositories(ServletContext servletContext) {
     List<HarRepo> harRepos = repositoryDao.getRepositories();
     if (harRepos != null) {
       for (HarRepo harRepo : harRepos) {
@@ -75,7 +76,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 
           listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
 
-          listRecordsService.setSession(session);
+          listRecordsService.setServletContext(servletContext);
           listRecordsService.setHarRepo(harRepo);
           listRecordsService.setMetadataPrefix("oai_dc");
 

@@ -6,7 +6,7 @@
 package in.gov.nvli.harvester.services;
 
 import in.gov.nvli.harvester.beans.HarRepo;
-import javax.servlet.http.HttpSession;
+import javax.servlet.ServletContext;
 
 /**
  *
@@ -20,5 +20,5 @@ public interface ListRecordsService {
 
   public void setMetadataPrefix(String metadataPrefix);
   
-  public void setSession(HttpSession session);
+  public void setServletContext(ServletContext servletContext);
 }

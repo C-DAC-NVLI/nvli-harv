@@ -31,14 +31,14 @@ public class HarvesterController {
 
   @RequestMapping("/harvester")
   public String harvestRepository(@RequestParam("baseURL") String baseURL, HttpServletRequest servletRequest) {
-    harvesterService.harvestReposiotires(baseURL, servletRequest.getSession());
+    harvesterService.harvestReposiotires(baseURL, servletRequest.getServletContext());
 
     return "example";
   }
 
   @RequestMapping("/harvestall")
   public String harvestAll(HttpServletRequest servletRequest) {
-    harvesterService.harvestAllRepositories(servletRequest.getSession());
+    harvesterService.harvestAllRepositories(servletRequest.getServletContext());
     return "example";
   }
 

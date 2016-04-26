@@ -35,7 +35,7 @@ public class ListRecordsController {
     String requestURL = baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=" + metadataPrefix;
     System.err.println("base url" + requestURL);
     HarRepo harRepo = repositoryDao.getRepository(baseURL);
-    listRecordsService.setSession(servletRequest.getSession());
+    listRecordsService.setServletContext(servletRequest.getServletContext());
     listRecordsService.setHarRepo(harRepo);
     listRecordsService.setMetadataPrefix(metadataPrefix);
     listRecordsService.getListRecord(requestURL);
