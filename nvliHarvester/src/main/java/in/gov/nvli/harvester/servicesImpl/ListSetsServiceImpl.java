@@ -90,4 +90,23 @@ public class ListSetsServiceImpl implements ListSetsService {
     public HarSet getHarSetType(String name, String setSpec) {
         return harSetDao.getHarSetType(name, setSpec);
     }
+
+    @Override
+    public boolean saveOrUpdateListSets(String baseUrl) throws MalformedURLException, IOException, JAXBException {
+        connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+        if (connection.getResponseCode() != 200) {
+            connection.disconnect();
+            return false;
+        }else{
+            return saveOrUpdateListSets();
+        }
+    }
+    
+    private boolean saveOrUpdateListSets() throws IOException, JAXBException {
+        List<HarSet> sets = new ArrayList<>();
+        for (SetType setTemp : getListSets()) {
+            sets.add(OAIBeanConverter.setTypeToHarSet(setTemp));
+        }
+        return harSetDao.saveOrUpdateHarSets(sets);
+    }
 }
