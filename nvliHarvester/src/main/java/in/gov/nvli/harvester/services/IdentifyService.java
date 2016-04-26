@@ -5,6 +5,7 @@
  */
 package in.gov.nvli.harvester.services;
 
+import in.gov.nvli.harvester.OAIPMH_beans.IdentifyType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,5 +21,6 @@ public interface IdentifyService {
     public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException;
     public HarRepo getRepositoryInformation() throws IOException,JAXBException;
     public HarRepo getRepositoryInformation(String baseURL) throws MalformedURLException,IOException,JAXBException;
+    public IdentifyType identify(String baseURL,String adminEmail) throws MalformedURLException,IOException,JAXBException;
     
 }
