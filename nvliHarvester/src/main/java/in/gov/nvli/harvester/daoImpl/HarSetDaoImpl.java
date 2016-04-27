@@ -33,8 +33,9 @@ public class HarSetDaoImpl extends GenericDaoImpl<HarSet, Long> implements HarSe
     public boolean saveHarSets(List<HarSet> sets) {
         try {
             for (HarSet set : sets) {
-               if(getHarSetType(set.getSetName(),set.getSetSpec())!=null)
-                   continue;
+                if(getHarSetType(set.getSetSpec())!=null){
+                    continue;
+                }
                 if (!createNew(set)) {
                     return false;
                 }
@@ -67,5 +68,39 @@ public class HarSetDaoImpl extends GenericDaoImpl<HarSet, Long> implements HarSe
             LOGGER.error(e.getMessage(), e);
         }
         return harSet;
+    }
+
+    @Override
+    public HarSet getHarSetType(String setSpec) {
+        HarSet harSet = null;
+        try {
+            harSet = (HarSet) currentSession().createCriteria(HarSet.class).add(Restrictions.and(Restrictions.eq("setSpec", setSpec))).uniqueResult();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return harSet;
+    }
+
+    @Override
+    @Transactional
+    public boolean saveOrUpdateHarSets(List<HarSet> sets) {
+        try {
+            HarSet tempSet;
+            for (HarSet set : sets) {
+               tempSet = getHarSetType(set.getSetSpec());
+                if(tempSet!=null){
+                    set.setSetId(tempSet.getSetId());
+                    currentSession().merge(set);
+                    continue;
+                }
+                if (!createNew(set)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return false;
+        }
     }
 }

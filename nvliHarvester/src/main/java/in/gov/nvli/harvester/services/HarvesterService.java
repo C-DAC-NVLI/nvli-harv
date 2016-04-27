@@ -15,7 +15,10 @@ import javax.servlet.ServletContext;
  */
 public interface HarvesterService {
   
-  public void harvestReposiotires(String baseURL,ServletContext servletContext);
+  public void harvestRepository(String baseURL,ServletContext servletContext);
   public void harvestAllRepositories(ServletContext servletContext);
+  
+  public void harvestRepositoryIncremental(String baseURL,ServletContext servletContext);
+  public void harvestAllRepositoriesIncremental(ServletContext servletContext);
   
 }

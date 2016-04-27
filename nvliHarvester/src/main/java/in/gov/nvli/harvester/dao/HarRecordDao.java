@@ -18,4 +18,7 @@ public interface HarRecordDao {
   public void saveHarRecord(HarRecord record);
   public void saveListHarRecord(List<HarRecord> records);
   
+  public void saveOrUpdateListHarRecord(List<HarRecord> records);
+  public HarRecord getHarRecord(String recordIdentifier);
+  
 }

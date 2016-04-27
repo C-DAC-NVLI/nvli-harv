@@ -43,6 +43,7 @@ http://oar.icrisat.org/cgi/oai2 <br>
 </form>
        <br>
        <a href="${pageContext.servletContext.contextPath}/harvestall" id="identify">Harvest all</a><br>
+       <a href="${pageContext.servletContext.contextPath}/harvest_all_incremental" id="identify">Harvest all Incremental</a><br>
         <br>
         <br>
         <a href="${pageContext.servletContext.contextPath}/identify?baseURL=http://dspace.library.iitb.ac.in/oai/request" id="identify">identify</a><br>

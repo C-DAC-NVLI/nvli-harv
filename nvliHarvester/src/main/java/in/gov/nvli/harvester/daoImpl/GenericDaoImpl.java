@@ -70,8 +70,8 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
     @Transactional(rollbackFor = {DataIntegrityViolationException.class}, readOnly = false)
     public boolean createNew(T entity) throws DataIntegrityViolationException {
         Session session = currentSession();
-        boolean isCreated = session.save(entity) != null;
-        return isCreated;
+        return session.save(entity) != null;
+        //return isCreated;
     }
 
     /**

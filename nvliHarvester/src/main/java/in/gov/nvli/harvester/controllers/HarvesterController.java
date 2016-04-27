@@ -31,7 +31,7 @@ public class HarvesterController {
 
   @RequestMapping("/harvester")
   public String harvestRepository(@RequestParam("baseURL") String baseURL, HttpServletRequest servletRequest) {
-    harvesterService.harvestReposiotires(baseURL, servletRequest.getServletContext());
+    harvesterService.harvestRepository(baseURL, servletRequest.getServletContext());
 
     return "example";
   }
@@ -41,5 +41,16 @@ public class HarvesterController {
     harvesterService.harvestAllRepositories(servletRequest.getServletContext());
     return "example";
   }
-
+  
+  @RequestMapping("/harvester_incremental")
+  public String harvestRepositoryIncremental(@RequestParam("baseURL") String baseURL, HttpServletRequest servletRequest) {
+    harvesterService.harvestRepositoryIncremental(baseURL, servletRequest.getServletContext());
+    return "example";
+  }
+  
+  @RequestMapping("/harvest_all_incremental")
+  public String harvestAllRepositoriesIncremental(HttpServletRequest servletRequest) {
+        harvesterService.harvestAllRepositoriesIncremental(servletRequest.getServletContext());
+        return "example";
+  }
 }

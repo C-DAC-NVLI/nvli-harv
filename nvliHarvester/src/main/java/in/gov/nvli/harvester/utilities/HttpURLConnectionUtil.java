@@ -16,28 +16,33 @@ import java.net.URL;
  * @author vootla
  */
 public class HttpURLConnectionUtil {
-    
-    public static HttpURLConnection getConnection(String  baseURL,String method,String userAgnet,String adminEmail) throws ProtocolException, MalformedURLException, IOException
-    {
+
+    public static HttpURLConnection getConnection(String baseURL, String method, String userAgnet, String adminEmail) throws ProtocolException, MalformedURLException, IOException {
         URL identifyRequestURL = new URL(baseURL);
-		HttpURLConnection con = (HttpURLConnection) identifyRequestURL.openConnection();
+        HttpURLConnection con = (HttpURLConnection) identifyRequestURL.openConnection();
 
-		// optional default is GET
-		con.setRequestMethod(method);
+        // optional default is GET
+        con.setRequestMethod(method);
 
-		// add request header
-		con.setRequestProperty("User-Agent", userAgnet);
-		con.setRequestProperty("From", "From : " + adminEmail);
-                return con;
+        // add request header
+        con.setRequestProperty("User-Agent", userAgnet);
+        con.setRequestProperty("From", "From : " + adminEmail);
+        return con;
 
     }
+
     public static int getConnectionStatus(HttpURLConnection coonection) throws IOException {
 
         int responseCode = coonection.getResponseCode();
         if (responseCode != 200) {
             return -1;
         }
-    return 0;
+        return 0;
     }
-    
+
+    public static int getResponseCodeOfConnection(String baseURL, String method, String userAgnet, String adminEmail) throws ProtocolException, MalformedURLException, IOException {
+        HttpURLConnection con = getConnection(baseURL, method, userAgnet, adminEmail);
+        return getConnectionStatus(con);
+    }
+
 }

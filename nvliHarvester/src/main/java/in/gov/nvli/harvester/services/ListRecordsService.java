@@ -21,4 +21,5 @@ public interface ListRecordsService {
   public void setMetadataPrefix(String metadataPrefix);
   
   public void setServletContext(ServletContext servletContext);
+  public void setIncrementalUpdateFlag(boolean incrementalUpdateFlag);
 }

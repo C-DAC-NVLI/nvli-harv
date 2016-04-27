@@ -43,7 +43,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 
   @Override
   @Async
-  public void harvestReposiotires(String baseURL, ServletContext servletContext) {
+  public void harvestRepository(String baseURL, ServletContext servletContext) {
 
     HarRepo harRepo = repositoryDao.getRepository(baseURL);
     try {
@@ -57,7 +57,6 @@ public class HarvesterServiceImpl implements HarvesterService {
       listRecordsService.setMetadataPrefix("oai_dc");
       listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
     } catch (Exception ex) {
-      ex.printStackTrace();
       LOGGER.error(ex.getMessage(),ex);
     }
 
@@ -87,5 +86,50 @@ public class HarvesterServiceImpl implements HarvesterService {
       }
     }
   }
+  
+  @Override
+   @Async
+    public void harvestRepositoryIncremental(String baseURL, ServletContext servletContext) {
+        
+        HarRepo harRepo = repositoryDao.getRepository(baseURL);
+        try {
+        listSetsService.saveOrUpdateListSets(baseURL + "?verb=" + VerbType.LIST_SETS.value());
+
+        listMetadataFormatsService.setRepository(harRepo);
+        listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+
+        listRecordsService.setServletContext(servletContext);
+        listRecordsService.setHarRepo(harRepo);
+        listRecordsService.setMetadataPrefix("oai_dc");
+        listRecordsService.setIncrementalUpdateFlag(true);
+        listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+        }catch(Exception e){
+            LOGGER.error(e.getMessage(),e);
+        }
+    }
+
+    @Override
+    @Async
+    public void harvestAllRepositoriesIncremental(ServletContext servletContext) {
+        List<HarRepo> harRepos = repositoryDao.getRepositories();
+        if (harRepos != null) {
+            for (HarRepo harRepo : harRepos) {
+                try{
+                listSetsService.saveOrUpdateListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
+
+                listMetadataFormatsService.setRepository(harRepo);
+                listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+
+                listRecordsService.setServletContext(servletContext);
+                listRecordsService.setHarRepo(harRepo);
+                listRecordsService.setMetadataPrefix("oai_dc");
+                listRecordsService.setIncrementalUpdateFlag(true);
+                listRecordsService.getListRecord(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+                }catch(Exception e){
+                    LOGGER.error(e.getMessage(),e);
+                }
+            }
+        }
+    }
 
 }
