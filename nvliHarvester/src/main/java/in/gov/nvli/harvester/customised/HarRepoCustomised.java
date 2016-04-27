@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.customised;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -57,6 +58,31 @@ public class HarRepoCustomised implements Serializable {
     private String repoLatitude;
 
     private String repoLongitude;
+    
+   
+    //fields after discussion
+    private Collection<String> thematicTypes;
+    
+    private Collection<String> contentTypes;
+    
+    private String organizationName;
+    
+    private String contactPerson;
+    
+    private String Designation;
+    
+    private long phone;
+    
+    private Collection<String> languages;
+   
+    private String organizationLink;
+   
+   
+    
+    
+    
+    
+    
 
 
 //
@@ -251,6 +277,70 @@ public class HarRepoCustomised implements Serializable {
 
     public void setRepoTypeId(int repoTypeId) {
         this.repoTypeId = repoTypeId;
+    }
+
+    public Collection<String> getThematicTypes() {
+        return thematicTypes;
+    }
+
+    public void setThematicTypes(Collection<String> thematicTypes) {
+        this.thematicTypes = thematicTypes;
+    }
+
+    public Collection<String> getContentTypes() {
+        return contentTypes;
+    }
+
+    public void setContentTypes(Collection<String> contentTypes) {
+        this.contentTypes = contentTypes;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    public String getDesignation() {
+        return Designation;
+    }
+
+    public void setDesignation(String Designation) {
+        this.Designation = Designation;
+    }
+
+    public long getPhone() {
+        return phone;
+    }
+
+    public void setPhone(long phone) {
+        this.phone = phone;
+    }
+
+    public Collection<String> getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(Collection<String> languages) {
+        this.languages = languages;
+    }
+
+    public String getOrganizationLink() {
+        return organizationLink;
+    }
+
+    public void setOrganizationLink(String organizationLink) {
+        this.organizationLink = organizationLink;
     }
 
 }
