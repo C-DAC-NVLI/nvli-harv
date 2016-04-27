@@ -13,9 +13,8 @@ import in.gov.nvli.harvester.servicesImpl.GetRecordServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -29,31 +28,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class GetRecordController {
 
-  @Autowired
-  public GetRecordService getRecordService;
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(GetRecordController.class);
+    @Autowired
+    public GetRecordService getRecordService;
 
-  @Autowired
-  RepositoryDao repositoryDao;
+    @Autowired
+    RepositoryDao repositoryDao;
 
-  @RequestMapping("/getrecord")
-  public String getRecord(@RequestParam("baseURL") String baseURL, @RequestParam("identifier") String identifier, @RequestParam("metadataPrefix") String metadataPrefix) {
+    @RequestMapping("/getrecord")
+    public String getRecord(@RequestParam("baseURL") String baseURL, @RequestParam("identifier") String identifier, @RequestParam("metadataPrefix") String metadataPrefix) {
 
-    String requestURL = baseURL + "?verb=" + VerbType.GET_RECORD.value() + "&identifier=" + identifier + "&metadataPrefix=" + metadataPrefix;
-    System.err.println("request url" + requestURL);
-    HarRepo harRepo = repositoryDao.getRepository(baseURL);
-    try {
-      getRecordService.setHarRepo(harRepo);
-      getRecordService.setMetadataPrefix(metadataPrefix);
-      getRecordService.getRecord(requestURL);
-    } catch (MalformedURLException ex) {
-      Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IOException ex) {
-      Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (JAXBException ex) {
-      Logger.getLogger(GetRecordController.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (ParseException ex) {
-      Logger.getLogger(GetRecordController.class.getName()).log(Level.SEVERE, null, ex);
+        String requestURL = baseURL + "?verb=" + VerbType.GET_RECORD.value() + "&identifier=" + identifier + "&metadataPrefix=" + metadataPrefix;
+        HarRepo harRepo = repositoryDao.getRepository(baseURL);
+        try {
+            getRecordService.setHarRepo(harRepo);
+            getRecordService.setMetadataPrefix(metadataPrefix);
+            getRecordService.getRecord(requestURL);
+        } catch (MalformedURLException | JAXBException | ParseException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+
+        } catch (IOException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
+        return "example";
     }
-    return "example";
-  }
 }
