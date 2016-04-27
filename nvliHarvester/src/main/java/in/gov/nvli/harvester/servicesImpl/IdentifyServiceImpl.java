@@ -92,6 +92,20 @@ public class IdentifyServiceImpl implements IdentifyService{
               return getRepositoryInformation();
           }
     }
+
+    @Override
+    public IdentifyType identify(String baseURL, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        connection = HttpURLConnectionUtil.getConnection(baseURL, "GET", "",adminEmail);
+       int status= HttpURLConnectionUtil.getConnectionStatus(connection);
+       if(status==-1)
+       {
+           connection.disconnect();
+       }
+       String response=OAIResponseUtil.createResponseFromXML(connection);
+        OAIPMHtype obj= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response); 
+        IdentifyType identifyObj = obj.getIdentify();
+        return  identifyObj;
+    }
 }
     
 
