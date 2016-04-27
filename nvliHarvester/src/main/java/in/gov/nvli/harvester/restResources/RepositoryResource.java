@@ -71,7 +71,7 @@ public class RepositoryResource
     @GET
     @Path("/start/{repoID}")
     @Produces(MediaType.APPLICATION_XML)
-    public String  startHarvesting(@PathParam("repoID") int repoID,HttpServletRequest request)
+    public String  startHarvesting(@PathParam("repoID") int repoID)
     {
          //harvesterService.harvestReposiotires(repoID, request.getServletContext());
          return "started";
@@ -79,9 +79,9 @@ public class RepositoryResource
     @GET
     @Path("/start")
     @Produces(MediaType.APPLICATION_XML)
-    public String  startHarvesting(@QueryParam("baseURL") String baseURL ,HttpServletRequest request)
+    public String  startHarvesting(@QueryParam("baseURL") String baseURL)
     {
-        harvesterService.harvestReposiotires(baseURL,context);
+        harvesterService.harvestRepository(baseURL, context);
          return "started";
     }
     
