@@ -5,7 +5,6 @@
  */
 package in.gov.nvli.harvester.customised;
 
-import in.gov.nvli.harvester.beans.HarRepoStatus;
 import java.io.Serializable;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -68,9 +67,9 @@ public class HarRepoCustomised implements Serializable {
 //    private Collection<HarRepoLanguage> harRepoLanguageCollection;
 
 //
-  //  private HarRepoStatus repoStatusId;
+    private short repoStatusId;
 //
-//    private HarRepoType repoTypeId;
+    private int repoTypeId;
 //
 //    private Collection<HarSetRepository> harSetRepositoryCollection;
 
@@ -236,6 +235,22 @@ public class HarRepoCustomised implements Serializable {
 
     public void setRepoLongitude(String repoLongitude) {
         this.repoLongitude = repoLongitude;
+    }
+
+    public short getRepoStatusId() {
+        return repoStatusId;
+    }
+
+    public void setRepoStatusId(short repoStatusId) {
+        this.repoStatusId = repoStatusId;
+    }
+
+    public int getRepoTypeId() {
+        return repoTypeId;
+    }
+
+    public void setRepoTypeId(int repoTypeId) {
+        this.repoTypeId = repoTypeId;
     }
 
 }
