@@ -2,13 +2,11 @@ package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.dao.GenericDao;
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @version 1
  * @since 1
  */
-
 public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T, ID> {
 
     /**
@@ -29,8 +26,6 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
     protected Class<T> persistentClass;
     @Autowired
     public SessionFactory sessionFactory;
-
-    
 
     /**
      * Get the current session from the seesionFactory.
@@ -48,11 +43,12 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
      *
      */
     public GenericDaoImpl(Class<T> entityClass) {
- this.persistentClass = entityClass;
+        this.persistentClass = entityClass;
     }
 
     /**
      * Get the Persistent class
+     *
      * @return
      */
     public Class<T> getPersistentClass() {
