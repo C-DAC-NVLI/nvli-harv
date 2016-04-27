@@ -79,9 +79,18 @@ public class RepositoryResource
     @GET
     @Path("/start")
     @Produces(MediaType.APPLICATION_XML)
-    public String  startHarvesting(@QueryParam("baseURL") String baseURL)
+    public String  startHarvest(@QueryParam("baseURL") String baseURL)
     {
         harvesterService.harvestRepository(baseURL, context);
+         return "started";
+    }
+    
+   @GET
+    @Path("/startall")
+    @Produces(MediaType.APPLICATION_XML)
+    public String  startHarvestAll()
+    {
+        harvesterService.harvestAllRepositories(context);
          return "started";
     }
     
