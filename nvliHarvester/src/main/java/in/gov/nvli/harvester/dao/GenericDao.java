@@ -23,8 +23,6 @@ public interface GenericDao<T, ID extends Serializable> {
      */
     public T get(ID id);
 
-   
-
     /**
      * Persist the given new bean.
      *
@@ -70,8 +68,6 @@ public interface GenericDao<T, ID extends Serializable> {
      */
     public T merge(T entity);
 
-   
-
     /**
      *
      * @param queryName
@@ -79,7 +75,6 @@ public interface GenericDao<T, ID extends Serializable> {
      */
     public void update(String queryName, Object... b);
 
-    
     /**
      * Flush all pending saves, updates and deletes to the database Only invoke
      * this for selective eager flushing, for example when JDBC code needs to
@@ -87,5 +82,16 @@ public interface GenericDao<T, ID extends Serializable> {
      * rely on auto-flushing at transaction completion.
      */
     public void flush();
-}
 
+    /**
+     *
+     * @param list
+     */
+    public boolean saveList(List<T> list);
+
+    /**
+     *
+     * @param list
+     */
+    public void saveOrUpdateList(List<T> list);
+}
