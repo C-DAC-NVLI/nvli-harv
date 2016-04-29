@@ -8,9 +8,12 @@
 
 package in.gov.nvli.harvester.OAIPMH_beans;
 
+import in.gov.nvli.harvester.OAIPMH_beans.toolkit.ToolkitType;
+import in.gov.nvli.harvester.beans.OAIDC;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -38,37 +41,20 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "descriptionType", propOrder = {
-    "any"
-})
+//@XmlAccessorType(XmlAccessType.FIELD)
+//@XmlType(name = "descriptionType", propOrder = {
+//    "toolkit "
+//})
 public class DescriptionType {
 
-    @XmlAnyElement(lax = true)
-    protected Object any;
+  protected ToolkitType toolkit;
 
-    /**
-     * Gets the value of the any property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
-     */
-    public Object getAny() {
-        return any;
+    public ToolkitType getToolkit () {
+        return toolkit ;
     }
 
-    /**
-     * Sets the value of the any property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
-     */
-    public void setAny(Object value) {
-        this.any = value;
+    public void setToolkit (ToolkitType toolkit ) {
+        this.toolkit  = toolkit ;
     }
 
 }
