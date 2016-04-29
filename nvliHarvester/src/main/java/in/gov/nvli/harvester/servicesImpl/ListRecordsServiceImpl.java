@@ -35,15 +35,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  *
@@ -180,7 +178,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
             recordDao.saveListHarRecord(harRecords);
           }
           if (harSetRecords.size() != 0) {
-            harSetRecordDao.saveHarSetRecords(harSetRecords);
+            harSetRecordDao.saveList(harSetRecords);
           }
           if (recordMetadataDcs.size() != 0) {
             metadataDcDao.saveList(recordMetadataDcs);

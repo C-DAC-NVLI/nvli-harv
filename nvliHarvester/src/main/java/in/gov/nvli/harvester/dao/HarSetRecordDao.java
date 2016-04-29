@@ -15,7 +15,6 @@ import java.util.List;
  */
 public interface HarSetRecordDao extends GenericDao<HarSetRecord, Long>{
   
-  public boolean saveHarSetRecords(List<HarSetRecord> setRecords);
   public HarSetRecord getHarSetRecord(HarRecord harRecord, HarSet harSet);
   public boolean saveOrUpdateHarSetRecords(List<HarSetRecord> setRecords);
 }
