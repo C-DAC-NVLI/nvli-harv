@@ -32,12 +32,12 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Override
     public List<HarRepo> getAllRepositories() {
-        return repositoryDaoObject.getRepositories();
+        return repositoryDaoObject.list();
     }
 
     @Override
     public HarRepo getRepository(int repositoryId) {
-        return repositoryDaoObject.getRepository(repositoryId);
+        return repositoryDaoObject.get(repositoryId);
     }
 
     @Override

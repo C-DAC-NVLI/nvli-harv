@@ -14,7 +14,6 @@ import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import java.util.List;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -65,7 +64,7 @@ public class HarvesterServiceImpl implements HarvesterService {
   @Override
   @Async
   public void harvestAllRepositories(ServletContext servletContext) {
-    List<HarRepo> harRepos = repositoryDao.getRepositories();
+    List<HarRepo> harRepos = repositoryDao.list();
     if (harRepos != null) {
       for (HarRepo harRepo : harRepos) {
         try {
@@ -111,7 +110,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     @Override
     @Async
     public void harvestAllRepositoriesIncremental(ServletContext servletContext) {
-        List<HarRepo> harRepos = repositoryDao.getRepositories();
+        List<HarRepo> harRepos = repositoryDao.list();
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
                 try{

@@ -13,10 +13,9 @@ import java.util.List;
  *
  * @author richa
  */
-public interface HarRecordMetadataDcDao {
-  
-  public void save(HarRecordMetadataDc metadataDc);
-  public void saveList(List<HarRecordMetadataDc> metadataDcs);
-  public boolean saveOrUpdateList(List<HarRecordMetadataDc> metadataDcs);
-  public HarRecordMetadataDc GetByHarRecord(HarRecord harRecord);
+public interface HarRecordMetadataDcDao extends GenericDao<HarRecordMetadataDc, Long> {
+
+    public boolean saveOrUpdateHarRecordMetadataDcList(List<HarRecordMetadataDc> metadataDcs);
+
+    public HarRecordMetadataDc GetByHarRecord(HarRecord harRecord);
 }

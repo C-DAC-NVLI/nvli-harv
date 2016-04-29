@@ -8,6 +8,7 @@ package in.gov.nvli.harvester.daoImpl;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.beans.HarSetRecord;
+import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
@@ -21,62 +22,45 @@ import org.springframework.transaction.annotation.Transactional;
  * @author richa
  */
 @Repository
-@Transactional(readOnly = true)
+@TransactionalReadOnly
 public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> implements HarSetRecordDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HarSetRecordDaoImpl.class);
-  public HarSetRecordDaoImpl() {
-    super(HarSetRecord.class);
-  }
 
-  @Override
-  @Transactional
-  public boolean saveHarSetRecords(List<HarSetRecord> setRecords) {
-    try {
-      for (HarSetRecord setRecord : setRecords) {
-        if (!createNew(setRecord)) {
-          return false;
-        }
-      }
-      return true;
-    } catch (Exception e) {
-      return false;
+    public HarSetRecordDaoImpl() {
+        super(HarSetRecord.class);
     }
-  }
 
-  
-  @Override
-  @Transactional
-  public boolean saveOrUpdateHarSetRecords(List<HarSetRecord> setRecords) {
-    HarSetRecord tempHarSetRecord = null;
-      try {
-      for (HarSetRecord setRecord : setRecords) {
-        tempHarSetRecord = getHarSetRecord(setRecord.getRecordId(), setRecord.getSetId());
-        if(tempHarSetRecord != null){
-            setRecord.setSetRecordId(tempHarSetRecord.getSetRecordId());
-            currentSession().merge(setRecord);
-        }else{
-            if (!createNew(setRecord)) {
-                return false; 
+    @Override
+    @Transactional
+    public boolean saveOrUpdateHarSetRecords(List<HarSetRecord> setRecords) {
+        HarSetRecord tempHarSetRecord = null;
+        try {
+            for (HarSetRecord setRecord : setRecords) {
+                tempHarSetRecord = getHarSetRecord(setRecord.getRecordId(), setRecord.getSetId());
+                if (tempHarSetRecord != null) {
+                    setRecord.setSetRecordId(tempHarSetRecord.getSetRecordId());
+                    currentSession().merge(setRecord);
+                } else if (!createNew(setRecord)) {
+                    return false;
+                }
             }
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return false;
         }
-      }
-      return true;
-    } catch (Exception e) {
-        LOGGER.error(e.getMessage(), e);
-        return false;
     }
-  }
-  
+
     @Override
     public HarSetRecord getHarSetRecord(HarRecord harRecord, HarSet harSet) {
-        try{
-            return (HarSetRecord) currentSession().createCriteria(HarSetRecord.class).createAlias("recordId", "harRecord").createAlias("setId", "harSet").add(Restrictions.and(Restrictions.eq("harRecord.recordId", harRecord.getRecordId()),Restrictions.eq("harSet.setId", harSet.getSetId()))).uniqueResult();
-        }catch(Exception e){
+        try {
+            return (HarSetRecord) currentSession().createCriteria(HarSetRecord.class).createAlias("recordId", "harRecord").createAlias("setId", "harSet").add(Restrictions.and(Restrictions.eq("harRecord.recordId", harRecord.getRecordId()), Restrictions.eq("harSet.setId", harSet.getSetId()))).uniqueResult();
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
-        
+
     }
 
 }

@@ -118,7 +118,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
 
     if (harSetRecords.size() != 0) {
-      harSetRecordDao.saveHarSetRecords(harSetRecords);
+      harSetRecordDao.saveList(harSetRecords);
     }
 
     HarRecordMetadataDc recordMetadataDc = new HarRecordMetadataDc();

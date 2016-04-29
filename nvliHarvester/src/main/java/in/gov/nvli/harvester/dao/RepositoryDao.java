@@ -13,10 +13,10 @@ import java.util.List;
  *
  * @author ankit
  */
-public interface RepositoryDao extends GenericDao<HarRepo, Integer>{
-    public HarRepo addRepository(HarRepo repositoryObject);
-    public List<HarRepo> getRepositories();
-    public HarRepo getRepository(String baseURL);
-    public HarRepo getRepository(int repositoryId);
-}
+public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
 
+    public HarRepo addRepository(HarRepo repositoryObject);
+
+    public HarRepo getRepository(String baseURL);
+
+}

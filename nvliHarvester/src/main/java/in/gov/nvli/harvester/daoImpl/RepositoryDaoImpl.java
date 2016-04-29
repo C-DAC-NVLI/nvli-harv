@@ -6,60 +6,50 @@
 package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
+import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
 import in.gov.nvli.harvester.dao.RepositoryDao;
-import java.util.List;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author ankit
  */
 @Repository
-@Transactional(readOnly = true)
-public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo,Integer> implements RepositoryDao{
+@TransactionalReadOnly
+public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implements RepositoryDao {
 
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryDao.class);
 
     public RepositoryDaoImpl() {
         super(HarRepo.class);
     }
-    
+
     @Override
+    @TransactionalReadOrWrite
     public HarRepo addRepository(HarRepo repositoryObject) {
         try {
-            
-            return null;
+            createNew(repositoryObject);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
+        return repositoryObject;
     }
 
-  @Override
-  public List<HarRepo> getRepositories() {
-    List<HarRepo> harRepos=null;
-    try{
-      harRepos=currentSession().createCriteria(HarRepo.class).list();
-    }catch(Exception e){
-      
+    @Override
+    public HarRepo getRepository(String baseURL) {
+        HarRepo harRepo = null;
+        try {
+            harRepo = (HarRepo) currentSession().createCriteria(HarRepo.class).add(Restrictions.eq("repoBaseUrl", baseURL)).uniqueResult();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
+        return harRepo;
     }
-    return harRepos;
-  }
 
-  @Override
-  public HarRepo getRepository(String baseURL) {
-    HarRepo harRepo=null;
-    try{
-      harRepo=(HarRepo) currentSession().createCriteria(HarRepo.class).add(Restrictions.eq("repoBaseUrl", baseURL)).uniqueResult();
-    }catch(Exception e){
-      
-    }
-    return harRepo;
-  }
-  
-  @Override
-    public HarRepo getRepository(int repositoryId) {
-       return get(repositoryId);
-    }  
 }

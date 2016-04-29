@@ -35,15 +35,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  *
@@ -164,36 +162,34 @@ public class ListRecordsServiceImpl implements ListRecordsService {
             recordMetadataDcs.add(recordMetadataDc);
           }
 
+        }
+        if (incrementalUpdateFlag) {
+          if (harRecords.size() != 0) {
+            recordDao.saveOrUpdateListHarRecord(harRecords);
+          }
+          if (harSetRecords.size() != 0) {
+            harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecords);
+          }
+          if (recordMetadataDcs.size() != 0) {
+            metadataDcDao.saveOrUpdateList(recordMetadataDcs);
+          }
+        } else {
+          if (harRecords.size() != 0) {
+            recordDao.saveListHarRecord(harRecords);
+          }
+          if (harSetRecords.size() != 0) {
+            harSetRecordDao.saveList(harSetRecords);
+          }
+          if (recordMetadataDcs.size() != 0) {
+            metadataDcDao.saveList(recordMetadataDcs);
+          }
+        }
 
-        }
-        if(incrementalUpdateFlag){
-            if (harRecords.size() != 0) {
-                recordDao.saveOrUpdateListHarRecord(harRecords);
-            }
-            if (harSetRecords.size() != 0) {
-              harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecords);
-            }
-            if (recordMetadataDcs.size() != 0) {
-              metadataDcDao.saveOrUpdateList(recordMetadataDcs);
-            }
-        }else{
-            if (harRecords.size() != 0) {
-                recordDao.saveListHarRecord(harRecords);
-            }
-            if (harSetRecords.size() != 0) {
-              harSetRecordDao.saveHarSetRecords(harSetRecords);
-            }
-            if (recordMetadataDcs.size() != 0) {
-              metadataDcDao.saveList(recordMetadataDcs);
-            }
-        }
-        
         servletContext.removeAttribute(baseUrl);
 
         System.out.println("Saved======================== " + harRecords.size() + " metadata " + recordMetadataDcs.size());
-        System.out.println("resumption token " + getRecordObj.getListRecords().getResumptionToken().getValue());
         resumptionToken = getRecordObj.getListRecords().getResumptionToken();
-        if (resumptionToken.getValue() != null && resumptionToken.getValue() != "" && !resumptionToken.getValue().isEmpty()) {
+        if (resumptionToken != null && resumptionToken.getValue() != null && resumptionToken.getValue() != "" && !resumptionToken.getValue().isEmpty()) {
           String urlSubtr[] = baseUrl.split("&");
           String requestUrl = urlSubtr[0] + "&resumptionToken=" + resumptionToken.getValue();
           getListRecord(requestUrl);
@@ -218,11 +214,6 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
   }
 
-  public ServletContext getServletContext() {
-    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-    return attr.getRequest().getServletContext();
-  }
-
   public void setHarRepo(HarRepo harRepo) {
     this.harRepo = harRepo;
   }
@@ -234,7 +225,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
   public void setServletContext(ServletContext servletContext) {
     this.servletContext = servletContext;
   }
-  public void setIncrementalUpdateFlag(boolean incrementalUpdateFlag){
-   this.incrementalUpdateFlag = incrementalUpdateFlag;   
+
+  public void setIncrementalUpdateFlag(boolean incrementalUpdateFlag) {
+    this.incrementalUpdateFlag = incrementalUpdateFlag;
   }
 }
