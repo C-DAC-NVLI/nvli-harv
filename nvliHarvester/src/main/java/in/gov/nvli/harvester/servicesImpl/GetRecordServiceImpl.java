@@ -126,7 +126,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     getMetadataFromObj(getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc(), recordMetadataDc);
 
     //save metadata object in db
-    metadataDcDao.save(recordMetadataDc);
+    metadataDcDao.createNew(recordMetadataDc);
     //end
 
   }
