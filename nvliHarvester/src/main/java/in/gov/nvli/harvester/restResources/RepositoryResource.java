@@ -59,13 +59,15 @@ public class RepositoryResource
     @Produces(MediaType.APPLICATION_XML)
     public HarRepo saveRepositoryXML(HarRepoCustomised harRepoCustomised)
     {
-       return saveRepository(harRepoCustomised);
+       System.out.println("sss xml"+harRepoCustomised.getRepoName());
+        return saveRepository(harRepoCustomised);
     }
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public HarRepo saveRepositoryJSON(HarRepoCustomised harRepoCustomised)
     {
-         return saveRepository(harRepoCustomised);
+        System.out.println("sss json"+harRepoCustomised.getRepoName());
+        return saveRepository(harRepoCustomised);
     }
     
     @GET
