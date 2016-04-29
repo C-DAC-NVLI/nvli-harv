@@ -100,7 +100,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
     record.setRecordAbout(temp);
     //save record object in db
-    recordDao.saveHarRecord(record);
+    recordDao.createNew(record);
     //end
 
     List<String> setSpecs = recordType.getHeader().getSetSpec();
@@ -126,7 +126,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     getMetadataFromObj(getRecordObj.getGetRecord().getRecord().getMetadata().getOaidc(), recordMetadataDc);
 
     //save metadata object in db
-    metadataDcDao.save(recordMetadataDc);
+    metadataDcDao.createNew(recordMetadataDc);
     //end
 
   }

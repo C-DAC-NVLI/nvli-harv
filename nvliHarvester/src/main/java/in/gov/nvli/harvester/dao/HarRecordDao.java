@@ -7,18 +7,18 @@ package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarRecord;
 import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author richa
  */
-public interface HarRecordDao {
-  
-  public void saveHarRecord(HarRecord record);
-  public void saveListHarRecord(List<HarRecord> records);
-  
-  public void saveOrUpdateListHarRecord(List<HarRecord> records);
-  public HarRecord getHarRecord(String recordIdentifier);
-  
+public interface HarRecordDao extends GenericDao<HarRecord, Long> {
+
+    
+
+    
+    public void saveOrUpdateHarRecordList(List<HarRecord> records);
+
+    public HarRecord getHarRecordByRecordIdentifier(String recordIdentifier);
+
 }

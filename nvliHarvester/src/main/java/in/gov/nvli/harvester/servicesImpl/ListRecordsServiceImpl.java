@@ -164,23 +164,23 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
         }
         if (incrementalUpdateFlag) {
-          if (harRecords.size() != 0) {
-            recordDao.saveOrUpdateListHarRecord(harRecords);
+          if (!harRecords.isEmpty()) {
+            recordDao.saveOrUpdateHarRecordList(harRecords);
           }
-          if (harSetRecords.size() != 0) {
+          if (!harSetRecords.isEmpty()) {
             harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecords);
           }
-          if (recordMetadataDcs.size() != 0) {
+          if (!recordMetadataDcs.isEmpty()) {
             metadataDcDao.saveOrUpdateList(recordMetadataDcs);
           }
         } else {
-          if (harRecords.size() != 0) {
-            recordDao.saveListHarRecord(harRecords);
+          if (!harRecords.isEmpty()) {
+            recordDao.saveList(harRecords);
           }
-          if (harSetRecords.size() != 0) {
+          if (!harSetRecords.isEmpty()) {
             harSetRecordDao.saveList(harSetRecords);
           }
-          if (recordMetadataDcs.size() != 0) {
+          if (!recordMetadataDcs.isEmpty()) {
             metadataDcDao.saveList(recordMetadataDcs);
           }
         }
