@@ -88,7 +88,7 @@ public class ListSetsServiceImpl implements ListSetsService {
 
     @Override
     public HarSet getHarSetType(String name, String setSpec) {
-        return harSetDao.getHarSetType(name, setSpec);
+        return harSetDao.getHarSet(name, setSpec);
     }
 
     @Override
