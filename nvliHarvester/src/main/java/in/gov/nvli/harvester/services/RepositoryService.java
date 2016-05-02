@@ -45,8 +45,8 @@ public interface RepositoryService {
     void scheduleSynchronisationOfRepositories(List<Integer> repositoryIds);
 
     void scheduleSynchronisationOfRepository(int repositoryId);
-    
+
     void validateRepositories(List<Integer> repositoryIds);
-    
+
     boolean isRepositoryValid(int repositoryId);
 }

@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.HarvesterService;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
@@ -46,7 +47,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     HarRepo harRepo = repositoryDao.getRepository(baseURL);
     try {
-      listSetsService.saveListSets(baseURL + "?verb=" + VerbType.LIST_SETS.value());
+      listSetsService.saveHarSets(baseURL + "?verb=" + VerbType.LIST_SETS.value(),MethodEnum.GET,"");
 
       listMetadataFormatsService.setRepository(harRepo);
       listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
@@ -68,7 +69,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     if (harRepos != null) {
       for (HarRepo harRepo : harRepos) {
         try {
-          listSetsService.saveListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
+          listSetsService.saveHarSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value(), MethodEnum.GET, "");
 
           listMetadataFormatsService.setRepository(harRepo);
 
@@ -92,7 +93,7 @@ public class HarvesterServiceImpl implements HarvesterService {
         
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
         try {
-        listSetsService.saveOrUpdateListSets(baseURL + "?verb=" + VerbType.LIST_SETS.value());
+        listSetsService.saveOrUpdateHarSets(baseURL + "?verb=" + VerbType.LIST_SETS.value(), MethodEnum.GET, "");
 
         listMetadataFormatsService.setRepository(harRepo);
         listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
@@ -114,7 +115,7 @@ public class HarvesterServiceImpl implements HarvesterService {
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
                 try{
-                listSetsService.saveOrUpdateListSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value());
+                listSetsService.saveOrUpdateHarSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value(), MethodEnum.GET, "");
 
                 listMetadataFormatsService.setRepository(harRepo);
                 listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());

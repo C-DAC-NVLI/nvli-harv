@@ -9,6 +9,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.ListSetsType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.servicesImpl.ListSetsServiceImpl;
 import java.io.IOException;
@@ -28,26 +29,21 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class ListSetsController {
-    
-    
+
     @Autowired
     private ListSetsService service;
+
     @RequestMapping("/listSets")
-    public ModelAndView listSets(String baseURL)
-    {
-       //service=new ListSetsServiceImpl();
-       baseURL=baseURL+"?verb="+VerbType.LIST_SETS.value();
-        ModelAndView mv=new ModelAndView("listsets");
+    public ModelAndView listSets(String baseURL) {
+        //service=new ListSetsServiceImpl();
+        baseURL = baseURL + "?verb=" + VerbType.LIST_SETS.value();
+        ModelAndView mv = new ModelAndView("listsets");
         try {
-           int status= service.getConnectionStatus(baseURL, "", "","");
-           mv.addObject("status",status);
-            if(!(status<0))
-            {
-             //   List<SetType> Sets=service.getListSets();
-                service.saveListSets();
-               // mv.addObject("sets",Sets);
-            }
-            
+
+            boolean status = service.saveHarSets(baseURL, MethodEnum.GET, "");
+
+            mv.addObject("status", status);
+
         } catch (MalformedURLException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JAXBException | IOException ex) {
@@ -55,6 +51,5 @@ public class ListSetsController {
         }
         return mv;
     }
-    
-    
+
 }
