@@ -12,9 +12,9 @@ import java.util.List;
  *
  * @author vootla
  */
-public interface HarMetadataTypeDao  extends GenericDao<HarMetadataType, Short> {
-  
-  public HarMetadataType getMetadataType(Short metadataId);
-  public boolean saveHarMetadataTypes(List<HarMetadataType> metadataTypes);
-   public HarMetadataType getMetadataTypeByMetadatPrefix(String metaPrefix);
+public interface HarMetadataTypeDao extends GenericDao<HarMetadataType, Short> {
+
+    public boolean saveHarMetadataTypes(List<HarMetadataType> metadataTypes);
+
+    public HarMetadataType getMetadataTypeByMetadatPrefix(String metaPrefix);
 }

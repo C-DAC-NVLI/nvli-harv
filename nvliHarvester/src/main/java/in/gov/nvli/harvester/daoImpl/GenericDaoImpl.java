@@ -143,23 +143,22 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
     public void flush() {
         currentSession().flush();
     }
-    
-    
+
     @Override
     @TransactionalReadOrWrite
     public boolean saveList(List<T> list) {
-        for(T temp : list){
-            if(!createNew(temp)){
+        for (T temp : list) {
+            if (!createNew(temp)) {
                 return false;
             }
         }
         return true;
     }
-    
+
     @Override
     @TransactionalReadOrWrite
     public void saveOrUpdateList(List<T> list) {
-        for(T temp : list){
+        for (T temp : list) {
             saveOrUpdate(temp);
         }
     }

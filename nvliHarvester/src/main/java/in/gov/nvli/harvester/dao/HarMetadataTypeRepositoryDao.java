@@ -14,7 +14,9 @@ import java.util.List;
  *
  * @author vootla
  */
-public interface HarMetadataTypeRepositoryDao  extends GenericDao<HarMetadataTypeRepository, Short> {
-  public boolean saveHarMetadataTypesOfRepository(List<HarMetadataTypeRepository> metadataTypesOfRepo);
-  public HarMetadataTypeRepository getMetadataTypeRepository(HarMetadataType metadataType,HarRepo repository);
+public interface HarMetadataTypeRepositoryDao extends GenericDao<HarMetadataTypeRepository, Short> {
+
+    public boolean saveHarMetadataTypesOfRepository(List<HarMetadataTypeRepository> metadataTypesOfRepo);
+
+    public HarMetadataTypeRepository getMetadataTypeRepository(HarMetadataType metadataType, HarRepo repository);
 }
