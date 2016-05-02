@@ -10,6 +10,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.ListIdentifiersType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.services.ListIdentifiersService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
@@ -31,7 +32,7 @@ public class ListIdentifiersServiceImpl implements ListIdentifiersService {
 static int i = 0;
   @Override
   public void getListIdentifiers(String baseUrl) throws MalformedURLException, IOException, JAXBException {
-    connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+    connection = HttpURLConnectionUtil.getConnection(baseUrl, MethodEnum.GET, "");
     int responseCode = connection.getResponseCode();
     if (responseCode != 200) {
       try{

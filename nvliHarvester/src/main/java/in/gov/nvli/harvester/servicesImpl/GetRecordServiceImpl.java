@@ -17,6 +17,7 @@ import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
@@ -73,7 +74,7 @@ public class GetRecordServiceImpl implements GetRecordService {
 
   @Override
   public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException, ParseException {
-    connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+    connection = HttpURLConnectionUtil.getConnection(baseUrl, MethodEnum.GET, "");
     int responseCode = connection.getResponseCode();
     String response = OAIResponseUtil.createResponseFromXML(connection);
 

@@ -18,6 +18,7 @@ import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
@@ -101,7 +102,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
       if (servletContext.getAttribute(baseUrl) != null) {
         Thread.sleep(interval);
       }
-      connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+      connection = HttpURLConnectionUtil.getConnection(baseUrl, MethodEnum.GET, "");
 
       int responseCode = connection.getResponseCode();
       System.out.println("response code " + responseCode);

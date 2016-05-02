@@ -9,6 +9,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.IdentifyType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
@@ -70,19 +71,20 @@ public class IdentifyServiceImpl implements IdentifyService{
    @Override
    public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException
    {
-       connection = HttpURLConnectionUtil.getConnection(baseURL, "GET", "", "");
-       int status= HttpURLConnectionUtil.getConnectionStatus(connection);
-       if(status==-1)
-       {
+       connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
+       if(HttpURLConnectionUtil.isConnectionAlive(connection)){
+           return 1;
+       }else{
            connection.disconnect();
+           return -1;
        }
-       return status;
+       
    }
 
     @Override
     public HarRepo getRepositoryInformation(String baseURL) throws MalformedURLException,IOException, JAXBException 
     {
-         connection = HttpURLConnectionUtil.getConnection(baseURL, "GET", "", "");
+         connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
         if(connection.getResponseCode()!=200)
        {
            connection.disconnect();
@@ -95,16 +97,19 @@ public class IdentifyServiceImpl implements IdentifyService{
 
     @Override
     public IdentifyType identify(String baseURL, String adminEmail) throws MalformedURLException, IOException, JAXBException {
-        connection = HttpURLConnectionUtil.getConnection(baseURL, "GET", "",adminEmail);
-       int status= HttpURLConnectionUtil.getConnectionStatus(connection);
-       if(status==-1)
-       {
-           connection.disconnect();
-       }
-       String response=OAIResponseUtil.createResponseFromXML(connection);
+        connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
+       if(HttpURLConnectionUtil.isConnectionAlive(connection)){
+           String response=OAIResponseUtil.createResponseFromXML(connection);
         OAIPMHtype obj= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response); 
         IdentifyType identifyObj = obj.getIdentify();
         return  identifyObj;
+       }else{
+           connection.disconnect();
+           return null;
+       }
+        
+       
+       
     }
 }
     

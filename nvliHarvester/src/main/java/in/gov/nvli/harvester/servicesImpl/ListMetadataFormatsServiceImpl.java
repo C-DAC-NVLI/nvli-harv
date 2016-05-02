@@ -10,6 +10,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarMetadataTypeRepositoryDao;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
@@ -45,12 +46,15 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
 
     @Override
     public int getConnectionStatus(String baseURL, String method, String userAgnet, String adminEmail) throws MalformedURLException, IOException {
-        connection = HttpURLConnectionUtil.getConnection(baseURL, "GET", "", "");
-        int status = HttpURLConnectionUtil.getConnectionStatus(connection);
-        if (status == -1) {
+        connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
+        boolean status = HttpURLConnectionUtil.isConnectionAlive(connection);
+        if (status == false) {
             connection.disconnect();
+            return -1;
+        }else{
+            return 1;
         }
-        return status;
+        
     }
 
     @Override
@@ -75,7 +79,7 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
 
     @Override
     public List<MetadataFormatType> getListMetadataFormats(String baseUrl) throws MalformedURLException, IOException, JAXBException {
-        connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+        connection = HttpURLConnectionUtil.getConnection(baseUrl, MethodEnum.GET, "");
         if (connection.getResponseCode() != 200) {
             connection.disconnect();
             return null;
@@ -87,7 +91,7 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
 
     @Override
     public boolean saveListOfMetadataFormats(String baseUrl) throws MalformedURLException, IOException, JAXBException {
-        connection = HttpURLConnectionUtil.getConnection(baseUrl, "GET", "", "");
+        connection = HttpURLConnectionUtil.getConnection(baseUrl, MethodEnum.GET, "");
         if (connection.getResponseCode() != 200) {
             connection.disconnect();
             return false;
