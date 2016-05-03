@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.RepositoryService;
@@ -40,21 +41,14 @@ public class ListMetadataFormatsController {
     public ModelAndView listSets(String baseURL)
     {
        HarRepo repo=repositoryService.getRepository(2);
-         //HarRepo repo=new HarRepo();
-       service.setRepository(repo);
+         
+       
         
         baseURL=baseURL+"?verb="+VerbType.LIST_METADATA_FORMATS.value();
         ModelAndView mv=new ModelAndView("ListMetadataFormats");
         try {
-           int status= service.getConnectionStatus(baseURL, "", "","");
-           mv.addObject("status",status);
-            if(!(status<0))
-            {
-                //List<MetadataFormatType> metaDataFormats=service.getListMetadataFormats();
-                service.saveListOfMetadataFormats();
-              //  mv.addObject("metaDataFormats",metaDataFormats);
-            }
-            
+           service.saveHarMetadataTypes(repo, MethodEnum.GET, "");
+              
         } catch (MalformedURLException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JAXBException | IOException ex) {

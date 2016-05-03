@@ -8,6 +8,7 @@ package in.gov.nvli.harvester.restResources;
 import in.gov.nvli.harvester.OAIPMH_beans.IdentifyType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
@@ -71,8 +72,8 @@ public class IdentifyResource {
    private IdentifyType identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException
     {
        
-        baseURL=baseURL+"?verb="+VerbType.IDENTIFY.value();
-        IdentifyType identifyObj=identifyService.identify(baseURL,adminEmail);
+        
+        IdentifyType identifyObj=identifyService.getIdentifyTypeObject(baseURL,MethodEnum.GET, adminEmail);
        return identifyObj;
     }  
     

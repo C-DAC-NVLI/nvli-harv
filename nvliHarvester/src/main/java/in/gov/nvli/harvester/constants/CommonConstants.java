@@ -14,6 +14,10 @@ public class CommonConstants {
   public static String COLUMNVALUESEPARARTOR="<>";   
   public  static Short RECORDNOTDELETED=0;
   public  static Short RECORDDELETED=1;
+  
+  public static final String VERB = "?verb=";
+  public static final String METADATA_PREFIX = "&metadataPrefix=";
+  public static final String RESUMPTION_TOKEN = "&resumptionToken=";
     
   
 }

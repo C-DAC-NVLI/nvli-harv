@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.services;
 
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
+import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import java.io.IOException;
@@ -20,9 +21,11 @@ import javax.xml.bind.JAXBException;
  */
 public interface ListSetsService {
 
-    public boolean saveHarSets(String baseUrl, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException;
+    public boolean saveHarSets(String baseURL, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException;
+    
+    public boolean saveHarSets(HarRepo repository, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException;
 
     public HarSet getHarSetByNameAndSpec(String name, String Spec);
 
-    public boolean saveOrUpdateHarSets(String baseUrl, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException;
+    public boolean saveOrUpdateHarSets(HarRepo repository, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException;
 }

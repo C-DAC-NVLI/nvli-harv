@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.ListIdentifiersService;
 import in.gov.nvli.harvester.servicesImpl.ListIdentifiersServiceImpl;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class ListIdentifiersControllers {
     System.err.println("base url" + requestURL);
     try {
       listIdentifiersService = new ListIdentifiersServiceImpl();
-      listIdentifiersService.getListIdentifiers(requestURL);
+      listIdentifiersService.getListIdentifiers(requestURL, MethodEnum.GET, "", "oai_dc");
     } catch (MalformedURLException ex) {
       ex.printStackTrace();
       Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);

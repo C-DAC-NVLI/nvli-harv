@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.HarvesterService;
@@ -47,10 +48,9 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     HarRepo harRepo = repositoryDao.getRepository(baseURL);
     try {
-      listSetsService.saveHarSets(baseURL + "?verb=" + VerbType.LIST_SETS.value(),MethodEnum.GET,"");
+      listSetsService.saveHarSets(harRepo,MethodEnum.GET,"");
 
-      listMetadataFormatsService.setRepository(harRepo);
-      listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+      listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
       listRecordsService.setServletContext(servletContext);
       listRecordsService.setHarRepo(harRepo);
@@ -67,19 +67,22 @@ public class HarvesterServiceImpl implements HarvesterService {
   public void harvestAllRepositories(ServletContext servletContext) {
     List<HarRepo> harRepos = repositoryDao.list();
     if (harRepos != null) {
-      for (HarRepo harRepo : harRepos) {
+      String desiredURL;
+        for (HarRepo harRepo : harRepos) {
         try {
-          listSetsService.saveHarSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value(), MethodEnum.GET, "");
+            
+          listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
 
-          listMetadataFormatsService.setRepository(harRepo);
-
-          listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+          
+          
+          listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
           listRecordsService.setServletContext(servletContext);
           listRecordsService.setHarRepo(harRepo);
           listRecordsService.setMetadataPrefix("oai_dc");
+          desiredURL = harRepo.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc";
 
-          listRecordsService.getListRecord(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+          listRecordsService.getListRecord(desiredURL);
         } catch (Exception ex) {
           LOGGER.error(ex.getMessage(),ex);
         }
@@ -93,10 +96,10 @@ public class HarvesterServiceImpl implements HarvesterService {
         
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
         try {
-        listSetsService.saveOrUpdateHarSets(baseURL + "?verb=" + VerbType.LIST_SETS.value(), MethodEnum.GET, "");
+        listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
 
-        listMetadataFormatsService.setRepository(harRepo);
-        listMetadataFormatsService.saveListOfMetadataFormats(baseURL + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+        
+        listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
         listRecordsService.setServletContext(servletContext);
         listRecordsService.setHarRepo(harRepo);
@@ -115,10 +118,10 @@ public class HarvesterServiceImpl implements HarvesterService {
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
                 try{
-                listSetsService.saveOrUpdateHarSets(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_SETS.value(), MethodEnum.GET, "");
+                listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
 
-                listMetadataFormatsService.setRepository(harRepo);
-                listMetadataFormatsService.saveListOfMetadataFormats(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_METADATA_FORMATS.value());
+                
+                listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
                 listRecordsService.setServletContext(servletContext);
                 listRecordsService.setHarRepo(harRepo);
