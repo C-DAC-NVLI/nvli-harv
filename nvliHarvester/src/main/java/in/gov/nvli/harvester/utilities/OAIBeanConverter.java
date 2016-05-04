@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class OAIBeanConverter {
 
-    public static HarSet setTypeToHarSet(SetType setType) {
+    public static HarSet convertSetTypeToHarSet(SetType setType) {
         HarSet obj = new HarSet(setType.getSetName(), setType.getSetSpec());
         if (setType.getSetDescription() != null && setType.getSetDescription().size() != 0) {
             //we have to parse discription an dwe hav eto store as it is
@@ -36,10 +36,20 @@ public class OAIBeanConverter {
         return harSetList;
     }
 
-    public static HarMetadataType metadataFormatTypeToHarMetadataType(MetadataFormatType metadataFormatType) {
-        HarMetadataType obj = new HarMetadataType(metadataFormatType.getMetadataPrefix(), metadataFormatType.getSchema(), metadataFormatType.getMetadataNamespace());
+    public static HarMetadataType convertMetadataFormatTypeToHarMetadataType(MetadataFormatType metadataFormatType) {
+        return new HarMetadataType(metadataFormatType.getMetadataPrefix(), metadataFormatType.getSchema(), metadataFormatType.getMetadataNamespace());
 
-        return obj;
+    }
+
+    public static List<HarMetadataType> convertMetadataFormatTypeToHarMetadataType(List<MetadataFormatType> metadataFormatTypeList) {
+        List<HarMetadataType> harMetadataTypeList = new ArrayList<>();
+        HarMetadataType harMetadataTypeObject;
+        for (MetadataFormatType tempMetadataFormatType : metadataFormatTypeList) {
+            harMetadataTypeObject = new HarMetadataType(tempMetadataFormatType.getMetadataPrefix(), tempMetadataFormatType.getSchema(), tempMetadataFormatType.getMetadataNamespace());
+            harMetadataTypeList.add(harMetadataTypeObject);
+        }
+        return harMetadataTypeList;
+
     }
 
 }
