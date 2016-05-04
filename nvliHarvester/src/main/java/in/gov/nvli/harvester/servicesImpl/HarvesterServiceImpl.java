@@ -5,9 +5,7 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
-import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
-import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.HarvesterService;
@@ -53,9 +51,7 @@ public class HarvesterServiceImpl implements HarvesterService {
       listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
       listRecordsService.setServletContext(servletContext);
-      listRecordsService.setHarRepo(harRepo);
-      listRecordsService.setMetadataPrefix("oai_dc");
-      listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+      listRecordsService.saveListRecords(harRepo,  "oai_dc", MethodEnum.GET, "", false);
     } catch (Exception ex) {
       LOGGER.error(ex.getMessage(),ex);
     }
@@ -78,11 +74,7 @@ public class HarvesterServiceImpl implements HarvesterService {
           listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
           listRecordsService.setServletContext(servletContext);
-          listRecordsService.setHarRepo(harRepo);
-          listRecordsService.setMetadataPrefix("oai_dc");
-          desiredURL = harRepo.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc";
-
-          listRecordsService.getListRecord(desiredURL);
+          listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", false);
         } catch (Exception ex) {
           LOGGER.error(ex.getMessage(),ex);
         }
@@ -102,10 +94,7 @@ public class HarvesterServiceImpl implements HarvesterService {
         listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
         listRecordsService.setServletContext(servletContext);
-        listRecordsService.setHarRepo(harRepo);
-        listRecordsService.setMetadataPrefix("oai_dc");
-        listRecordsService.setIncrementalUpdateFlag(true);
-        listRecordsService.getListRecord(baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+        listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", false );
         }catch(Exception e){
             LOGGER.error(e.getMessage(),e);
         }
@@ -124,10 +113,7 @@ public class HarvesterServiceImpl implements HarvesterService {
                 listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
                 listRecordsService.setServletContext(servletContext);
-                listRecordsService.setHarRepo(harRepo);
-                listRecordsService.setMetadataPrefix("oai_dc");
-                listRecordsService.setIncrementalUpdateFlag(true);
-                listRecordsService.getListRecord(harRepo.getRepoBaseUrl() + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=oai_dc");
+                listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", false );
                 }catch(Exception e){
                     LOGGER.error(e.getMessage(),e);
                 }

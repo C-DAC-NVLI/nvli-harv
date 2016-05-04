@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.services;
 
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import javax.servlet.ServletContext;
 
 /**
@@ -14,12 +15,10 @@ import javax.servlet.ServletContext;
  */
 public interface ListRecordsService {
 
-  public void getListRecord(String baseUrl);
+    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag);
 
-  public void setHarRepo(HarRepo harRepo);
+    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag);
 
-  public void setMetadataPrefix(String metadataPrefix);
-  
-  public void setServletContext(ServletContext servletContext);
-  public void setIncrementalUpdateFlag(boolean incrementalUpdateFlag);
+    public void setServletContext(ServletContext servletContext);
+
 }

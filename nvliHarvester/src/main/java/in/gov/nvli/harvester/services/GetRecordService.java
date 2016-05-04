@@ -5,12 +5,15 @@
  */
 package in.gov.nvli.harvester.services;
 
+import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.OAIDC;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -18,10 +21,13 @@ import javax.xml.bind.JAXBException;
  * @author richa
  */
 public interface GetRecordService {
-  
-  public void getRecord(String baseUrl) throws MalformedURLException, IOException, JAXBException,ParseException;
-  public HarRecordMetadataDc getMetadataFromObj(OAIDC oaiDC, HarRecordMetadataDc recordMetadataDc); 
-  public void setHarRepo(HarRepo harRepo);
-  public void setMetadataPrefix(String metadataPrefix);
-  
+
+    public boolean saveGetRecord(String baseURL, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException;
+
+    public boolean saveGetRecord(HarRepo repository, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException;
+
+    public boolean saveGetRecordList(List<RecordType> recordTypeList, HarRepo repository, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException;
+
+    public HarRecordMetadataDc convertOAIDCToHarRecordMetadataDc(OAIDC oaiDC);
+
 }

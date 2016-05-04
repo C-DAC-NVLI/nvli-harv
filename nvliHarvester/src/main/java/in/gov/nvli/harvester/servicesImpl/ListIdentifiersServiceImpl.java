@@ -23,6 +23,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +38,7 @@ public class ListIdentifiersServiceImpl implements ListIdentifiersService {
     
     private HttpURLConnection connection;
     private HarRepo repository;
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ListIdentifiersService.class);
+    Logger LOGGER = LoggerFactory.getLogger(ListIdentifiersService.class);
     static int i = 0;
 
     @Override

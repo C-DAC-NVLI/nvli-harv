@@ -5,9 +5,7 @@
  */
 package in.gov.nvli.harvester.controllers;
 
-import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
-import in.gov.nvli.harvester.beans.HarRepo;
-import in.gov.nvli.harvester.dao.RepositoryDao;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @EnableAsync
 public class ListRecordsController {
 
-  @Autowired
-  public ListRecordsService listRecordsService;
+    @Autowired
+    public ListRecordsService listRecordsService;
 
-  @Autowired
-  RepositoryDao repositoryDao;
-
-  @RequestMapping("/listrecords")
-  public String listRecord(@RequestParam("baseURL") String baseURL, @RequestParam("metadataPrefix") String metadataPrefix, HttpServletRequest servletRequest) {
-    String requestURL = baseURL + "?verb=" + VerbType.LIST_RECORDS.value() + "&metadataPrefix=" + metadataPrefix;
-    System.err.println("base url" + requestURL);
-    HarRepo harRepo = repositoryDao.getRepository(baseURL);
-    listRecordsService.setServletContext(servletRequest.getServletContext());
-    listRecordsService.setHarRepo(harRepo);
-    listRecordsService.setMetadataPrefix(metadataPrefix);
-    listRecordsService.getListRecord(requestURL);
-    return "example";
-  }
+    @RequestMapping("/listrecords")
+    public String listRecord(@RequestParam("baseURL") String baseURL, @RequestParam("metadataPrefix") String metadataPrefix, HttpServletRequest servletRequest) {
+        listRecordsService.setServletContext(servletRequest.getServletContext());
+        listRecordsService.saveListRecords(baseURL, metadataPrefix, MethodEnum.GET, "", false);
+        return "example";
+    }
 
 }

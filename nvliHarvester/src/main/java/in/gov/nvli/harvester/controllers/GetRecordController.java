@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.servicesImpl.GetRecordServiceImpl;
@@ -29,21 +30,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class GetRecordController {
 
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(GetRecordController.class);
-    @Autowired
-    public GetRecordService getRecordService;
 
     @Autowired
-    RepositoryDao repositoryDao;
+    public GetRecordService getRecordService;
 
     @RequestMapping("/getrecord")
     public String getRecord(@RequestParam("baseURL") String baseURL, @RequestParam("identifier") String identifier, @RequestParam("metadataPrefix") String metadataPrefix) {
 
-        String requestURL = baseURL + "?verb=" + VerbType.GET_RECORD.value() + "&identifier=" + identifier + "&metadataPrefix=" + metadataPrefix;
-        HarRepo harRepo = repositoryDao.getRepository(baseURL);
         try {
-            getRecordService.setHarRepo(harRepo);
-            getRecordService.setMetadataPrefix(metadataPrefix);
-            getRecordService.getRecord(requestURL);
+
+            getRecordService.saveGetRecord(baseURL, MethodEnum.GET, "", identifier, metadataPrefix);
         } catch (MalformedURLException | JAXBException | ParseException ex) {
             LOGGER.error(ex.getMessage(), ex);
 

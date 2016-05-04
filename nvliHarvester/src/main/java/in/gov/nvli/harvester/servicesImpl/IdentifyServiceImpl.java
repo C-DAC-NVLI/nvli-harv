@@ -59,7 +59,7 @@ public class IdentifyServiceImpl implements IdentifyService {
                 compressions = new StringBuilder(temp);
                 tempflag = false;
             } else {
-                compressions.append(CommonConstants.COLUMNVALUESEPARARTOR);
+                compressions.append(CommonConstants.COLUMN_VALUE_SEPARATOR);
                 compressions.append(temp);
             }
         }
