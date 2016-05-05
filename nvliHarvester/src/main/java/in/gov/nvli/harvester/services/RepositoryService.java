@@ -49,4 +49,8 @@ public interface RepositoryService {
     void validateRepositories(List<Integer> repositoryIds);
 
     boolean isRepositoryValid(int repositoryId);
+    
+    public HarRepo getRepositoryByUID(int repoUID);
+
+    public List<HarRepo> getRepositoriesByUIDS(List<Integer> repoUIDS);
 }

@@ -19,4 +19,8 @@ public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
 
     public HarRepo getRepository(String baseURL);
 
+    public HarRepo getRepository(int repoUID);
+
+    public List<HarRepo> getRepositories(List<Integer> repoUIDS);
+
 }
