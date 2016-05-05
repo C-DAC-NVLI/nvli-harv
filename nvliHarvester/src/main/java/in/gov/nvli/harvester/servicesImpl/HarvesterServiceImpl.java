@@ -41,10 +41,35 @@ public class HarvesterServiceImpl implements HarvesterService {
   RepositoryDao repositoryDao;
 
   @Override
-  @Async
-  public void harvestRepository(String baseURL, ServletContext servletContext) {
+  public boolean harvestRepository(String baseURL, ServletContext servletContext) {
 
     HarRepo harRepo = repositoryDao.getRepository(baseURL);
+    try {
+      harvestRepository(harRepo,servletContext);
+    } catch (Exception ex) {
+      LOGGER.error(ex.getMessage(),ex);
+      return false;
+    }
+   return true;
+  }
+
+  
+  @Override
+  public boolean harvestRepository(int repoUID, ServletContext servletContext) {
+
+    HarRepo harRepo = repositoryDao.getRepository(repoUID);
+    try {
+      harvestRepository(harRepo,servletContext);
+    } catch (Exception ex) {
+      LOGGER.error(ex.getMessage(),ex);
+      return false;
+    }
+   return true;
+  }
+  
+
+  @Async
+  private void harvestRepository(HarRepo harRepo, ServletContext servletContext) {
     try {
       listSetsService.saveHarSets(harRepo,MethodEnum.GET,"");
 
@@ -57,7 +82,9 @@ public class HarvesterServiceImpl implements HarvesterService {
     }
 
   }
-
+  
+  
+  
   @Override
   public void harvestAllRepositories(ServletContext servletContext) {
     List<HarRepo> harRepos = repositoryDao.list();
@@ -70,7 +97,6 @@ public class HarvesterServiceImpl implements HarvesterService {
   @Async
   public void harvestRepositories(List<HarRepo> harRepos,ServletContext servletContext) {
     if (harRepos != null) {
-      String desiredURL;
         for (HarRepo harRepo : harRepos) {
         try {
             
