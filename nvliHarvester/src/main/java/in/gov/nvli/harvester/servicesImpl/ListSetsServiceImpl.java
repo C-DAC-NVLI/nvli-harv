@@ -7,9 +7,13 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.SetType;
+import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
+import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSet;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarSetDao;
+import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIBeanConverter;
@@ -32,16 +36,26 @@ public class ListSetsServiceImpl implements ListSetsService {
 
     @Autowired
     public HarSetDao harSetDao;
+
+    @Autowired
+    RepositoryDao repositoryDao;    
     
     private List<SetType> getSetTypeList(HttpURLConnection connection) throws IOException, JAXBException {
         String response = OAIResponseUtil.createResponseFromXML(connection);
         OAIPMHtype obj = (OAIPMHtype) UnmarshalUtils.xmlToOaipmh(response);
         return obj.getListSets().getSet();
     }
+    
+    @Override
+    public boolean saveHarSets(String baseURL, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        HarRepo repository = repositoryDao.getRepository(baseURL);
+        return saveHarSets(repository, method, adminEmail);
+    }
 
     @Override
-    public boolean saveHarSets(String baseUrl, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
-        return saveOrUpdate(baseUrl, method, adminEmail, false);
+    public boolean saveHarSets(HarRepo repository, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_SETS.value();
+        return saveOrUpdate(desiredURL, method, adminEmail, false);
     }
     
     private boolean saveOrUpdate(String baseUrl, MethodEnum method, String adminEmail, boolean updateFlag) throws MalformedURLException, IOException, JAXBException{
@@ -67,7 +81,8 @@ public class ListSetsServiceImpl implements ListSetsService {
     }
 
     @Override
-    public boolean saveOrUpdateHarSets(String baseUrl, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
-        return saveOrUpdate(baseUrl, method, adminEmail, true);
+    public boolean saveOrUpdateHarSets(HarRepo repository, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_SETS.value();
+        return saveOrUpdate(desiredURL, method, adminEmail, true);
     }
 }

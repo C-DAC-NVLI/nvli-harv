@@ -8,6 +8,7 @@ package in.gov.nvli.harvester.controllers;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import java.io.IOException;
@@ -36,16 +37,12 @@ public class IdentifyController {
    public ModelAndView identify(@RequestParam("baseURL") String baseURL)
    {
        identifyService=new IdentifyServiceImpl();
-       baseURL=baseURL+"?verb="+VerbType.IDENTIFY.value();
+       
         ModelAndView mv=new ModelAndView("identify");
         try {
-           int status= identifyService.getConnectionStatus(baseURL, "", "","");
-           mv.addObject("status",status);
-            if(!(status<0))
-            {
-                HarRepo repo=identifyService.getRepositoryInformation();
+               HarRepo repo=identifyService.getIdentify(baseURL, MethodEnum.GET, "");
                 mv.addObject("repo",repo);
-            }
+            
             
         } catch (MalformedURLException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);

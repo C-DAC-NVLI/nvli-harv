@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.IdentifyType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.MethodEnum;
@@ -27,90 +28,71 @@ import org.springframework.stereotype.Service;
  * @author vootla
  */
 @Service
-public class IdentifyServiceImpl implements IdentifyService{
+public class IdentifyServiceImpl implements IdentifyService {
 
-  
-    private HttpURLConnection connection;
-   @Override
-    public HarRepo getRepositoryInformation() throws IOException,JAXBException
-    {
-        String response=OAIResponseUtil.createResponseFromXML(connection);
-        OAIPMHtype obj= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response); 
-        IdentifyType identifyObj = obj.getIdentify();
-       
-//        HarRepoDetail repoDetails=new HarRepoDetail();
-//        repoDetails.setRepoDetailCompression(response);
-//        repoDetails.setRepoDetailDesc(response);
-//        repoDetails.setRepoDetailEmail(response);
-        
-        HarRepo repo=new HarRepo();
-        repo.setRepoName(identifyObj.getRepositoryName());
-        repo.setRepoBaseUrl(identifyObj.getBaseURL());
-        repo.setRepoProtocolVersion(identifyObj.getProtocolVersion());
-        Date d=DatesRelatedUtil.convertDateToGranularityFormat(identifyObj.getGranularity().value(), identifyObj.getEarliestDatestamp());
-        repo.setRepoEarliestTimestamp(d);  
-        repo.setRepoGranularityDate(identifyObj.getGranularity().value());
-        repo.setRepoDeletionMode(identifyObj.getDeletedRecord().value());
-      StringBuilder compressions=null;
-      boolean tempflag=true;
-       for(String temp:identifyObj.getCompression())
-       {
-           if(tempflag)
-           {
-               compressions=new StringBuilder(temp);
-               tempflag=false;
-           }else
-           {
-              compressions.append(CommonConstants.COLUMNVALUESEPARARTOR+temp);
-           }
-       }
-        repo.setRepoCompression(compressions.toString());
-        
+    private IdentifyType getIdentifyTypeObject(HttpURLConnection connection) throws IOException, JAXBException {
+        String response = OAIResponseUtil.createResponseFromXML(connection);
+        OAIPMHtype obj = (OAIPMHtype) UnmarshalUtils.xmlToOaipmh(response);
+        return obj.getIdentify();
+    }
+
+    @Override
+    public HarRepo convertIdentifyTypeToHarRepo(IdentifyType identifyTypeObject) {
+        if (identifyTypeObject == null) {
+            return null;
+        }
+        HarRepo repo = new HarRepo();
+        repo.setRepoName(identifyTypeObject.getRepositoryName());
+        repo.setRepoBaseUrl(identifyTypeObject.getBaseURL());
+        repo.setRepoProtocolVersion(identifyTypeObject.getProtocolVersion());
+
+        Date repoDate = DatesRelatedUtil.convertDateToGranularityFormat(identifyTypeObject.getGranularity().value(), identifyTypeObject.getEarliestDatestamp());
+        repo.setRepoEarliestTimestamp(repoDate);
+
+        repo.setRepoGranularityDate(identifyTypeObject.getGranularity().value());
+        repo.setRepoDeletionMode(identifyTypeObject.getDeletedRecord().value());
+
+        StringBuilder compressions = null;
+        boolean tempflag = true;
+        for (String temp : identifyTypeObject.getCompression()) {
+            if (tempflag) {
+                compressions = new StringBuilder(temp);
+                tempflag = false;
+            } else {
+                compressions.append(CommonConstants.COLUMN_VALUE_SEPARATOR);
+                compressions.append(temp);
+            }
+        }
+
+        if (compressions != null) {
+            repo.setRepoCompression(compressions.toString());
+        }
+
         return repo;
     }
-   @Override
-   public int getConnectionStatus(String  baseURL,String method,String userAgnet,String adminEmail) throws MalformedURLException, IOException
-   {
-       connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
-       if(HttpURLConnectionUtil.isConnectionAlive(connection)){
-           return 1;
-       }else{
-           connection.disconnect();
-           return -1;
-       }
-       
-   }
 
     @Override
-    public HarRepo getRepositoryInformation(String baseURL) throws MalformedURLException,IOException, JAXBException 
-    {
-         connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
-        if(connection.getResponseCode()!=200)
-       {
-           connection.disconnect();
-           return null;
-       }else
-          {
-              return getRepositoryInformation();
-          }
+    public HarRepo getIdentify(String baseURL, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        String desiredURL = baseURL+CommonConstants.VERB+VerbType.IDENTIFY.value();
+        HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, MethodEnum.GET, adminEmail);
+        if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
+            IdentifyType identifyTypeObject = getIdentifyTypeObject(connection);
+            return convertIdentifyTypeToHarRepo(identifyTypeObject);
+        } else {
+            connection.disconnect();
+            return null;
+        }
     }
 
     @Override
-    public IdentifyType identify(String baseURL, String adminEmail) throws MalformedURLException, IOException, JAXBException {
-        connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
-       if(HttpURLConnectionUtil.isConnectionAlive(connection)){
-           String response=OAIResponseUtil.createResponseFromXML(connection);
-        OAIPMHtype obj= (OAIPMHtype)UnmarshalUtils.xmlToOaipmh(response); 
-        IdentifyType identifyObj = obj.getIdentify();
-        return  identifyObj;
-       }else{
-           connection.disconnect();
-           return null;
-       }
-        
-       
-       
+    public IdentifyType getIdentifyTypeObject(String baseURL, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        String desiredURL = baseURL+CommonConstants.VERB+VerbType.IDENTIFY.value();
+        HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, MethodEnum.GET, adminEmail);
+        if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
+            return getIdentifyTypeObject(connection);
+        } else {
+            connection.disconnect();
+            return null;
+        }
     }
 }
-    
-

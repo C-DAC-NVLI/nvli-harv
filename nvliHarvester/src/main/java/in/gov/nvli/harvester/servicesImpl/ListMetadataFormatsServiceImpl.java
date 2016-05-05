@@ -7,9 +7,11 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarMetadataTypeRepositoryDao;
@@ -34,91 +36,50 @@ import org.springframework.stereotype.Service;
 @Service
 public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsService {
 
-    private HttpURLConnection connection;
-
     @Autowired
     private HarMetadataTypeDao harMetadataTypeDao;
 
     @Autowired
     private HarMetadataTypeRepositoryDao harMetadataTypeRepositoryDao;
 
-    private HarRepo repository = null;
-
-    @Override
-    public int getConnectionStatus(String baseURL, String method, String userAgnet, String adminEmail) throws MalformedURLException, IOException {
-        connection = HttpURLConnectionUtil.getConnection(baseURL, MethodEnum.GET, "");
-        boolean status = HttpURLConnectionUtil.isConnectionAlive(connection);
-        if (status == false) {
-            connection.disconnect();
-            return -1;
-        }else{
-            return 1;
-        }
-        
-    }
-
-    @Override
-    public List<MetadataFormatType> getListMetadataFormats() throws IOException, JAXBException {
+    private List<MetadataFormatType> getMetadataFormatTypeList(HttpURLConnection connection) throws IOException, JAXBException {
         String response = OAIResponseUtil.createResponseFromXML(connection);
         OAIPMHtype obj = (OAIPMHtype) UnmarshalUtils.xmlToOaipmh(response);
         return obj.getListMetadataFormats().getMetadataFormat();
     }
 
     @Override
-    public boolean saveListOfMetadataFormats() throws IOException, JAXBException {
-        List<HarMetadataType> metadatFormts = new ArrayList<>();
-        for (MetadataFormatType metadataFormatType : getListMetadataFormats()) {
-            metadatFormts.add(OAIBeanConverter.metadataFormatTypeToHarMetadataType(metadataFormatType));
-        }
-        if (harMetadataTypeDao.saveHarMetadataTypes(metadatFormts)) {
-            return saveListOfMetadataFormatsOfRepository(metadatFormts);
-        } else {
-            return false;
-        }
+    public boolean saveHarMetadataTypes(HarRepo repo, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        String desiredURL = repo.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value();
+        return saveOrUpdate(desiredURL, method, adminEmail, repo);
     }
 
-    @Override
-    public List<MetadataFormatType> getListMetadataFormats(String baseUrl) throws MalformedURLException, IOException, JAXBException {
-        connection = HttpURLConnectionUtil.getConnection(baseUrl, MethodEnum.GET, "");
-        if (connection.getResponseCode() != 200) {
-            connection.disconnect();
-            return null;
-        } else {
-            return getListMetadataFormats();
-        }
-
-    }
-
-    @Override
-    public boolean saveListOfMetadataFormats(String baseUrl) throws MalformedURLException, IOException, JAXBException {
-        connection = HttpURLConnectionUtil.getConnection(baseUrl, MethodEnum.GET, "");
-        if (connection.getResponseCode() != 200) {
+    private boolean saveOrUpdate(String baseUrl, MethodEnum method, String adminEmail, HarRepo repo) throws MalformedURLException, IOException, JAXBException {
+        HttpURLConnection connection = HttpURLConnectionUtil.getConnection(baseUrl, method, adminEmail);
+        if (!HttpURLConnectionUtil.isConnectionAlive(connection)) {
             connection.disconnect();
             return false;
         } else {
-            return saveListOfMetadataFormats();
+            List<HarMetadataType> harMetadataTypeList = OAIBeanConverter.convertMetadataFormatTypeToHarMetadataType(getMetadataFormatTypeList(connection));
+            connection.disconnect();
+            if (harMetadataTypeDao.saveHarMetadataTypes(harMetadataTypeList)) {
+                return saveHarMetadataTypeRepositoryList(harMetadataTypeList, repo);
+            } else {
+                return false;
+            }
         }
     }
 
-    public boolean saveListOfMetadataFormatsOfRepository(List<HarMetadataType> metadataOfRepo) {
+    private boolean saveHarMetadataTypeRepositoryList(List<HarMetadataType> harMetadataTypeList, HarRepo repository) {
         HarMetadataTypeRepository obj = null;
         List<HarMetadataTypeRepository> metadatOfRepo = new ArrayList<>();
-        for (HarMetadataType meataData : metadataOfRepo) {
+        for (HarMetadataType meataData : harMetadataTypeList) {
             obj = new HarMetadataTypeRepository();
             obj.setRepoId(repository);
             obj.setMetadataTypeId(harMetadataTypeDao.getMetadataTypeByMetadatPrefix(meataData.getMetadataPrefix()));
             metadatOfRepo.add(obj);
         }
         return harMetadataTypeRepositoryDao.saveHarMetadataTypesOfRepository(metadatOfRepo);
-    }
-
-    public HarRepo getRepository() {
-        return repository;
-    }
-
-    @Override
-    public void setRepository(HarRepo repository) {
-        this.repository = repository;
     }
 
 }

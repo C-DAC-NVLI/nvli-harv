@@ -5,7 +5,8 @@
  */
 package in.gov.nvli.harvester.services;
 
-import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
+import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.customised.MethodEnum;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
@@ -15,8 +16,11 @@ import javax.xml.bind.JAXBException;
  * @author richa
  */
 public interface ListIdentifiersService {
-  
-  public void getListIdentifiers(String baseUrl) throws MalformedURLException, IOException, JAXBException;
-  public void getRecordFromIdentifiers(String baseUrl,String identifier,String metadataPrefix);
-  
+
+    public void getListIdentifiers(String basUrl, MethodEnum method, String adminEmail, String metadataPrefix) throws MalformedURLException, IOException, JAXBException;
+            
+    public void getListIdentifiers(HarRepo repository, MethodEnum method, String adminEmail, String metadataPrefix) throws MalformedURLException, IOException, JAXBException;
+
+    public void getRecordByIdentifiers(HarRepo repository, MethodEnum method, String adminEmail, String identifier, String metadataPrefix);
+
 }
