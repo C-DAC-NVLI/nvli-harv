@@ -21,9 +21,9 @@ public class HttpURLConnectionUtil {
     private static final int RESPONSE_CODE_SUCCESS = 200;
 
     public static HttpURLConnection getConnection(String baseURL, MethodEnum method, String adminEmail) throws ProtocolException, MalformedURLException, IOException {
-        if (adminEmail == null || adminEmail.isEmpty() || adminEmail == "") {
-            return null;
-        }
+//        if (adminEmail == null || adminEmail.isEmpty() || adminEmail == "") {
+//            return null;
+//        }
         URL identifyRequestURL = new URL(baseURL);
 
         HttpURLConnection con = (HttpURLConnection) identifyRequestURL.openConnection();

@@ -15,9 +15,13 @@ import javax.servlet.ServletContext;
  */
 public interface ListRecordsService {
 
-    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag);
+    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail);
 
-    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag);
+    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail);
+
+    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail);
+
+    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail);
 
     public void setServletContext(ServletContext servletContext);
 

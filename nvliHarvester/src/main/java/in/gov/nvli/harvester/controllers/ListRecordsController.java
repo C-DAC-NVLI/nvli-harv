@@ -28,7 +28,7 @@ public class ListRecordsController {
     @RequestMapping("/listrecords")
     public String listRecord(@RequestParam("baseURL") String baseURL, @RequestParam("metadataPrefix") String metadataPrefix, HttpServletRequest servletRequest) {
         listRecordsService.setServletContext(servletRequest.getServletContext());
-        listRecordsService.saveListRecords(baseURL, metadataPrefix, MethodEnum.GET, "", false);
+        listRecordsService.saveListRecords(baseURL, metadataPrefix, MethodEnum.GET, "");
         return "example";
     }
 

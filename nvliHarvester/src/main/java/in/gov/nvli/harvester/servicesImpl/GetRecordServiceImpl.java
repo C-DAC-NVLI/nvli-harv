@@ -77,7 +77,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     @Override
     public boolean saveGetRecord(HarRepo harRepoObj, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException {
         HarRecord record;
-        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.GET_RECORD + CommonConstants.IDENTIFIER + identifier + CommonConstants.METADATA_PREFIX + metadataPrefix;
+        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.GET_RECORD.value() + CommonConstants.IDENTIFIER + identifier + CommonConstants.METADATA_PREFIX + metadataPrefix;
         HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
 
         if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
@@ -86,9 +86,7 @@ public class GetRecordServiceImpl implements GetRecordService {
             record = saveHarRecord(recordTypeObject, metadataPrefix, harRepoObj);
             if (null != record) {
                 if (saveHarSetRecord(recordTypeObject, record)) {
-                    if (saveHarRecordMetadataDc(recordTypeObject, record)) {
-                        return true;
-                    }
+                    saveHarRecordMetadataDc(recordTypeObject, record);
                 }
             }
             return false;
@@ -98,6 +96,17 @@ public class GetRecordServiceImpl implements GetRecordService {
         }
     }
 
+    /**
+     *
+     * @param recordTypeList
+     * @param repository
+     * @param metadataPrefix
+     * @return
+     * @throws MalformedURLException
+     * @throws IOException
+     * @throws JAXBException
+     * @throws ParseException
+     */
     @Override
     public boolean saveGetRecordList(List<RecordType> recordTypeList, HarRepo repository, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException {
         HarRecord harRecordObject;
@@ -105,9 +114,7 @@ public class GetRecordServiceImpl implements GetRecordService {
             harRecordObject = saveHarRecord(recordTypeObject, metadataPrefix, repository);
             if (null != harRecordObject) {
                 if (saveHarSetRecord(recordTypeObject, harRecordObject)) {
-                    if (saveHarRecordMetadataDc(recordTypeObject, harRecordObject)) {
-                        return true;
-                    }
+                    saveHarRecordMetadataDc(recordTypeObject, harRecordObject);
                 }
             }
         }
@@ -122,6 +129,16 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
 
     private HarRecord saveHarRecord(RecordType recordTypeObject, String metadataPrefix, HarRepo harRepoObject) throws ParseException {
+        HarRecord harRecordObject = getHarRecordByRecordType(recordTypeObject, metadataPrefix, harRepoObject);
+
+        recordDao.createNew(harRecordObject);
+
+        return harRecordObject;
+
+    }
+
+    @Override
+    public HarRecord getHarRecordByRecordType(RecordType recordTypeObject, String metadataPrefix, HarRepo harRepoObject) throws ParseException {
         HarRecord harRecordObject = new HarRecord();
         harRecordObject.setRecordIdentifier(recordTypeObject.getHeader().getIdentifier());
         DateFormat formatter = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
@@ -145,13 +162,24 @@ public class GetRecordServiceImpl implements GetRecordService {
             harRecordObject.setRecordStatus(CommonConstants.RECORD_DELETED);
         }
 
-        recordDao.createNew(harRecordObject);
-
         return harRecordObject;
 
     }
 
     private boolean saveHarSetRecord(RecordType recordTypeObject, HarRecord harRecordObject) {
+        List<HarSetRecord> harSetRecords = getHarSetRecordListByRecordType(recordTypeObject, harRecordObject);
+        return harSetRecordDao.saveList(harSetRecords);
+
+    }
+
+    /**
+     *
+     * @param recordTypeObject
+     * @param harRecordObject
+     * @return
+     */
+    @Override
+    public List<HarSetRecord> getHarSetRecordListByRecordType(RecordType recordTypeObject, HarRecord harRecordObject) {
         HarSetRecord harSetRecord;
         List<HarSetRecord> harSetRecords = new ArrayList<>();
         HarSet harSetObject;
@@ -168,14 +196,35 @@ public class GetRecordServiceImpl implements GetRecordService {
                 harSetRecords.add(harSetRecord);
             }
         }
-        return harSetRecordDao.saveList(harSetRecords);
+        return harSetRecords;
 
     }
 
     private boolean saveHarRecordMetadataDc(RecordType recordTypeObject, HarRecord harRecordObject) {
-        HarRecordMetadataDc recordMetadataDc = convertOAIDCToHarRecordMetadataDc(recordTypeObject.getMetadata().getOaidc());
-        recordMetadataDc.setRecordId(harRecordObject);
-        return metadataDcDao.createNew(recordMetadataDc);
+        HarRecordMetadataDc recordMetadataDc = getHarRecordMetadataDcByRecordType(recordTypeObject, harRecordObject);
+        if (recordMetadataDc != null) {
+            return metadataDcDao.createNew(recordMetadataDc);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param recordTypeObject
+     * @param harRecordObject
+     * @return
+     */
+    @Override
+    public HarRecordMetadataDc getHarRecordMetadataDcByRecordType(RecordType recordTypeObject, HarRecord harRecordObject) {
+        HarRecordMetadataDc recordMetadataDc = null;
+        if (recordTypeObject.getHeader().getStatus() != StatusType.DELETED) {
+            recordMetadataDc = convertOAIDCToHarRecordMetadataDc(recordTypeObject.getMetadata().getOaidc());
+            recordMetadataDc.setRecordId(harRecordObject);
+            return recordMetadataDc;
+        }
+        return recordMetadataDc;
+
     }
 
     @Override

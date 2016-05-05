@@ -25,78 +25,76 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class HarvesterServiceImpl implements HarvesterService {
-  
-  private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HarvesterServiceImpl.class);
 
-  @Autowired
-  ListSetsService listSetsService;
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HarvesterServiceImpl.class);
 
-  @Autowired
-  ListMetadataFormatsService listMetadataFormatsService;
+    @Autowired
+    ListSetsService listSetsService;
 
-  @Autowired
-  ListRecordsService listRecordsService;
+    @Autowired
+    ListMetadataFormatsService listMetadataFormatsService;
 
-  @Autowired
-  RepositoryDao repositoryDao;
+    @Autowired
+    ListRecordsService listRecordsService;
 
-  @Override
-  @Async
-  public void harvestRepository(String baseURL, ServletContext servletContext) {
+    @Autowired
+    RepositoryDao repositoryDao;
 
-    HarRepo harRepo = repositoryDao.getRepository(baseURL);
-    try {
-      listSetsService.saveHarSets(harRepo,MethodEnum.GET,"");
+    @Override
+    @Async
+    public void harvestRepository(String baseURL, ServletContext servletContext) {
 
-      listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-
-      listRecordsService.setServletContext(servletContext);
-      listRecordsService.saveListRecords(harRepo,  "oai_dc", MethodEnum.GET, "", false);
-    } catch (Exception ex) {
-      LOGGER.error(ex.getMessage(),ex);
-    }
-
-  }
-
-  @Override
-  @Async
-  public void harvestAllRepositories(ServletContext servletContext) {
-    List<HarRepo> harRepos = repositoryDao.list();
-    if (harRepos != null) {
-      String desiredURL;
-        for (HarRepo harRepo : harRepos) {
-        try {
-            
-          listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
-
-          
-          
-          listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-
-          listRecordsService.setServletContext(servletContext);
-          listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", false);
-        } catch (Exception ex) {
-          LOGGER.error(ex.getMessage(),ex);
-        }
-      }
-    }
-  }
-  
-  @Override
-   @Async
-    public void harvestRepositoryIncremental(String baseURL, ServletContext servletContext) {
-        
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
         try {
-        listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
+            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
 
-        
-        listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
-        listRecordsService.setServletContext(servletContext);
-        listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", false );
-        }catch(Exception e){
-            LOGGER.error(e.getMessage(),e);
+            listRecordsService.setServletContext(servletContext);
+            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
+
+    }
+
+    @Override
+    @Async
+    public void harvestAllRepositories(ServletContext servletContext) {
+        List<HarRepo> harRepos = repositoryDao.list();
+        if (harRepos != null) {
+            String desiredURL;
+            for (HarRepo harRepo : harRepos) {
+                try {
+
+                    listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
+
+                    listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+
+                    listRecordsService.setServletContext(servletContext);
+                    listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+                    System.err.println("Done for Repository " + harRepo.getRepoBaseUrl());
+                } catch (Exception ex) {
+                    LOGGER.error(ex.getMessage(), ex);
+                }
+            }
+        }
+    }
+
+    @Override
+    @Async
+    public void harvestRepositoryIncremental(String baseURL, ServletContext servletContext) {
+
+        HarRepo harRepo = repositoryDao.getRepository(baseURL);
+        try {
+            listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
+
+            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+
+            listRecordsService.setServletContext(servletContext);
+            listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -106,16 +104,15 @@ public class HarvesterServiceImpl implements HarvesterService {
         List<HarRepo> harRepos = repositoryDao.list();
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
-                try{
-                listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
+                try {
+                    listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
 
-                
-                listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+                    listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
-                listRecordsService.setServletContext(servletContext);
-                listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", false );
-                }catch(Exception e){
-                    LOGGER.error(e.getMessage(),e);
+                    listRecordsService.setServletContext(servletContext);
+                    listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

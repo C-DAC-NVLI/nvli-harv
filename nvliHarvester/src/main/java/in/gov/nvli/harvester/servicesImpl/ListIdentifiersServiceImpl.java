@@ -35,7 +35,7 @@ public class ListIdentifiersServiceImpl implements ListIdentifiersService {
 
     @Autowired
     RepositoryDao repositoryDao;
-    
+
     private HttpURLConnection connection;
     private HarRepo repository;
     Logger LOGGER = LoggerFactory.getLogger(ListIdentifiersService.class);
@@ -44,14 +44,14 @@ public class ListIdentifiersServiceImpl implements ListIdentifiersService {
     @Override
     public void getListIdentifiers(String basUrl, MethodEnum method, String adminEmail, String metadataPrefix) throws MalformedURLException, IOException, JAXBException {
         this.repository = repositoryDao.getRepository(basUrl);
-        String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS + CommonConstants.METADATA_PREFIX + metadataPrefix;
+        String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
         getListIdentifiersRecursive(desiredURL, method, adminEmail);
     }
-    
+
     @Override
     public void getListIdentifiers(HarRepo repository, MethodEnum method, String adminEmail, String metadataPrefix) throws MalformedURLException, IOException, JAXBException {
         this.repository = repository;
-        String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS + CommonConstants.METADATA_PREFIX + metadataPrefix;
+        String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
         getListIdentifiersRecursive(desiredURL, method, adminEmail);
     }
 
@@ -74,7 +74,7 @@ public class ListIdentifiersServiceImpl implements ListIdentifiersService {
 
             resumptionToken = listIdentifiers.getResumptionToken();
             if (resumptionToken != null) {
-                desiredUrl = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS + CommonConstants.RESUMPTION_TOKEN + resumptionToken.getValue();
+                desiredUrl = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken.getValue();
                 getListIdentifiersRecursive(desiredUrl, method, adminEmail);
             }
 
@@ -101,7 +101,7 @@ public class ListIdentifiersServiceImpl implements ListIdentifiersService {
     @Override
     public void getRecordByIdentifiers(HarRepo repository, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) {
         String desiredURL = repository.getRepoBaseUrl();
-        String requestUrl = desiredURL + CommonConstants.VERB + VerbType.GET_RECORD + "&identifier=" + identifier + "&metadataPrefix=" + metadataPrefix;
+        String requestUrl = desiredURL + CommonConstants.VERB + VerbType.GET_RECORD.value() + "&identifier=" + identifier + "&metadataPrefix=" + metadataPrefix;
         System.out.println("identifier " + identifier);
     }
 }

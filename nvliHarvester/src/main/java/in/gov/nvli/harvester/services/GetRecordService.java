@@ -6,8 +6,10 @@
 package in.gov.nvli.harvester.services;
 
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
+import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import java.io.IOException;
@@ -30,4 +32,9 @@ public interface GetRecordService {
 
     public HarRecordMetadataDc convertOAIDCToHarRecordMetadataDc(OAIDC oaiDC);
 
+    public HarRecord getHarRecordByRecordType(RecordType recordTypeObject, String metadataPrefix, HarRepo harRepoObject) throws ParseException;
+
+    public List<HarSetRecord> getHarSetRecordListByRecordType(RecordType recordTypeObject, HarRecord harRecordObject);
+
+    public HarRecordMetadataDc getHarRecordMetadataDcByRecordType(RecordType recordTypeObject, HarRecord harRecordObject);
 }
