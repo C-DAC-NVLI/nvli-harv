@@ -21,6 +21,8 @@ public class HarRepoCustomised implements Serializable {
 
     private Integer repoId;
     
+     private Integer repoUID;
+    
     private String repoName;
 
     private String repoBaseUrl;
@@ -341,6 +343,14 @@ public class HarRepoCustomised implements Serializable {
 
     public void setOrganizationLink(String organizationLink) {
         this.organizationLink = organizationLink;
+    }
+
+    public Integer getRepoUID() {
+        return repoUID;
+    }
+
+    public void setRepoUID(Integer repoUID) {
+        this.repoUID = repoUID;
     }
 
 }
