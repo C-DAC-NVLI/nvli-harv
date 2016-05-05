@@ -11,6 +11,7 @@ import in.gov.nvli.harvester.services.HarvesterService;
 import in.gov.nvli.harvester.services.RepositoryService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +64,7 @@ public class RepositoryResource
         return saveRepository(harRepoCustomised);
     }
     @POST
+    
     @Produces(MediaType.APPLICATION_JSON)
     public HarRepo saveRepositoryJSON(HarRepoCustomised harRepoCustomised)
     {
@@ -95,6 +97,18 @@ public class RepositoryResource
         harvesterService.harvestAllRepositories(context);
          return "started";
     }
+    
+    
+    @GET
+    @Path("/startlist")
+    @Produces(MediaType.APPLICATION_XML)
+    public String  startHarvestList(@QueryParam("baseURLS") String baseURLS)
+    {
+        List<String> myList = new ArrayList<String>(Arrays.asList(baseURLS.split(",")));
+        harvesterService.harvestAllRepositories(context);
+         return "started";
+    }
+    
     
     
     private HarRepo saveRepository(HarRepoCustomised harRepoCustomised)
