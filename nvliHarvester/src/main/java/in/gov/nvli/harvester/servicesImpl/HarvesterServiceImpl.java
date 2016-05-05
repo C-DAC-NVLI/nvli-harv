@@ -63,9 +63,16 @@ public class HarvesterServiceImpl implements HarvesterService {
   }
 
   @Override
-  @Async
   public void harvestAllRepositories(ServletContext servletContext) {
     List<HarRepo> harRepos = repositoryDao.list();
+    harvestRepositories(harRepos,servletContext);
+  }
+  
+  
+  
+  @Override
+  @Async
+  public void harvestRepositories(List<HarRepo> harRepos,ServletContext servletContext) {
     if (harRepos != null) {
       for (HarRepo harRepo : harRepos) {
         try {
@@ -86,6 +93,14 @@ public class HarvesterServiceImpl implements HarvesterService {
       }
     }
   }
+  
+  
+  
+  
+  
+  
+  
+  
   
   @Override
    @Async
