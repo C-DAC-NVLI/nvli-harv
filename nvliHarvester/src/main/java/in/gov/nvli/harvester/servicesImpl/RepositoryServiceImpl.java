@@ -118,4 +118,14 @@ public class RepositoryServiceImpl implements RepositoryService {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public HarRepo getRepositoryByUID(int repoUID) {
+       return repositoryDaoObject.get(repoUID);
+    }
+
+    @Override
+    public List<HarRepo> getRepositoriesByUIDS(List<Integer> repoUIDS) {
+        return repositoryDaoObject.getRepositories(repoUIDS);
+    }
+
 }
