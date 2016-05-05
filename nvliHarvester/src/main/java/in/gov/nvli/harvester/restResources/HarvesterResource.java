@@ -44,7 +44,7 @@ public class HarvesterResource {
     }
    
     @GET
-    @Path("/{repoUIDS}")
+    @Path("/list/{repoUIDS}")
     @Produces(MediaType.APPLICATION_XML)
     public String  startHarvestList(@PathParam("repoUIDS") String repoUIDS)
     {
