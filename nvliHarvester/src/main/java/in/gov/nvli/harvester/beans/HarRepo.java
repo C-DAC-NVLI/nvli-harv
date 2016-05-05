@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "HarRepo.findAll", query = "SELECT h FROM HarRepo h"),
     @NamedQuery(name = "HarRepo.findByRepoId", query = "SELECT h FROM HarRepo h WHERE h.repoId = :repoId"),
+    @NamedQuery(name = "HarRepo.findByRepoUID", query = "SELECT h FROM HarRepo h WHERE h.repoUID = :repoUID"),
     @NamedQuery(name = "HarRepo.findByRepoName", query = "SELECT h FROM HarRepo h WHERE h.repoName = :repoName"),
     @NamedQuery(name = "HarRepo.findByRepoBaseUrl", query = "SELECT h FROM HarRepo h WHERE h.repoBaseUrl = :repoBaseUrl"),
     @NamedQuery(name = "HarRepo.findByRepoProtocolVersion", query = "SELECT h FROM HarRepo h WHERE h.repoProtocolVersion = :repoProtocolVersion"),
@@ -64,6 +65,10 @@ public class HarRepo implements Serializable {
     @Basic(optional = false)
     @Column(name = "repo_id", nullable = false)
     private Integer repoId;
+    
+    @Column(name = "repo_uid", nullable = false)
+    private Integer repoUID;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
@@ -173,6 +178,16 @@ public class HarRepo implements Serializable {
         this.repoId = repoId;
     }
 
+    public Integer getRepoUID() {
+        return repoUID;
+    }
+
+    public void setRepoUID(Integer repoUID) {
+        this.repoUID = repoUID;
+    }
+
+    
+    
     public String getRepoName() {
         return repoName;
     }
