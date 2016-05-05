@@ -46,6 +46,7 @@ public class CustomBeansGenerator {
             repositoryObject.setRepoStatusId(harRepo.getRepoStatusId().getRepoStatusId());
             repositoryObject.setRepoLastSyncDate(harRepo.getRepoLastSyncDate());
             repositoryObject.setRepoActivationDate(harRepo.getRepoActivationDate());
+            repositoryObject.setRepoUID(harRepo.getRepoUID());
        
         return  repositoryObject;
     }
@@ -72,6 +73,7 @@ public class CustomBeansGenerator {
             repositoryObject.setRepoStatusId(new HarRepoStatus(harRepoCustomised.getRepoStatusId()));
             repositoryObject.setRepoLastSyncDate(harRepoCustomised.getRepoLastSyncDate());
             repositoryObject.setRepoActivationDate(harRepoCustomised.getRepoActivationDate());
+            repositoryObject.setRepoUID(harRepoCustomised.getRepoUID());
        
         return  repositoryObject;
     }
