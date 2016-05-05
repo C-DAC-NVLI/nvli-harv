@@ -32,24 +32,23 @@ public class IdentifyResource {
     
     public IdentifyService identifyService;
     
-
-    @GET
-    @Produces(MediaType.APPLICATION_XML)
-    public IdentifyTypeCustomised identifyXML(@QueryParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
-    {
-       identifyService=new IdentifyServiceImpl(); 
-       return CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identify(baseURL,adminEmail));
-    }
-    
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public IdentifyTypeCustomised identifyJSON(@QueryParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
-    {
-      
-        identifyService=new IdentifyServiceImpl();
-       return CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identify(baseURL,adminEmail));
-    }
-   
+//    @GET
+//    @Produces(MediaType.APPLICATION_XML)
+//    public IdentifyTypeCustomised identifyXML(@QueryParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+//    {
+//       identifyService=new IdentifyServiceImpl(); 
+//       return CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identify(baseURL,adminEmail));
+//    }
+//    
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public IdentifyTypeCustomised identifyJSON(@QueryParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+//    {
+//      
+//        identifyService=new IdentifyServiceImpl();
+//       return CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identify(baseURL,adminEmail));
+//    }
+//   
     @GET
     @Path("{baseURL}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,7 +59,7 @@ public class IdentifyResource {
         return CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identify(baseURL,adminEmail));
     }
     
-  @GET
+    @GET
     @Path("{baseURL}")
     @Produces(MediaType.APPLICATION_XML)
     public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
