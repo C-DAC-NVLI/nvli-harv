@@ -5,6 +5,8 @@
  */
 package in.gov.nvli.harvester.services;
 
+import in.gov.nvli.harvester.beans.HarRepo;
+import java.util.List;
 import javax.servlet.ServletContext;
 
 
@@ -20,5 +22,6 @@ public interface HarvesterService {
   
   public void harvestRepositoryIncremental(String baseURL,ServletContext servletContext);
   public void harvestAllRepositoriesIncremental(ServletContext servletContext);
+  public void harvestRepositories(List<HarRepo> harRepos,ServletContext servletContext);
   
 }
