@@ -82,13 +82,13 @@ public class HarvesterServiceImpl implements HarvesterService {
     }
 
     @Override
+    @Async
     public void harvestAllRepositories(ServletContext servletContext) {
         List<HarRepo> harRepos = repositoryDao.list();
         harvestRepositories(harRepos, servletContext);
     }
 
     @Override
-    @Async
     public void harvestRepositories(List<HarRepo> harRepos, ServletContext servletContext) {
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
@@ -113,12 +113,12 @@ public class HarvesterServiceImpl implements HarvesterService {
 
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
         try {
-            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
+            listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
 
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
             listRecordsService.setServletContext(servletContext);
-            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
         }
