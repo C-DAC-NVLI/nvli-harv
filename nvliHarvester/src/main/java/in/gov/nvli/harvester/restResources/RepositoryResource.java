@@ -7,20 +7,15 @@ package in.gov.nvli.harvester.restResources;
 
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
-import in.gov.nvli.harvester.services.HarvesterService;
 import in.gov.nvli.harvester.services.RepositoryService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,11 +28,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RepositoryResource 
 {
-    @Autowired
+   @Autowired
     private RepositoryService repositoryService;
-    
-    @Autowired
-    private HarvesterService harvesterService;
     
     @javax.ws.rs.core.Context 
     ServletContext context;
@@ -60,7 +52,6 @@ public class RepositoryResource
     @Produces(MediaType.APPLICATION_XML)
     public HarRepo saveRepositoryXML(HarRepoCustomised harRepoCustomised)
     {
-       System.out.println("sss xml"+harRepoCustomised.getRepoName());
         return saveRepository(harRepoCustomised);
     }
     @POST
@@ -68,46 +59,10 @@ public class RepositoryResource
     @Produces(MediaType.APPLICATION_JSON)
     public HarRepo saveRepositoryJSON(HarRepoCustomised harRepoCustomised)
     {
-        System.out.println("sss json"+harRepoCustomised.getRepoName());
         return saveRepository(harRepoCustomised);
     }
     
-    @GET
-    @Path("/start/{repoID}")
-    @Produces(MediaType.APPLICATION_XML)
-    public String  startHarvesting(@PathParam("repoID") int repoID)
-    {
-         //harvesterService.harvestReposiotires(repoID, request.getServletContext());
-         return "started";
-    }
-    @GET
-    @Path("/start")
-    @Produces(MediaType.APPLICATION_XML)
-    public String  startHarvest(@QueryParam("baseURL") String baseURL)
-    {
-        harvesterService.harvestRepository(baseURL, context);
-         return "started";
-    }
     
-   @GET
-    @Path("/startall")
-    @Produces(MediaType.APPLICATION_XML)
-    public String  startHarvestAll()
-    {
-        harvesterService.harvestAllRepositories(context);
-         return "started";
-    }
-    
-    
-    @GET
-    @Path("/startlist")
-    @Produces(MediaType.APPLICATION_XML)
-    public String  startHarvestList(@QueryParam("baseURLS") String baseURLS)
-    {
-        List<String> myList = new ArrayList<String>(Arrays.asList(baseURLS.split(",")));
-        harvesterService.harvestAllRepositories(context);
-         return "started";
-    }
     
     
     
