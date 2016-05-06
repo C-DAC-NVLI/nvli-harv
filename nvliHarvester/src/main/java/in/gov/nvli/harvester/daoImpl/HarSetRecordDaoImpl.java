@@ -40,7 +40,6 @@ public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> impl
     @Transactional
     public boolean saveOrUpdateHarSetRecords(List<HarSetRecord> setRecords) {
         HarSetRecord tempHarSetRecord = null;
-        HarRecord harRecord=null;
         try {
             for (HarSetRecord setRecord : setRecords) {
                 if(setRecord.getRecordId().getRecordId() != null ){
