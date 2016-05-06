@@ -43,16 +43,12 @@ public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> impl
         HarRecord harRecord=null;
         try {
             for (HarSetRecord setRecord : setRecords) {
-                if(setRecord.getRecordId().getRecordId() == null ){
-                    harRecord = harRecordDao.getHarRecordByRecordIdentifier(setRecord.getRecordId().getRecordIdentifier());
-                    setRecord.setRecordId(harRecord);
-                }
-                tempHarSetRecord = getHarSetRecord(setRecord.getRecordId(), setRecord.getSetId());
-                if (tempHarSetRecord == null) {
-                    if (!createNew(setRecord)) {
-                        return false;
+                if(setRecord.getRecordId().getRecordId() != null ){
+                    tempHarSetRecord = getHarSetRecord(setRecord.getRecordId(), setRecord.getSetId());
+                    if(tempHarSetRecord == null){
+                        createNew(setRecord);
                     }
-                } 
+                }
             }
             return true;
         } catch (Exception e) {

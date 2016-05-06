@@ -39,22 +39,17 @@ public class HarRecordMetadataDcDaoImpl extends GenericDaoImpl<HarRecordMetadata
     @TransactionalReadOrWrite
     public boolean saveOrUpdateHarRecordMetadataDcList(List<HarRecordMetadataDc> metadataDcs) {
         HarRecordMetadataDc tempHarRecordMetadataDc = null;
-        HarRecord harRecord=null;
         
         try {
             for (HarRecordMetadataDc metadataDc : metadataDcs) {
-                if(metadataDc.getRecordId().getRecordId() == null){
-                    harRecord = harRecordDao.getHarRecordByRecordIdentifier(metadataDc.getRecordId().getRecordIdentifier());
-                    metadataDc.setRecordId(harRecord);
-                }
-                tempHarRecordMetadataDc = GetByHarRecord(metadataDc.getRecordId());
-                if (tempHarRecordMetadataDc != null) {
-                    if(tempHarRecordMetadataDc.getRecordId().getRecordSoureDatestamp().compareTo(metadataDc.getRecordId().getRecordSoureDatestamp()) < 0){
+                if(metadataDc.getRecordId().getRecordId() != null){
+                    tempHarRecordMetadataDc = GetByHarRecord(metadataDc.getRecordId());
+                    if(tempHarRecordMetadataDc == null){
+                        createNew(metadataDc);
+                    }else{
                         metadataDc.setRecordMetadataDcId(tempHarRecordMetadataDc.getRecordMetadataDcId());
                         currentSession().merge(metadataDc);
                     }
-                } else if (!createNew(metadataDc)) {
-                    return false;
                 }
             }
             return true;
