@@ -90,7 +90,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
             listRecordsService.setServletContext(servletContext);
-            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getValue());
             if(harRepo.getOreEnableFlag()==1)
             {
@@ -105,6 +105,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     }
 
     @Override
+    @Async
     public void harvestAllRepositories(ServletContext servletContext) {
         List<HarRepo> harRepos = repositoryDao.list();
         harvestRepositories(harRepos, servletContext);
@@ -160,7 +161,7 @@ public class HarvesterServiceImpl implements HarvesterService {
                 }
         
         try {
-            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
+            listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
 
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 

@@ -36,9 +36,11 @@ public class HarRecordDaoImpl extends GenericDaoImpl<HarRecord, Long> implements
         try {
             for (HarRecord record : records) {
                 temprecord = getHarRecordByRecordIdentifier(record.getRecordIdentifier());
-                if (temprecord != null) {
-                    record.setRecordId(temprecord.getRecordId());
-                    currentSession().merge(record);
+                if (temprecord != null){
+                    if(temprecord.getRecordSoureDatestamp().compareTo(record.getRecordSoureDatestamp()) < 0){
+                        record.setRecordId(temprecord.getRecordId());
+                        currentSession().merge(record);
+                    }
                 } else {
                     createNew(record);
                 }

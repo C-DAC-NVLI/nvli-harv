@@ -142,7 +142,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                         harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecordList);
                     }
                     if (!harRecordMetadataDcList.isEmpty()) {
-                        harRecordMetadataDcDao.saveOrUpdateList(harRecordMetadataDcList);
+                        harRecordMetadataDcDao.saveOrUpdateHarRecordMetadataDcList(harRecordMetadataDcList);
                     }
                 } else {
                     if (!harRecordList.isEmpty()) {

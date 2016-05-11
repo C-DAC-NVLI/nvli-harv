@@ -9,11 +9,13 @@ import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
+import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> implements HarSetRecordDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HarSetRecordDaoImpl.class);
-
+    
+    @Autowired
+    private HarRecordDao harRecordDao;
+    
     public HarSetRecordDaoImpl() {
         super(HarSetRecord.class);
     }
@@ -37,12 +42,11 @@ public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> impl
         HarSetRecord tempHarSetRecord = null;
         try {
             for (HarSetRecord setRecord : setRecords) {
-                tempHarSetRecord = getHarSetRecord(setRecord.getRecordId(), setRecord.getSetId());
-                if (tempHarSetRecord != null) {
-                    setRecord.setSetRecordId(tempHarSetRecord.getSetRecordId());
-                    currentSession().merge(setRecord);
-                } else if (!createNew(setRecord)) {
-                    return false;
+                if(setRecord.getRecordId().getRecordId() != null ){
+                    tempHarSetRecord = getHarSetRecord(setRecord.getRecordId(), setRecord.getSetId());
+                    if(tempHarSetRecord == null){
+                        createNew(setRecord);
+                    }
                 }
             }
             return true;

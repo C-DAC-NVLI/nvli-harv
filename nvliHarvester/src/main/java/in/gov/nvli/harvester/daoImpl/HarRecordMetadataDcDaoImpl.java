@@ -9,11 +9,13 @@ import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
+import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -26,6 +28,9 @@ public class HarRecordMetadataDcDaoImpl extends GenericDaoImpl<HarRecordMetadata
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HarRecordMetadataDcDaoImpl.class);
 
+    @Autowired
+    private HarRecordDao harRecordDao;
+    
     public HarRecordMetadataDcDaoImpl() {
         super(HarRecordMetadataDc.class);
     }
@@ -34,14 +39,17 @@ public class HarRecordMetadataDcDaoImpl extends GenericDaoImpl<HarRecordMetadata
     @TransactionalReadOrWrite
     public boolean saveOrUpdateHarRecordMetadataDcList(List<HarRecordMetadataDc> metadataDcs) {
         HarRecordMetadataDc tempHarRecordMetadataDc = null;
+        
         try {
             for (HarRecordMetadataDc metadataDc : metadataDcs) {
-                tempHarRecordMetadataDc = GetByHarRecord(metadataDc.getRecordId());
-                if (tempHarRecordMetadataDc != null) {
-                    metadataDc.setRecordMetadataDcId(tempHarRecordMetadataDc.getRecordMetadataDcId());
-                    currentSession().merge(metadataDc);
-                } else if (!createNew(metadataDc)) {
-                    return false;
+                if(metadataDc.getRecordId().getRecordId() != null){
+                    tempHarRecordMetadataDc = GetByHarRecord(metadataDc.getRecordId());
+                    if(tempHarRecordMetadataDc == null){
+                        createNew(metadataDc);
+                    }else{
+                        metadataDc.setRecordMetadataDcId(tempHarRecordMetadataDc.getRecordMetadataDcId());
+                        currentSession().merge(metadataDc);
+                    }
                 }
             }
             return true;
