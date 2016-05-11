@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.daoImpl;
 
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
 import in.gov.nvli.harvester.dao.RepositoryDao;
@@ -14,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -54,7 +56,7 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     }
     
     @Override
-    public HarRepo getRepository(int repoUID) {
+    public HarRepo getRepositoryByUID(String repoUID) {
         HarRepo harRepo = null;
         try {
             harRepo = (HarRepo) currentSession().createCriteria(HarRepo.class).add(Restrictions.eq("repoUID", repoUID)).uniqueResult();
@@ -66,7 +68,7 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     }
 
     @Override
-    public List<HarRepo> getRepositories(List<Integer> repoUIDS) {
+    public List<HarRepo> getRepositories(List<String> repoUIDS) {
         List<HarRepo> harRepos = null;
         try {
             harRepos = currentSession().createCriteria(HarRepo.class).add(Restrictions.in("repoUID", repoUIDS)).list();
@@ -76,4 +78,72 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
         }
         return harRepos;
     }
+
+    @Override
+    public List<HarRepo> getRepositories() {
+        List<HarRepo> harRepos = null;
+        try {
+            harRepos = currentSession().createCriteria(HarRepo.class).list();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return harRepos;
+        }
+        return harRepos;
+    }
+    
+    
+    @Override
+    @TransactionalReadOrWrite
+    public boolean changeRepoStatus(List<String> repositoryUIDs, short status) {
+        
+       for(String repositoryUID:repositoryUIDs)
+       {
+           if(!changeRepoStatusInternal(repositoryUID, status))
+               return false;
+       }
+   return true;
+    }
+
+    @Override
+    @TransactionalReadOrWrite
+    public boolean changeRepoStatus(String repositoryUID, short status) {
+        return changeRepoStatusInternal(repositoryUID, status);
+    }
+
+    @Override
+    @TransactionalReadOrWrite
+    public boolean changeRepoStatusByHarRepo(List<HarRepo> repos, short status) {
+        try
+        {
+        for(HarRepo repo:repos)
+       {
+        HarRepoStatus repoStatus = (HarRepoStatus) currentSession().createCriteria(HarRepoStatus.class).add(Restrictions.eq("repoStatusId", status)).uniqueResult();
+        repo.setRepoStatusId(repoStatus);
+       currentSession().saveOrUpdate(repo); 
+       }
+        }catch(Exception e)
+        {
+            LOGGER.error(e.getMessage(), e);
+            return false;  
+        }
+        return true;
+    }
+
+    private boolean  changeRepoStatusInternal(String repositoryUID, short status)
+    {
+        try
+        {
+        HarRepo repo=(HarRepo) currentSession().createCriteria(HarRepo.class).add(Restrictions.eq("repoUID", repositoryUID)).uniqueResult();
+        HarRepoStatus repoStatus = (HarRepoStatus) currentSession().createCriteria(HarRepoStatus.class).add(Restrictions.eq("repoStatusId", status)).uniqueResult();
+        repo.setRepoStatusId(repoStatus);
+        currentSession().saveOrUpdate(repo);
+        }catch(Exception e)
+        {
+           LOGGER.error(e.getMessage(), e);
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

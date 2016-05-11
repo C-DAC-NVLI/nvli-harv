@@ -5,13 +5,19 @@
  */
 package in.gov.nvli.harvester.controllers;
 
+import in.gov.nvli.harvester.customised.HarRepoCustomised;
 import in.gov.nvli.harvester.services.HarvesterService;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 /**
  *
@@ -53,4 +59,23 @@ public class HarvesterController {
         harvesterService.harvestAllRepositoriesIncremental(servletRequest.getServletContext());
         return "example";
   }
+  @RequestMapping("/test")
+public void test() throws URISyntaxException
+{
+     URI webServiceURL = new URI("http://localhost:8080/nvliHarvester/rest/repositories");//"http://nvli-vm.pune.cdac.in:8080/harvester/rest/repositories"
+            RestTemplate restTemplate = new RestTemplate();
+            HarRepoCustomised harRepoCustomised = new HarRepoCustomised();
+            harRepoCustomised.setRepoName("arxiv");
+            harRepoCustomised.setRepoBaseUrl("http://export.arxiv.org/oai2");
+            harRepoCustomised.setRepoRegistrationDate(new Date());
+            harRepoCustomised.setRepoStatusId((short) 1);
+            harRepoCustomised.setRepoTypeId(1);
+            harRepoCustomised.setRepoUID("1");
+            harRepoCustomised.setOreEnableFlag((byte)1);
+            ResponseEntity<HarRepoCustomised> responseObj = restTemplate.postForEntity(webServiceURL, harRepoCustomised, HarRepoCustomised.class);
+            System.out.println("Has done " + responseObj.getStatusCode());
+    
+}
+
+
 }

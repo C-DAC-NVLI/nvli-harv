@@ -21,7 +21,7 @@ public class HarRepoCustomised implements Serializable {
 
     private Integer repoId;
     
-     private Integer repoUID;
+     private String repoUID;
     
     private String repoName;
 
@@ -80,7 +80,7 @@ public class HarRepoCustomised implements Serializable {
     private String organizationLink;
    
    
-    
+    private byte oreEnableFlag;//1=enabled,0-disabled/not enabled
     
     
     
@@ -345,12 +345,21 @@ public class HarRepoCustomised implements Serializable {
         this.organizationLink = organizationLink;
     }
 
-    public Integer getRepoUID() {
+    public String getRepoUID() {
         return repoUID;
     }
 
-    public void setRepoUID(Integer repoUID) {
+    public void setRepoUID(String repoUID) {
         this.repoUID = repoUID;
     }
 
+    public byte getOreEnableFlag() {
+        return oreEnableFlag;
+    }
+
+    public void setOreEnableFlag(byte oreEnableFlag) {
+        this.oreEnableFlag = oreEnableFlag;
+    }
+
+   
 }

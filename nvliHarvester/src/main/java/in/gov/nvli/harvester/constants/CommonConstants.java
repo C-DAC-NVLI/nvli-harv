@@ -19,6 +19,7 @@ public class CommonConstants {
   public static final String METADATA_PREFIX = "&metadataPrefix=";
   public static final String RESUMPTION_TOKEN = "&resumptionToken=";
   public static final String IDENTIFIER = "&identifier=";
+  public static final String PATH_PARAM_SEPERATOR = ",";
     
   
 }

@@ -19,8 +19,16 @@ public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
 
     public HarRepo getRepository(String baseURL);
 
-    public HarRepo getRepository(int repoUID);
+    public HarRepo getRepositoryByUID(String repoUID);
 
-    public List<HarRepo> getRepositories(List<Integer> repoUIDS);
+    public List<HarRepo> getRepositories(List<String> repoUIDS);
+
+    boolean changeRepoStatus(List<String> repositoryUIDs, short status);
+
+    boolean changeRepoStatus(String repositoryUID, short status);
+
+    boolean changeRepoStatusByHarRepo(List<HarRepo> repos, short status);
+
+    public List<HarRepo> getRepositories();
 
 }

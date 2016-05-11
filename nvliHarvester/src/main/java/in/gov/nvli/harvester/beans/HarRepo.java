@@ -67,7 +67,8 @@ public class HarRepo implements Serializable {
     private Integer repoId;
     
     @Column(name = "repo_uid", nullable = false)
-    private Integer repoUID;
+    @Size(min = 1, max = 200)
+    private String repoUID;
     
     @Basic(optional = false)
     @NotNull
@@ -156,6 +157,9 @@ public class HarRepo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
     private Collection<HarSetRepository> harSetRepositoryCollection;
 
+    @Column(name = "ore_enable_flag",nullable = false)
+    private byte oreEnableFlag=0;//1=enabled,0-disabled/not enabled(default)
+    
     public HarRepo() {
     }
 
@@ -178,13 +182,15 @@ public class HarRepo implements Serializable {
         this.repoId = repoId;
     }
 
-    public Integer getRepoUID() {
+    public String getRepoUID() {
         return repoUID;
     }
 
-    public void setRepoUID(Integer repoUID) {
+    public void setRepoUID(String repoUID) {
         this.repoUID = repoUID;
     }
+
+   
 
     
     
@@ -428,6 +434,16 @@ public class HarRepo implements Serializable {
         this.harSetRepositoryCollection = harSetRepositoryCollection;
     }
 
+    public byte getOreEnableFlag() {
+        return oreEnableFlag;
+    }
+
+    public void setOreEnableFlag(byte oreEnableFlag) {
+        this.oreEnableFlag = oreEnableFlag;
+    }
+
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;

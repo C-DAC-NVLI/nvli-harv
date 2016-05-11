@@ -9,12 +9,7 @@
 package in.gov.nvli.harvester.customised;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
@@ -70,7 +65,12 @@ public class IdentifyTypeCustomised {
     protected String granularity;
     protected List<String> compression;
     protected String description;
-     public String getRepositoryName() {
+    protected byte oreEnableFlag;//1=enabled,0-disabled/not enabled
+    
+    
+    
+    
+    public String getRepositoryName() {
         return repositoryName;
     }
 
@@ -141,4 +141,15 @@ public class IdentifyTypeCustomised {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public byte getOreEnableFlag() {
+        return oreEnableFlag;
+    }
+
+    public void setOreEnableFlag(byte oreEnableFlag) {
+        this.oreEnableFlag = oreEnableFlag;
+    }
+
+   
+    
 }

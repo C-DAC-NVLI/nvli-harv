@@ -119,13 +119,29 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    public HarRepo getRepositoryByUID(int repoUID) {
-       return repositoryDaoObject.get(repoUID);
+    public HarRepo getRepositoryByUID(String repoUID) {
+       return repositoryDaoObject.getRepositoryByUID(repoUID);
     }
 
     @Override
-    public List<HarRepo> getRepositoriesByUIDS(List<Integer> repoUIDS) {
+    public List<HarRepo> getRepositoriesByUIDS(List<String> repoUIDS) {
         return repositoryDaoObject.getRepositories(repoUIDS);
+    }
+
+    @Override
+    public boolean changeRepoStatus(List<String> repositoryUIDs, short status) {
+        return repositoryDaoObject.changeRepoStatus(repositoryUIDs, status);
+    }
+
+    @Override
+    public boolean changeRepoStatus(String repositoryUID, short status) {
+         return repositoryDaoObject.changeRepoStatus(repositoryUID, status);
+    }
+
+   @Override
+    public boolean changeRepoStatus(short status) {
+        List<HarRepo> repos=repositoryDaoObject.getRepositories();
+        return repositoryDaoObject.changeRepoStatusByHarRepo(repos, status);
     }
 
 }

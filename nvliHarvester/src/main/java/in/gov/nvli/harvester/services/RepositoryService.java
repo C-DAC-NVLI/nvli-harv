@@ -49,8 +49,14 @@ public interface RepositoryService {
     void validateRepositories(List<Integer> repositoryIds);
 
     boolean isRepositoryValid(int repositoryId);
-    
-    public HarRepo getRepositoryByUID(int repoUID);
 
-    public List<HarRepo> getRepositoriesByUIDS(List<Integer> repoUIDS);
+    public HarRepo getRepositoryByUID(String repoUID);
+
+    public List<HarRepo> getRepositoriesByUIDS(List<String> repoUIDS);
+
+    boolean changeRepoStatus(List<String> repositoryUIDs, short status);
+
+    boolean changeRepoStatus(String repositoryUID, short status);
+
+    public boolean changeRepoStatus(short status);
 }
