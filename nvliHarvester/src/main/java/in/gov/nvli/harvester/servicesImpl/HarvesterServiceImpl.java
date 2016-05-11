@@ -49,7 +49,7 @@ public class HarvesterServiceImpl implements HarvesterService {
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
          if(!harvesterConstraintChecker(harRepo, (byte)0))
         {
-            LOGGER.info("can't Start Harvesting ::::"+harRepo.getRepoStatusId().getRepoStatusName());  
+            LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") :::"+harRepo.getRepoStatusId().getRepoStatusName());  
             return  false;
         }
         
@@ -69,8 +69,8 @@ public class HarvesterServiceImpl implements HarvesterService {
         HarRepo harRepo = repositoryDao.getRepositoryByUID(repoUID);
         if(!harvesterConstraintChecker(harRepo, (byte)0))
         {
-            LOGGER.info("can't Start Harvesting ::: "+harRepo.getRepoStatusId().getRepoStatusName());  
-            return new AsyncResult<String>("Can't Start Hravesting ::: "+harRepo.getRepoStatusId().getRepoStatusName());  
+            LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName());  
+            return new AsyncResult<String>("Can't Start Hravesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName());  
         }
          
         try {
@@ -119,7 +119,7 @@ public class HarvesterServiceImpl implements HarvesterService {
                
                 if(!harvesterConstraintChecker(harRepo, (byte)0))
                 {
-                   LOGGER.info("can't Start Harvesting ::: "+harRepo.getRepoStatusId().getRepoStatusName()); 
+                   LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName()); 
                      continue;
                 }
                 
@@ -156,7 +156,7 @@ public class HarvesterServiceImpl implements HarvesterService {
         
         if(!harvesterConstraintChecker(harRepo, (byte)0))
                 {
-                   LOGGER.info("can't Start Harvesting ::: "+harRepo.getRepoStatusId().getRepoStatusName()); 
+                   LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName()); 
                    return ;
                 }
         
