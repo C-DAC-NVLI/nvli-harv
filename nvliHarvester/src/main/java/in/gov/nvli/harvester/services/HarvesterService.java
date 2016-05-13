@@ -31,5 +31,7 @@ public interface HarvesterService {
     public void harvestRepositoriesIncremental(List<HarRepo> harRepos,ServletContext servletContext);
     
     public void harvestRepositoryIncrementalBYUID(String repoUID, ServletContext servletContext);
+    
+    public void harvestAllActiveRepositories( List<HarRepo> harRepos,ServletContext servletContext);
 
 }

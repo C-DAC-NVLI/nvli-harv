@@ -9,6 +9,7 @@ import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
+import in.gov.nvli.harvester.customised.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
@@ -143,6 +144,19 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<HarRepo> getActiveRepositories() {
+       List<HarRepo> activeRepos=null;
+        try
+       {
+          activeRepos= currentSession().createCriteria(HarRepo.class).createAlias("repoStatusId", "repoStatusId").add(Restrictions.eq("repoStatusId.repoStatusId",RepoStatusEnum.ACTIVE )).list();
+       }catch(Exception e)
+       {
+           LOGGER.error(e.getMessage(),e);
+       }
+    return activeRepos;
     }
     
     

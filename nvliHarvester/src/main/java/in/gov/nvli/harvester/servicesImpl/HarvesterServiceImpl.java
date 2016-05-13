@@ -91,14 +91,14 @@ public class HarvesterServiceImpl implements HarvesterService {
 
             listRecordsService.setServletContext(servletContext);
             listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getValue());
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             if(harRepo.getOreEnableFlag()==1)
             {
                 //start ore harvesting
             }
             
         } catch (Exception ex) {
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getValue());
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
         }
 
@@ -110,7 +110,13 @@ public class HarvesterServiceImpl implements HarvesterService {
         List<HarRepo> harRepos = repositoryDao.list();
         harvestRepositories(harRepos, servletContext);
     }
-
+  @Override
+    @Async
+    public void harvestAllActiveRepositories( List<HarRepo> harRepos,ServletContext servletContext) {
+        harvestRepositories(harRepos, servletContext);
+    }
+   
+    
     @Override
      @Async
     public void harvestRepositories(List<HarRepo> harRepos, ServletContext servletContext) {
@@ -167,13 +173,13 @@ public class HarvesterServiceImpl implements HarvesterService {
 
             listRecordsService.setServletContext(servletContext);
             listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getValue());
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             if(harRepo.getOreEnableFlag()==1)
             {
                 //start ore harvesting
             }
         } catch (Exception ex) {
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getValue());
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
         }
 
@@ -212,7 +218,7 @@ public class HarvesterServiceImpl implements HarvesterService {
                 return false;
             case 2://active
                 //change status code to  harvest_processing(i.e 3)
-                return repositoryDao.changeRepoStatus(repo.getRepoUID(),RepoStatusEnum.HARVEST_PROCESSING.getValue());
+                return repositoryDao.changeRepoStatus(repo.getRepoUID(),RepoStatusEnum.HARVEST_PROCESSING.getId());
             case 3://harvest_processing
                return false;
             case 4://harvest_processing_error
@@ -220,7 +226,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             case 5://harvest_complete
                 if(firstOrIncremental==1)
                 {
-                    return repositoryDao.changeRepoStatus(repo.getRepoUID(),RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getValue());
+                    return repositoryDao.changeRepoStatus(repo.getRepoUID(),RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
                 }  
                 else
                  return  false;

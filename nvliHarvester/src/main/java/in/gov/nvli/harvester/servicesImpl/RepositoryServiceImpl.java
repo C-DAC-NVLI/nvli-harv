@@ -144,4 +144,9 @@ public class RepositoryServiceImpl implements RepositoryService {
         return repositoryDaoObject.changeRepoStatusByHarRepo(repos, status);
     }
 
+    @Override
+    public List<HarRepo> getActiveRepositories() {
+        return repositoryDaoObject.getActiveRepositories();
+    }
+
 }

@@ -10,25 +10,31 @@ package in.gov.nvli.harvester.customised;
  * @author svootla
  */
 public enum RepoStatusEnum {
-    
-    NOT_ACTIVE((short)1),
-    ACTIVE((short)2),
-    HARVEST_PROCESSING((short)3),
-    HARVEST_PROCESSING_ERROR((short)4),
-    HARVEST_COMPLETE((short)5),
-    INCREMENT_HARVEST_PROCESSING((short)6),
-    INCREMENT_HARVEST_PROCESSING_ERROR((short)7),
-    INVALID_URL((short)8);
+
+    NOT_ACTIVE((short) 1, "not_active"),
+    ACTIVE((short) 2, "active"),
+    HARVEST_PROCESSING((short) 3, "harvest_processing"),
+    HARVEST_PROCESSING_ERROR((short) 4,"harvest_processing_error"),
+    HARVEST_COMPLETE ((short)5,"harvest_complete"),
+    INCREMENT_HARVEST_PROCESSING((short)6,"increment_harvest_processing"),
+    INCREMENT_HARVEST_PROCESSING_ERROR((short)7,"increment_harvest_processing_error"),
+    INVALID_URL((short)8,"invalid_url");
     
 
-    private final short value;
+    private final short id;
+    private final String name;
 
-    private RepoStatusEnum(final short value) {
-        this.value = value;
+    private RepoStatusEnum(final short id,final String name)
+{
+        this.id = id;
+        this.name = name;
+        
     }
 
-   public short getValue() { 
-       return value; 
+   public short getId() { 
+       return id; 
    }
-
+public String getName(){ 
+       return name; 
+   }
 }

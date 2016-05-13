@@ -59,4 +59,6 @@ public interface RepositoryService {
     boolean changeRepoStatus(String repositoryUID, short status);
 
     public boolean changeRepoStatus(short status);
+    
+    public List<HarRepo> getActiveRepositories();
 }

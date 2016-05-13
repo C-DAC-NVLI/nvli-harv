@@ -56,6 +56,7 @@ public class IdentifyResource {
     {
         identifyService=new IdentifyServiceImpl();
         baseURL = URLDecoder.decode(baseURL, "UTF-8");
+        baseURL="http://dspace.gipe.ac.in/oai/request";
         return CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identify(baseURL,adminEmail));
     }
     
@@ -66,6 +67,7 @@ public class IdentifyResource {
     {
         identifyService=new IdentifyServiceImpl();
         baseURL = URLDecoder.decode(baseURL, "UTF-8");
+         baseURL="http://dspace.gipe.ac.in/oai/request";
         return CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identify(baseURL,adminEmail));
     }  
    private IdentifyType identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException
