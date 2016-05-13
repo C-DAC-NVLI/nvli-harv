@@ -159,7 +159,7 @@ public class RepositoryResource
                            
               }
               if (status == RepoStatusEnum.NOT_ACTIVE.getId())
-                  return RepoStatusEnum.ACTIVE.getName();
+                  return RepoStatusEnum.NOT_ACTIVE.getName();
               return "ERROR";
                         
           }else
