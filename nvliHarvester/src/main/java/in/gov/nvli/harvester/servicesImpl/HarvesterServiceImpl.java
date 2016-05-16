@@ -89,13 +89,14 @@ public class HarvesterServiceImpl implements HarvesterService {
             listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
-            listRecordsService.setServletContext(servletContext);
-            listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getValue());
+            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", servletContext);
+            
             if(harRepo.getOreEnableFlag()==1)
             {
-                //start ore harvesting
+                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "", servletContext);
             }
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getValue());
+            
             
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getValue());
@@ -165,13 +166,13 @@ public class HarvesterServiceImpl implements HarvesterService {
 
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
-            listRecordsService.setServletContext(servletContext);
-            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getValue());
+            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", servletContext);
+            
             if(harRepo.getOreEnableFlag()==1)
             {
                 //start ore harvesting
             }
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getValue());
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getValue());
             LOGGER.error(ex.getMessage(), ex);

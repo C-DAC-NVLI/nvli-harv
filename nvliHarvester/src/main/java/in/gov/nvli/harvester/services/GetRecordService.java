@@ -5,8 +5,10 @@
  */
 package in.gov.nvli.harvester.services;
 
+import com.sun.syndication.io.FeedException;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.beans.HarRecord;
+import in.gov.nvli.harvester.beans.HarRecordData;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSetRecord;
@@ -17,6 +19,8 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 
 /**
  *
@@ -37,4 +41,8 @@ public interface GetRecordService {
     public List<HarSetRecord> getHarSetRecordListByRecordType(RecordType recordTypeObject, HarRecord harRecordObject);
 
     public HarRecordMetadataDc getHarRecordMetadataDcByRecordType(RecordType recordTypeObject, HarRecord harRecordObject);
+
+    public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException;
+
+    public void saveHarRecordDataInFileSystem(HarRecordData harRecordDataObj, String path) throws IOException;
 }

@@ -78,6 +78,8 @@ public class HarRecord implements Serializable {
   @Basic(optional = false)
   @Column(name = "record_status", nullable = false, columnDefinition =  "smallint default 0")
   private Short recordStatus;
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
+  private Collection<HarRecordData> harRecordDataCollection;
 
   public HarRecord() {
   }
@@ -182,6 +184,15 @@ public class HarRecord implements Serializable {
   public void setRecordStatus(Short recordStatus) {
     this.recordStatus = recordStatus;
   }
+  
+  @XmlTransient
+    public Collection<HarRecordData> getHarRecordDataCollection() {
+        return harRecordDataCollection;
+    }
+
+    public void setHarRecordDataCollection(Collection<HarRecordData> harRecordDataCollection) {
+        this.harRecordDataCollection = harRecordDataCollection;
+    }
   
   
 

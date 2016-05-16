@@ -5,16 +5,19 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
+import com.sun.syndication.io.FeedException;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRecord;
+import in.gov.nvli.harvester.beans.HarRecordData;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarRecordDao;
+import in.gov.nvli.harvester.dao.HarRecordDataDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
 import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
@@ -23,6 +26,7 @@ import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
 import in.gov.nvli.harvester.utilities.UnmarshalUtils;
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
@@ -30,8 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -44,7 +51,10 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ListRecordsServiceImpl.class);
 
     private static final int INTERVAL = 60000;
-
+    
+    @Value("${repository.data.path}")
+    private String repositoryDataPath;
+    
     @Autowired
     HarRecordDao harRecordDao;
 
@@ -55,12 +65,13 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     HarRecordMetadataDcDao harRecordMetadataDcDao;
 
     @Autowired
+    HarRecordDataDao harRecordDataDao;
+
+    @Autowired
     GetRecordService getRecordServiceObject;
 
     @Autowired
     RepositoryDao repositoryDao;
-
-    ServletContext servletContext;
 
     private HarRepo harRepoObj;
     private HttpURLConnection connection;
@@ -73,34 +84,34 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     }
 
     @Override
-    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
         this.harRepoObj = harRepoObj;
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, false);
+        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, false);
     }
 
     @Override
-    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
         this.harRepoObj = repositoryDao.getRepository(baseURL);
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, false);
+        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, false);
     }
 
     @Override
-    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
         this.harRepoObj = harRepoObj;
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, true);
+        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, true);
     }
 
     @Override
-    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
         this.harRepoObj = repositoryDao.getRepository(baseURL);
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, true);
+        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, true);
     }
 
-    private boolean saveListRecordsRecursive(String desiredURL, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag) {
+    private boolean saveListRecordsRecursive(String desiredURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext, boolean incrementalFlag) {
         try {
             LOGGER.info("desired URL " + desiredURL);
             if (servletContext.getAttribute(desiredURL) != null) {
@@ -120,49 +131,59 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
                 String response = OAIResponseUtil.createResponseFromXML(connection);
                 OAIPMHtype oAIPMHtypeObject = UnmarshalUtils.xmlToOaipmh(response);
-                List<RecordType> recordTypeList = oAIPMHtypeObject.getListRecords().getRecord();
-                for (RecordType recordTypeObj : recordTypeList) {
-                    harRecordObj = getRecordServiceObject.getHarRecordByRecordType(recordTypeObj, metadataPrefix, harRepoObj);
-                    tempHarSetRecordList = getRecordServiceObject.getHarSetRecordListByRecordType(recordTypeObj, harRecordObj);
-                    harRecordMetadataDcObj = getRecordServiceObject.getHarRecordMetadataDcByRecordType(recordTypeObj, harRecordObj);
+                if (oAIPMHtypeObject != null && oAIPMHtypeObject.getListRecords() != null) {
+                    List<RecordType> recordTypeList = oAIPMHtypeObject.getListRecords().getRecord();
+                    if (recordTypeList != null) {
+                        for (RecordType recordTypeObj : recordTypeList) {
+                            harRecordObj = getRecordServiceObject.getHarRecordByRecordType(recordTypeObj, metadataPrefix, harRepoObj);
+                            tempHarSetRecordList = getRecordServiceObject.getHarSetRecordListByRecordType(recordTypeObj, harRecordObj);
+                            harRecordMetadataDcObj = getRecordServiceObject.getHarRecordMetadataDcByRecordType(recordTypeObj, harRecordObj);
 
-                    this.harRecordList.add(harRecordObj);
-                    this.harSetRecordList.addAll(tempHarSetRecordList);
-                    if (harRecordMetadataDcObj != null) {
-                        harRecordMetadataDcList.add(harRecordMetadataDcObj);
-                    }
+                            this.harRecordList.add(harRecordObj);
+                            this.harSetRecordList.addAll(tempHarSetRecordList);
+                            if (harRecordMetadataDcObj != null) {
+                                harRecordMetadataDcList.add(harRecordMetadataDcObj);
+                            }
 
-                }
+                        }
 
-                if (incrementalFlag) {
-                    if (!harRecordList.isEmpty()) {
-                        harRecordDao.saveOrUpdateHarRecordList(harRecordList);
-                    }
-                    if (!harSetRecordList.isEmpty()) {
-                        harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecordList);
-                    }
-                    if (!harRecordMetadataDcList.isEmpty()) {
-                        harRecordMetadataDcDao.saveOrUpdateHarRecordMetadataDcList(harRecordMetadataDcList);
+                        if (incrementalFlag) {
+                            if (!harRecordList.isEmpty()) {
+                                harRecordDao.saveOrUpdateHarRecordList(harRecordList);
+                            }
+                            if (!harSetRecordList.isEmpty()) {
+                                harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecordList);
+                            }
+                            if (!harRecordMetadataDcList.isEmpty()) {
+                                harRecordMetadataDcDao.saveOrUpdateHarRecordMetadataDcList(harRecordMetadataDcList);
+                            }
+                        } else {
+                            if (!harRecordList.isEmpty()) {
+                                harRecordDao.saveList(harRecordList);
+                            }
+                            if (!harSetRecordList.isEmpty()) {
+                                harSetRecordDao.saveList(harSetRecordList);
+                            }
+                            if (!harRecordMetadataDcList.isEmpty()) {
+                                harRecordMetadataDcDao.saveList(harRecordMetadataDcList);
+                            }
+                        }
+                        servletContext.removeAttribute(desiredURL);
+                        
+                        if (oAIPMHtypeObject.getListRecords().getResumptionToken() != null) {
+                            resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
+                            if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
+                                desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
+                                saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, incrementalFlag);
+                            }
+                        }
+                    } else {
+                        return false;
                     }
                 } else {
-                    if (!harRecordList.isEmpty()) {
-                        harRecordDao.saveList(harRecordList);
-                    }
-                    if (!harSetRecordList.isEmpty()) {
-                        harSetRecordDao.saveList(harSetRecordList);
-                    }
-                    if (!harRecordMetadataDcList.isEmpty()) {
-                        harRecordMetadataDcDao.saveList(harRecordMetadataDcList);
-                    }
+                    return false;
                 }
 
-                servletContext.removeAttribute(desiredURL);
-
-                resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
-                if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
-                    desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
-                    saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, incrementalFlag);
-                }
             } else {
                 int tmpCnt = 0;
                 if (servletContext.getAttribute(desiredURL) == null) {
@@ -172,7 +193,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                     servletContext.setAttribute(desiredURL, (++tmpCnt));
                 }
                 if (((int) servletContext.getAttribute(desiredURL)) <= 3) {
-                    saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, incrementalFlag);
+                    saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, incrementalFlag);
                 }
             }
 
@@ -186,8 +207,102 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     }
 
     @Override
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
+    public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail, ServletContext servletContext) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
+        this.harRepoObj = repositoryDao.getRepository(baseURL);
+        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + "ore";
+        if (saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, false)) {
+            return saveHarRecordDataIntoFileSystem(harRepoObj);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean saveListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail, ServletContext servletContext) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
+        this.harRepoObj = harRepoObj;
+        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + "ore";
+        if (saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, false)) {
+            return saveHarRecordDataIntoFileSystem(harRepoObj);
+        }
+        return false;
+    }
+
+    private boolean saveListHarRecordDataRecursive(String desiredURL, MethodEnum method, String adminEmail, ServletContext servletContext, boolean incrementalFlag) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException {
+        try {
+            LOGGER.info("desired URL " + desiredURL);
+            if (servletContext.getAttribute(desiredURL) != null) {
+                Thread.sleep(INTERVAL);
+
+            }
+            connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
+
+            if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
+                String resumptionToken;
+                HarRecordData harRecordDataObject;
+
+                String response = OAIResponseUtil.createResponseFromXML(connection);
+                OAIPMHtype oAIPMHtypeObject = UnmarshalUtils.xmlToOaipmh(response);
+                if (oAIPMHtypeObject != null && oAIPMHtypeObject.getListRecords() != null) {
+                    List<RecordType> recordTypeList = oAIPMHtypeObject.getListRecords().getRecord();
+                    if (recordTypeList != null) {
+                        for (RecordType recordTypeObj : recordTypeList) {
+                            harRecordDataObject = getRecordServiceObject.getHarRecordDataByRecordType(recordTypeObj);
+                            if (harRecordDataObject != null) {
+                                harRecordDataDao.createNew(harRecordDataObject);
+                            }
+                        }
+
+                        servletContext.removeAttribute(desiredURL);
+
+                        resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
+                        if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
+                            desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
+                            saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, incrementalFlag);
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+
+            } else {
+                int tmpCnt = 0;
+                if (servletContext.getAttribute(desiredURL) == null) {
+                    servletContext.setAttribute(desiredURL, 1);
+                } else {
+                    tmpCnt = (int) servletContext.getAttribute(desiredURL);
+                    servletContext.setAttribute(desiredURL, (++tmpCnt));
+                }
+                if (((int) servletContext.getAttribute(desiredURL)) <= 3) {
+                    saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, incrementalFlag);
+                }
+            }
+
+        } catch (InterruptedException | ParseException | JAXBException | IOException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+            return false;
+        }
+
+        return true;
+
+    }
+
+    private boolean saveHarRecordDataIntoFileSystem(HarRepo harRepoObject) throws IOException {
+        File recordDirectory;
+        System.err.println("repositoryDataPath "+repositoryDataPath);
+        List<HarRecordData> harRecordDataList = harRecordDataDao.list(harRepoObject);
+        if (harRecordDataList != null) {
+            repositoryDataPath += File.separator+harRepoObject.getRepoUID();
+            for (HarRecordData tempHarRecordDataObj : harRecordDataList) {
+                recordDirectory = new File(repositoryDataPath + File.separator + tempHarRecordDataObj.getRecordId().getRecordId());
+                if (!recordDirectory.exists()) {
+                    recordDirectory.mkdirs();
+                    getRecordServiceObject.saveHarRecordDataInFileSystem(tempHarRecordDataObj, recordDirectory.getPath());
+                    LOGGER.info("record saved " + tempHarRecordDataObj.getRecordId().getRecordId());
+                }
+            }
+        }
+        return true;
     }
 
 }

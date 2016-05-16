@@ -5,6 +5,11 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
+import com.sun.syndication.feed.atom.Feed;
+import com.sun.syndication.io.FeedException;
+import com.sun.syndication.io.WireFeedInput;
+import com.sun.syndication.io.XmlReader;
+import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
 import in.gov.nvli.harvester.OAIPMH_beans.AboutType;
 
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
@@ -12,6 +17,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.StatusType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRecord;
+import in.gov.nvli.harvester.beans.HarRecordData;
 import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSet;
@@ -26,10 +32,14 @@ import in.gov.nvli.harvester.dao.HarSetDao;
 import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.GetRecordService;
+import in.gov.nvli.harvester.utilities.FileUtils;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
 import in.gov.nvli.harvester.utilities.UnmarshalUtils;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.text.DateFormat;
@@ -40,8 +50,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.jdom.Element;
+import org.jdom.Namespace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -67,6 +87,10 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     @Autowired
     RepositoryDao repositoryDao;
+    
+    private static final String LICENSE = "LICENSE";
+    private static final String ORIGINAL = "ORIGINAL";
+    private static final String TEXT = "TEXT";
 
     @Override
     public boolean saveGetRecord(String baseURL, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException {
@@ -318,4 +342,76 @@ public class GetRecordServiceImpl implements GetRecordService {
         return columnValue;
     }
 
+    @Override
+    public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException {
+        HarRecordData harRecordDataObject;
+        ElementNSImpl eleNsImplObject;
+        HarRecord harRecordObject;
+
+        harRecordObject = recordDao.getHarRecordByRecordIdentifier(recordTypeObject.getHeader().getIdentifier());
+        if (harRecordObject != null && recordTypeObject.getHeader().getStatus() != StatusType.DELETED) {
+            harRecordDataObject = new HarRecordData();
+            harRecordDataObject.setRecordId(harRecordObject);
+
+            eleNsImplObject = (ElementNSImpl) recordTypeObject.getMetadata().getAny();
+            Document document = eleNsImplObject.getOwnerDocument();
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            Source xmlSource = new DOMSource(document);
+            Result outputTarget = new StreamResult(outputStream);
+            TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+            InputStream is = new ByteArrayInputStream(outputStream.toByteArray());
+
+            XmlReader reader = new XmlReader(is);
+            WireFeedInput input = new WireFeedInput();
+            Feed atom = (Feed) input.build(reader);
+
+            Namespace oreNs = Namespace.getNamespace("ore", "http://www.openarchives.org/ore/terms/");
+            Namespace rdfNs = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+            Namespace dcNs = Namespace.getNamespace("dc", "http://purl.org/dc/terms/");
+            List<Element> rdf = (List<Element>) atom.getForeignMarkup();
+            for (Element e : rdf) {
+                List<Element> children = e.getChildren("Description", rdfNs);
+                for (Element childElement : children) {
+                    Element descriptionElement = childElement.getChild("description", dcNs);
+                    String recordAbout = childElement.getAttributeValue("about", rdfNs);
+                    if (descriptionElement != null) {
+                        switch (descriptionElement.getText()) {
+                            case LICENSE:
+                                harRecordDataObject.setRecordDataLicense(recordAbout);
+                                break;
+                            case ORIGINAL:
+                                harRecordDataObject.setRecordData(recordAbout);
+                                break;
+                            case TEXT:
+                                harRecordDataObject.setRecordDataText(recordAbout);
+                                break;
+                        }
+                    }
+                }
+            }
+            return harRecordDataObject;
+        }
+        return null;
+
+    }
+    
+    @Override
+    public void saveHarRecordDataInFileSystem(HarRecordData harRecordDataObj, String path) throws IOException {
+        String recordData = harRecordDataObj.getRecordData();
+        String recordText = harRecordDataObj.getRecordDataText();
+        String recordLicense = harRecordDataObj.getRecordDataLicense();
+        
+        if(recordData != null){
+            FileUtils.saveFile(recordData, path, FileUtils.getNameFromURL(harRecordDataObj.getRecordData()));
+        }
+        if(recordText != null){
+            FileUtils.saveFile(recordText, path, FileUtils.getNameFromURL(harRecordDataObj.getRecordDataText()));
+        }
+        if(recordLicense != null){
+            FileUtils.saveFile(recordLicense, path, FileUtils.getNameFromURL(harRecordDataObj.getRecordDataLicense()));
+        }
+        
+        
+    } 
 }

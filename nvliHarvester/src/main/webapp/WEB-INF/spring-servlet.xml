@@ -20,8 +20,15 @@
     <!-- enables @AutoWired -->
     <mvc:annotation-driven />
     <context:annotation-config />
-    <context:property-placeholder location="/WEB-INF/db.properties" ignore-unresolvable="true"/>
-    <context:property-placeholder location="/WEB-INF/logfile.properties" />
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"        >
+        <property name="locations">
+            <list>
+                <value>/WEB-INF/conf/db.properties</value>
+                <value>/WEB-INF/conf/logfile.properties</value>
+                <value>/WEB-INF/conf/settings.properties</value>
+            </list>
+        </property>
+    </bean>
     <!-- setting a system variable -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetObject">
