@@ -78,7 +78,7 @@ public class RepositoryResource
     public String repositoriesActivate()
     {
        
-       return changeRepoStatus(RepoStatusEnum.ACTIVE.getValue());
+       return changeRepoStatus(RepoStatusEnum.ACTIVE.getId());
     }
     
     @GET
@@ -86,7 +86,7 @@ public class RepositoryResource
     @Produces(MediaType.TEXT_PLAIN)
     public String repositoriesDeActivate()
     {
-      return changeRepoStatus(RepoStatusEnum.NOT_ACTIVE.getValue());
+      return changeRepoStatus(RepoStatusEnum.NOT_ACTIVE.getId());
     }
     
     @GET
@@ -94,7 +94,7 @@ public class RepositoryResource
     @Produces(MediaType.TEXT_PLAIN)
     public String  repositoriesActivateParticular(@PathParam("repoUID") String repoUID)
     {
-          return changeRepoStatus(repoUID,RepoStatusEnum.ACTIVE.getValue());
+          return changeRepoStatus(repoUID,RepoStatusEnum.ACTIVE.getId());
     }
     
     
@@ -103,7 +103,7 @@ public class RepositoryResource
     @Produces(MediaType.TEXT_PLAIN)
     public String  repositoriesDeActivateParticular(@PathParam("repoUID") String repoUID)
     {
-         return changeRepoStatus(repoUID,RepoStatusEnum.NOT_ACTIVE.getValue());
+         return changeRepoStatus(repoUID,RepoStatusEnum.NOT_ACTIVE.getId());
     }
     
     
@@ -115,7 +115,7 @@ public class RepositoryResource
     public String   repositoriesActivateList(@PathParam("repoUIDS") String repoUIDS)
     {
         List<String> repoUIDSList=splitRepoUIDS(repoUIDS);
-       return  changeRepoStatus(repoUIDSList,RepoStatusEnum.ACTIVE.getValue());
+       return  changeRepoStatus(repoUIDSList,RepoStatusEnum.ACTIVE.getId());
     } 
     
     @GET
@@ -124,7 +124,7 @@ public class RepositoryResource
     public String   repositoriesDeActivateList(@PathParam("repoUIDS") String repoUIDS)
     { 
         List<String> repoUIDSList=splitRepoUIDS(repoUIDS);
-      return  changeRepoStatus(repoUIDSList,RepoStatusEnum.NOT_ACTIVE.getValue());
+      return  changeRepoStatus(repoUIDSList,RepoStatusEnum.NOT_ACTIVE.getId());
     } 
     
    private String changeRepoStatus(short status)
@@ -154,12 +154,12 @@ public class RepositoryResource
     {
         if(result)
           {
-              if (status == RepoStatusEnum.ACTIVE.getValue()) {
-                  return "ACTIVATED";
+              if (status == RepoStatusEnum.ACTIVE.getId()) {
+                  return RepoStatusEnum.ACTIVE.getName();
                            
               }
-              if (status == RepoStatusEnum.NOT_ACTIVE.getValue())
-                  return "DEACTIVATED";
+              if (status == RepoStatusEnum.NOT_ACTIVE.getId())
+                  return RepoStatusEnum.NOT_ACTIVE.getName();
               return "ERROR";
                         
           }else

@@ -42,7 +42,7 @@
         </layout>
     </appender>
     <appender name="consoleLogs" class="org.apache.log4j.ConsoleAppender">
-        <param name="Threshold" value="ERROR"/>
+        <param name="Threshold" value="INFO"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS}|%p|%C(%M)|%m%n" />
         </layout>
