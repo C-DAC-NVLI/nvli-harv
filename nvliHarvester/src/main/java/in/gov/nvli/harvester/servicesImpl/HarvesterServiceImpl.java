@@ -154,7 +154,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     private void harvestRepositoryIncremental(HarRepo harRepo) {
 
-        if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+        if (!harvesterConstraintChecker(harRepo, (byte) 1)) {
             LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
             return;
         }
