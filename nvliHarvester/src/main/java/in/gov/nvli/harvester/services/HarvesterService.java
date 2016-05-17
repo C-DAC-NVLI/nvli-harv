@@ -16,22 +16,22 @@ import javax.servlet.ServletContext;
  */
 public interface HarvesterService {
 
-    public boolean harvestRepository(String baseURL, ServletContext servletContext);
+    public boolean harvestRepository(String baseURL);
 
-    public Future<String> harvestRepositoryByUID(String repoUID, ServletContext servletContext);
+    public Future<String> harvestRepositoryByUID(String repoUID);
 
-    public void harvestAllRepositories(ServletContext servletContext);
+    public void harvestAllRepositories();
 
-    public void harvestRepositoryIncremental(String baseURL, ServletContext servletContext);
+    public void harvestRepositoryIncremental(String baseURL);
 
-    public void harvestAllRepositoriesIncremental(ServletContext servletContext);
+    public void harvestAllRepositoriesIncremental();
 
-    public void harvestRepositories(List<HarRepo> harRepos, ServletContext servletContext);
+    public void harvestRepositories(List<HarRepo> harRepos);
     
-    public void harvestRepositoriesIncremental(List<HarRepo> harRepos,ServletContext servletContext);
+    public void harvestRepositoriesIncremental(List<HarRepo> harRepos);
     
-    public void harvestRepositoryIncrementalBYUID(String repoUID, ServletContext servletContext);
+    public void harvestRepositoryIncrementalBYUID(String repoUID);
     
-    public void harvestAllActiveRepositories( List<HarRepo> harRepos,ServletContext servletContext);
+    public void harvestAllActiveRepositories( List<HarRepo> harRepos);
 
 }

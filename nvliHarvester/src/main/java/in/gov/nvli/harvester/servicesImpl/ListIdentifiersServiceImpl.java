@@ -26,37 +26,34 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author richa
  */
+@Service
 public class ListIdentifiersServiceImpl implements ListIdentifiersService {
 
     @Autowired
     RepositoryDao repositoryDao;
 
-    private HttpURLConnection connection;
-    private HarRepo repository;
     Logger LOGGER = LoggerFactory.getLogger(ListIdentifiersService.class);
-    static int i = 0;
 
     @Override
     public void getListIdentifiers(String basUrl, MethodEnum method, String adminEmail, String metadataPrefix) throws MalformedURLException, IOException, JAXBException {
-        this.repository = repositoryDao.getRepository(basUrl);
-        String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        getListIdentifiersRecursive(desiredURL, method, adminEmail);
+        HarRepo harRepoObj = repositoryDao.getRepository(basUrl);
+        getListIdentifiers(harRepoObj, method, adminEmail, metadataPrefix);
     }
 
     @Override
     public void getListIdentifiers(HarRepo repository, MethodEnum method, String adminEmail, String metadataPrefix) throws MalformedURLException, IOException, JAXBException {
-        this.repository = repository;
         String desiredURL = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        getListIdentifiersRecursive(desiredURL, method, adminEmail);
+        getListIdentifiersRecursive(repository, desiredURL, method, adminEmail);
     }
 
-    private void getListIdentifiersRecursive(String desiredUrl, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
-        connection = HttpURLConnectionUtil.getConnection(desiredUrl, MethodEnum.GET, adminEmail);
+    private void getListIdentifiersRecursive(HarRepo harRepoObj, String desiredUrl, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException {
+        HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredUrl, MethodEnum.GET, adminEmail);
 
         if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
             String identifier;
@@ -69,19 +66,19 @@ public class ListIdentifiersServiceImpl implements ListIdentifiersService {
 
             for (HeaderType header : headers) {
                 identifier = header.getIdentifier();
-                System.out.println((++i) + " Identifier " + identifier);
+                LOGGER.info(" Identifier " + identifier);
             }
 
             resumptionToken = listIdentifiers.getResumptionToken();
             if (resumptionToken != null) {
-                desiredUrl = repository.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken.getValue();
-                getListIdentifiersRecursive(desiredUrl, method, adminEmail);
+                desiredUrl = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_IDENTIFIERS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken.getValue();
+                getListIdentifiersRecursive(harRepoObj, desiredUrl, method, adminEmail);
             }
 
         } else {
             try {
                 Thread.sleep(1000);
-                getListIdentifiersRecursive(desiredUrl, method, adminEmail);
+                getListIdentifiersRecursive(harRepoObj, desiredUrl, method, adminEmail);
             } catch (InterruptedException ex) {
                 LOGGER.error(ex.getMessage(), ex);
             }

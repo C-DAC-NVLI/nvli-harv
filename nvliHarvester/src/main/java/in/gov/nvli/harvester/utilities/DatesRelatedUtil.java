@@ -14,30 +14,25 @@ import java.util.Date;
  * @author vootla
  */
 public class DatesRelatedUtil {
-    
-    
-    public static Date convertDateToGranularityFormat(String granularityFormat,String date)
-    {
-         Date d =null;
+
+    public static Date convertDateToGranularityFormat(String granularityFormat, String date) {
+        Date d = null;
         try {
-         SimpleDateFormat sdf=null;
-	if("YYYY-MM-DDThh:mm:ssZ".equals(granularityFormat))
-        {
-          sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            
-        }else if("YYYY-MM-DD".equals(granularityFormat))
-        {
-          sdf = new SimpleDateFormat("yyyy-MM-dd");   
+            SimpleDateFormat sdf = null;
+            if ("YYYY-MM-DDThh:mm:ssZ".equals(granularityFormat)) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+            } else if ("YYYY-MM-DD".equals(granularityFormat)) {
+                sdf = new SimpleDateFormat("yyyy-MM-dd");
+            }
+            if (sdf != null) {
+                d = sdf.parse(date);
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        if(sdf!=null)
-        {
-          d = sdf.parse(date);  
-        }
-    
-	} catch (ParseException e) {
-		e.printStackTrace();
-	}
-        
-    return d;
+
+        return d;
     }
 }

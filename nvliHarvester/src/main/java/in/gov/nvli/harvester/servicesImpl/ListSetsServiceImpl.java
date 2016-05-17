@@ -35,10 +35,10 @@ import org.springframework.stereotype.Service;
 public class ListSetsServiceImpl implements ListSetsService {
 
     @Autowired
-    public HarSetDao harSetDao;
+    private HarSetDao harSetDao;
 
     @Autowired
-    RepositoryDao repositoryDao;    
+    private RepositoryDao repositoryDao;    
     
     private List<SetType> getSetTypeList(HttpURLConnection connection) throws IOException, JAXBException {
         String response = OAIResponseUtil.createResponseFromXML(connection);

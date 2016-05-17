@@ -28,9 +28,6 @@ public class HarRecordMetadataDcDaoImpl extends GenericDaoImpl<HarRecordMetadata
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HarRecordMetadataDcDaoImpl.class);
 
-    @Autowired
-    private HarRecordDao harRecordDao;
-    
     public HarRecordMetadataDcDaoImpl() {
         super(HarRecordMetadataDc.class);
     }

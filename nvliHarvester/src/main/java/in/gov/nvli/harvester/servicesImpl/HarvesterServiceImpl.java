@@ -15,7 +15,7 @@ import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import java.util.List;
 import java.util.concurrent.Future;
-import javax.servlet.ServletContext;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -29,32 +29,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class HarvesterServiceImpl implements HarvesterService {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HarvesterServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HarvesterServiceImpl.class);
 
     @Autowired
-    ListSetsService listSetsService;
+    private ListSetsService listSetsService;
 
     @Autowired
-    ListMetadataFormatsService listMetadataFormatsService;
+    private ListMetadataFormatsService listMetadataFormatsService;
 
     @Autowired
-    ListRecordsService listRecordsService;
+    private ListRecordsService listRecordsService;
 
     @Autowired
-    RepositoryDao repositoryDao;
+    private RepositoryDao repositoryDao;
 
     @Override
-    public boolean harvestRepository(String baseURL, ServletContext servletContext) {
-        
+    public boolean harvestRepository(String baseURL) {
+
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
-         if(!harvesterConstraintChecker(harRepo, (byte)0))
-        {
-            LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") :::"+harRepo.getRepoStatusId().getRepoStatusName());  
-            return  false;
+        if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+            LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") :::" + harRepo.getRepoStatusId().getRepoStatusName());
+            return false;
         }
-        
+
         try {
-            harvestRepository(harRepo, servletContext);
+            harvestRepository(harRepo);
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
             return false;
@@ -64,40 +63,37 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     @Override
     @Async
-    public Future<String> harvestRepositoryByUID(String repoUID, ServletContext servletContext) {
+    public Future<String> harvestRepositoryByUID(String repoUID) {
 
         HarRepo harRepo = repositoryDao.getRepositoryByUID(repoUID);
-        if(!harvesterConstraintChecker(harRepo, (byte)0))
-        {
-            LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName());  
-            return new AsyncResult<String>("Can't Start Hravesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName());  
+        if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+            LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
+            return new AsyncResult<String>("Can't Start Hravesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
         }
-         
+
         try {
-            harvestRepository(harRepo, servletContext);
-            
+            harvestRepository(harRepo);
+
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
-           return new AsyncResult<String>("ERROR");
+            return new AsyncResult<String>("ERROR");
         }
-       return new AsyncResult<String>("STARTED");
+        return new AsyncResult<String>("STARTED");
     }
 
-    private void harvestRepository(HarRepo harRepo, ServletContext servletContext) {
-       
+    private void harvestRepository(HarRepo harRepo) {
+
         try {
             listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
-            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "", servletContext);
-            
-            if(harRepo.getOreEnableFlag()==1)
-            {
-                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "", servletContext);
+            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+
+            if (harRepo.getOreEnableFlag() == 1) {
+                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
             }
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
-            
-            
+
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
@@ -107,31 +103,30 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     @Override
     @Async
-    public void harvestAllRepositories(ServletContext servletContext) {
+    public void harvestAllRepositories() {
         List<HarRepo> harRepos = repositoryDao.list();
-        harvestRepositories(harRepos, servletContext);
+        harvestRepositories(harRepos);
     }
-  @Override
-    @Async
-    public void harvestAllActiveRepositories( List<HarRepo> harRepos,ServletContext servletContext) {
-        harvestRepositories(harRepos, servletContext);
-    }
-   
-    
+
     @Override
-     @Async
-    public void harvestRepositories(List<HarRepo> harRepos, ServletContext servletContext) {
+    @Async
+    public void harvestAllActiveRepositories(List<HarRepo> harRepos) {
+        harvestRepositories(harRepos);
+    }
+
+    @Override
+    @Async
+    public void harvestRepositories(List<HarRepo> harRepos) {
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
-               
-                if(!harvesterConstraintChecker(harRepo, (byte)0))
-                {
-                   LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName()); 
-                     continue;
+
+                if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+                    LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
+                    continue;
                 }
-                
+
                 try {
-                    harvestRepository(harRepo, servletContext);
+                    harvestRepository(harRepo);
                 } catch (Exception ex) {
                     LOGGER.error(ex.getMessage(), ex);
                 }
@@ -141,41 +136,37 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     @Override
     @Async
-    public void harvestRepositoryIncremental(String baseURL, ServletContext servletContext) {
+    public void harvestRepositoryIncremental(String baseURL) {
 
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
-        harvestRepositoryIncremental(harRepo,servletContext);
+        harvestRepositoryIncremental(harRepo);
 
     }
-    
+
     @Override
     @Async
-    public void harvestRepositoryIncrementalBYUID(String repoUID, ServletContext servletContext) {
+    public void harvestRepositoryIncrementalBYUID(String repoUID) {
 
         HarRepo harRepo = repositoryDao.getRepositoryByUID(repoUID);
-        harvestRepositoryIncremental(harRepo,servletContext);
+        harvestRepositoryIncremental(harRepo);
 
     }
-    
-    
-    
-    private void harvestRepositoryIncremental( HarRepo harRepo, ServletContext servletContext) {
-        
-        if(!harvesterConstraintChecker(harRepo, (byte)0))
-                {
-                   LOGGER.info("can't Start Harvesting("+harRepo.getRepoUID()+") ::: "+harRepo.getRepoStatusId().getRepoStatusName()); 
-                   return ;
-                }
-        
+
+    private void harvestRepositoryIncremental(HarRepo harRepo) {
+
+        if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+            LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
+            return;
+        }
+
         try {
             listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
 
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
 
-            listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "", servletContext);
-            
-            if(harRepo.getOreEnableFlag()==1)
-            {
+            listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+
+            if (harRepo.getOreEnableFlag() == 1) {
                 //start ore harvesting
             }
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
@@ -185,69 +176,56 @@ public class HarvesterServiceImpl implements HarvesterService {
         }
 
     }
-    
-    
-    
 
     @Override
-    public void harvestAllRepositoriesIncremental(ServletContext servletContext) {
+    public void harvestAllRepositoriesIncremental() {
         List<HarRepo> harRepos = repositoryDao.list();
-       harvestRepositoriesIncremental(harRepos,servletContext);
+        harvestRepositoriesIncremental(harRepos);
     }
 
-    
     @Override
     @Async
-    public void harvestRepositoriesIncremental(List<HarRepo> harRepos,ServletContext servletContext) {
+    public void harvestRepositoriesIncremental(List<HarRepo> harRepos) {
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
                 try {
-                    harvestRepositoryIncremental(harRepo, servletContext);
+                    harvestRepositoryIncremental(harRepo);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
         }
     }
-    
-    
-    private boolean harvesterConstraintChecker(HarRepo repo,byte firstOrIncremental)//0-firstTime,1-Incremental
+
+    private boolean harvesterConstraintChecker(HarRepo repo, byte firstOrIncremental)//0-firstTime,1-Incremental
     {
-        switch(repo.getRepoStatusId().getRepoStatusId())
-        {
+        switch (repo.getRepoStatusId().getRepoStatusId()) {
             case 1://not_active
                 return false;
             case 2://active
                 //change status code to  harvest_processing(i.e 3)
-                return repositoryDao.changeRepoStatus(repo.getRepoUID(),RepoStatusEnum.HARVEST_PROCESSING.getId());
+                return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING.getId());
             case 3://harvest_processing
-               return false;
+                return false;
             case 4://harvest_processing_error
-                 return  false;
+                return false;
             case 5://harvest_complete
-                if(firstOrIncremental==1)
-                {
-                    return repositoryDao.changeRepoStatus(repo.getRepoUID(),RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
-                }  
-                else
-                 return  false;
+                if (firstOrIncremental == 1) {
+                    return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
+                } else {
+                    return false;
+                }
             case 6://increment_harvest_processing
-               return false;
+                return false;
             case 7://increment_harvest_processing_error
-               return false;
+                return false;
             case 8://invalid_url
                 return false;
             default:
                 return false;
 
-                    
-                    
-                            
-                            
         }
-        
-        
+
     }
-    
-    
+
 }

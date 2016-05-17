@@ -10,7 +10,6 @@ import in.gov.nvli.harvester.services.HarvesterService;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -36,27 +35,27 @@ public class HarvesterController {
   }
 
   @RequestMapping("/harvester")
-  public String harvestRepository(@RequestParam("baseURL") String baseURL, HttpServletRequest servletRequest) {
-    harvesterService.harvestRepository(baseURL, servletRequest.getServletContext());
+  public String harvestRepository(@RequestParam("baseURL") String baseURL) {
+    harvesterService.harvestRepository(baseURL);
 
     return "example";
   }
 
   @RequestMapping("/harvestall")
-  public String harvestAll(HttpServletRequest servletRequest) {
-    harvesterService.harvestAllRepositories(servletRequest.getServletContext());
+  public String harvestAll() {
+    harvesterService.harvestAllRepositories();
     return "example";
   }
   
   @RequestMapping("/harvester_incremental")
-  public String harvestRepositoryIncremental(@RequestParam("baseURL") String baseURL, HttpServletRequest servletRequest) {
-    harvesterService.harvestRepositoryIncremental(baseURL, servletRequest.getServletContext());
+  public String harvestRepositoryIncremental(@RequestParam("baseURL") String baseURL) {
+    harvesterService.harvestRepositoryIncremental(baseURL);
     return "example";
   }
   
   @RequestMapping("/harvest_all_incremental")
-  public String harvestAllRepositoriesIncremental(HttpServletRequest servletRequest) {
-        harvesterService.harvestAllRepositoriesIncremental(servletRequest.getServletContext());
+  public String harvestAllRepositoriesIncremental() {
+        harvesterService.harvestAllRepositoriesIncremental();
         return "example";
   }
   @RequestMapping("/test")

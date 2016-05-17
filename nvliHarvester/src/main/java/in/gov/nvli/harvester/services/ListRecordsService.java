@@ -9,7 +9,6 @@ import com.sun.syndication.io.FeedException;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import java.io.IOException;
-import javax.servlet.ServletContext;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -19,16 +18,16 @@ import javax.xml.transform.TransformerException;
  */
 public interface ListRecordsService {
 
-    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext);
+    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail);
 
-    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext);
+    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail);
 
-    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext);
+    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail);
 
-    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext);
+    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail);
 
-    public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail, ServletContext servletContext) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
+    public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
     
-    public boolean saveListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail, ServletContext servletContext) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
+    public boolean saveListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
     
 }

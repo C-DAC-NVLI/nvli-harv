@@ -83,11 +83,11 @@ public class GetRecordServiceImpl implements GetRecordService {
     private HarSetDao harSetDao;
 
     @Autowired
-    HarSetRecordDao harSetRecordDao;
+    private HarSetRecordDao harSetRecordDao;
 
     @Autowired
-    RepositoryDao repositoryDao;
-    
+    private RepositoryDao repositoryDao;
+
     private static final String LICENSE = "LICENSE";
     private static final String ORIGINAL = "ORIGINAL";
     private static final String TEXT = "TEXT";
@@ -395,23 +395,22 @@ public class GetRecordServiceImpl implements GetRecordService {
         return null;
 
     }
-    
+
     @Override
     public void saveHarRecordDataInFileSystem(HarRecordData harRecordDataObj, String path) throws IOException {
         String recordData = harRecordDataObj.getRecordData();
         String recordText = harRecordDataObj.getRecordDataText();
         String recordLicense = harRecordDataObj.getRecordDataLicense();
-        
-        if(recordData != null){
+
+        if (recordData != null) {
             FileUtils.saveFile(recordData, path, FileUtils.getNameFromURL(harRecordDataObj.getRecordData()));
         }
-        if(recordText != null){
+        if (recordText != null) {
             FileUtils.saveFile(recordText, path, FileUtils.getNameFromURL(harRecordDataObj.getRecordDataText()));
         }
-        if(recordLicense != null){
+        if (recordLicense != null) {
             FileUtils.saveFile(recordLicense, path, FileUtils.getNameFromURL(harRecordDataObj.getRecordDataLicense()));
         }
-        
-        
-    } 
+
+    }
 }

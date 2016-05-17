@@ -56,75 +56,67 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     private String repositoryDataPath;
     
     @Autowired
-    HarRecordDao harRecordDao;
+    private HarRecordDao harRecordDao;
 
     @Autowired
-    HarSetRecordDao harSetRecordDao;
+    private HarSetRecordDao harSetRecordDao;
 
     @Autowired
-    HarRecordMetadataDcDao harRecordMetadataDcDao;
+    private HarRecordMetadataDcDao harRecordMetadataDcDao;
 
     @Autowired
-    HarRecordDataDao harRecordDataDao;
+    private HarRecordDataDao harRecordDataDao;
 
     @Autowired
-    GetRecordService getRecordServiceObject;
+    private GetRecordService getRecordServiceObject;
 
     @Autowired
-    RepositoryDao repositoryDao;
-
-    private HarRepo harRepoObj;
-    private HttpURLConnection connection;
-
-    List<HarRecord> harRecordList;
-    List<HarSetRecord> harSetRecordList;
-    List<HarRecordMetadataDc> harRecordMetadataDcList;
+    private RepositoryDao repositoryDao;
+    
+    @Autowired 
+    private ServletContext servletContext;
 
     public ListRecordsServiceImpl() {
     }
 
     @Override
-    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
-        this.harRepoObj = harRepoObj;
+    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) {
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, false);
+        return saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, false);
     }
 
     @Override
-    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
-        this.harRepoObj = repositoryDao.getRepository(baseURL);
-        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, false);
+    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) {
+        HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
+        return saveListRecords(harRepoObj, metadataPrefix, method, adminEmail);
     }
 
     @Override
-    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
-        this.harRepoObj = harRepoObj;
+    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) {
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, true);
+        return saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, true);
     }
 
     @Override
-    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext) {
-        this.harRepoObj = repositoryDao.getRepository(baseURL);
-        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
-        return saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, true);
+    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) {
+        HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
+        return saveOrUpdateListRecords(harRepoObj, metadataPrefix, method, adminEmail);
     }
 
-    private boolean saveListRecordsRecursive(String desiredURL, String metadataPrefix, MethodEnum method, String adminEmail, ServletContext servletContext, boolean incrementalFlag) {
+    private boolean saveListRecordsRecursive(HarRepo harRepoObj, String desiredURL, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag) {
         try {
             LOGGER.info("desired URL " + desiredURL);
             if (servletContext.getAttribute(desiredURL) != null) {
                 Thread.sleep(INTERVAL);
 
             }
-            connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
+            HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
 
             if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
                 String resumptionToken;
-                harRecordList = new ArrayList<>();
-                harSetRecordList = new ArrayList<>();
-                harRecordMetadataDcList = new ArrayList<>();
+                List<HarRecord> harRecordList = new ArrayList<>();
+                List<HarSetRecord> harSetRecordList = new ArrayList<>();
+                List<HarRecordMetadataDc> harRecordMetadataDcList = new ArrayList<>();
                 HarRecord harRecordObj;
                 List<HarSetRecord> tempHarSetRecordList;
                 HarRecordMetadataDc harRecordMetadataDcObj;
@@ -139,8 +131,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                             tempHarSetRecordList = getRecordServiceObject.getHarSetRecordListByRecordType(recordTypeObj, harRecordObj);
                             harRecordMetadataDcObj = getRecordServiceObject.getHarRecordMetadataDcByRecordType(recordTypeObj, harRecordObj);
 
-                            this.harRecordList.add(harRecordObj);
-                            this.harSetRecordList.addAll(tempHarSetRecordList);
+                            harRecordList.add(harRecordObj);
+                            harSetRecordList.addAll(tempHarSetRecordList);
                             if (harRecordMetadataDcObj != null) {
                                 harRecordMetadataDcList.add(harRecordMetadataDcObj);
                             }
@@ -174,7 +166,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                             resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
                             if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
                                 desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
-                                saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, incrementalFlag);
+                                saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, incrementalFlag);
                             }
                         }
                     } else {
@@ -193,7 +185,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                     servletContext.setAttribute(desiredURL, (++tmpCnt));
                 }
                 if (((int) servletContext.getAttribute(desiredURL)) <= 3) {
-                    saveListRecordsRecursive(desiredURL, metadataPrefix, method, adminEmail, servletContext, incrementalFlag);
+                    saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, incrementalFlag);
                 }
             }
 
@@ -207,33 +199,28 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     }
 
     @Override
-    public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail, ServletContext servletContext) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
-        this.harRepoObj = repositoryDao.getRepository(baseURL);
-        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + "ore";
-        if (saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, false)) {
-            return saveHarRecordDataIntoFileSystem(harRepoObj);
-        }
-        return false;
+    public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
+        HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
+        return saveListHarRecordData(harRepoObj, method, adminEmail);
     }
 
     @Override
-    public boolean saveListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail, ServletContext servletContext) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
-        this.harRepoObj = harRepoObj;
+    public boolean saveListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + "ore";
-        if (saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, false)) {
+        if (saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, false)) {
             return saveHarRecordDataIntoFileSystem(harRepoObj);
         }
         return false;
     }
 
-    private boolean saveListHarRecordDataRecursive(String desiredURL, MethodEnum method, String adminEmail, ServletContext servletContext, boolean incrementalFlag) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException {
+    private boolean saveListHarRecordDataRecursive(HarRepo harRepoObj, String desiredURL, MethodEnum method, String adminEmail, boolean incrementalFlag) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException {
         try {
             LOGGER.info("desired URL " + desiredURL);
             if (servletContext.getAttribute(desiredURL) != null) {
                 Thread.sleep(INTERVAL);
 
             }
-            connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
+            HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
 
             if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
                 String resumptionToken;
@@ -256,7 +243,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                         resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
                         if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
                             desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
-                            saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, incrementalFlag);
+                            saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, incrementalFlag);
                         }
                     } else {
                         return false;
@@ -274,7 +261,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                     servletContext.setAttribute(desiredURL, (++tmpCnt));
                 }
                 if (((int) servletContext.getAttribute(desiredURL)) <= 3) {
-                    saveListHarRecordDataRecursive(desiredURL, method, adminEmail, servletContext, incrementalFlag);
+                    saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, incrementalFlag);
                 }
             }
 
@@ -289,7 +276,6 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
     private boolean saveHarRecordDataIntoFileSystem(HarRepo harRepoObject) throws IOException {
         File recordDirectory;
-        System.err.println("repositoryDataPath "+repositoryDataPath);
         List<HarRecordData> harRecordDataList = harRecordDataDao.list(harRepoObject);
         if (harRecordDataList != null) {
             repositoryDataPath += File.separator+harRepoObject.getRepoUID();

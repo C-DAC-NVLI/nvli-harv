@@ -29,9 +29,7 @@ public class HarSetRecordDaoImpl extends GenericDaoImpl<HarSetRecord, Long> impl
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HarSetRecordDaoImpl.class);
     
-    @Autowired
-    private HarRecordDao harRecordDao;
-    
+       
     public HarSetRecordDaoImpl() {
         super(HarSetRecord.class);
     }

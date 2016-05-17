@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
@@ -27,28 +28,22 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class ListMetadataFormatsController {
-    
-    
+
     @Autowired
     private ListMetadataFormatsService service;
 
     @Autowired
     private RepositoryService repositoryService;
-    
-    
-    
+
     @RequestMapping("/listMetadataFormats")
-    public ModelAndView listSets(String baseURL)
-    {
-       HarRepo repo=repositoryService.getRepository(2);
-         
-       
-        
-        baseURL=baseURL+"?verb="+VerbType.LIST_METADATA_FORMATS.value();
-        ModelAndView mv=new ModelAndView("ListMetadataFormats");
+    public ModelAndView listSets(String baseURL) {
+        HarRepo repo = repositoryService.getRepository(2);
+
+        baseURL = baseURL + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value();
+        ModelAndView mv = new ModelAndView("ListMetadataFormats");
         try {
-           service.saveHarMetadataTypes(repo, MethodEnum.GET, "");
-              
+            service.saveHarMetadataTypes(repo, MethodEnum.GET, "");
+
         } catch (MalformedURLException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JAXBException | IOException ex) {
@@ -56,6 +51,5 @@ public class ListMetadataFormatsController {
         }
         return mv;
     }
-    
-    
+
 }

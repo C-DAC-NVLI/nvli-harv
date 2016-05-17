@@ -41,9 +41,7 @@ public class HarvesterResource {
     @Autowired
     private RepositoryService repositoryService;
     
-    @javax.ws.rs.core.Context 
-    ServletContext context;
-     
+        
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public  Map<String,String>  startHarvestAll()
@@ -56,7 +54,7 @@ public class HarvesterResource {
            
         }else
         {
-           harvesterService.harvestAllActiveRepositories(activeRepos, context);
+           harvesterService.harvestAllActiveRepositories(activeRepos);
             for (HarRepo repo : activeRepos) {
                // result.put(repo.getRepoUID(), getHarvesterStatus(repo.getRepoUID()));
                 result.put(repo.getRepoUID(),RepoStatusEnum.HARVEST_PROCESSING.getName());
@@ -81,7 +79,7 @@ public class HarvesterResource {
             result.put("message", "no Repositories Exist on corresponding repoUIDS");
         }else
          {
-             harvesterService.harvestRepositories(harRepos, context);
+             harvesterService.harvestRepositories(harRepos);
              for (String repoUID : repoUIDSList) {
                  // result.put(repoUID, getHarvesterStatus(repoUID));
                  result.put(repoUID, RepoStatusEnum.HARVEST_PROCESSING.getName());
@@ -97,7 +95,7 @@ public class HarvesterResource {
     public String  startHarvesting(@PathParam("repoUID") String repoUID) throws InterruptedException, ExecutionException
     {
         //if(harvesterService.harvestRepositoryByUID(repoUID, context))
-        Future<String> response = harvesterService.harvestRepositoryByUID(repoUID, context); 
+        Future<String> response = harvesterService.harvestRepositoryByUID(repoUID); 
        // return getHarvesterStatus(repoUID);
         return RepoStatusEnum.HARVEST_PROCESSING.getName();
     }

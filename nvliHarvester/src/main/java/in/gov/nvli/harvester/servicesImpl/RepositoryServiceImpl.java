@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class RepositoryServiceImpl implements RepositoryService {
 
     @Autowired
-    RepositoryDao repositoryDaoObject;
+    private RepositoryDao repositoryDaoObject;
 
     @Override
     public HarRepo addRepository(HarRepo repositoryObject) {
