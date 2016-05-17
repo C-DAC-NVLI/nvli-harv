@@ -158,6 +158,19 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
        }
     return activeRepos;
     }
+
+    @Override
+    public List<HarRepo> getRepositoriesByStaus(short repoStatusId) {
+        List<HarRepo> Repos=null;
+        try
+       {
+          Repos= currentSession().createCriteria(HarRepo.class).createAlias("repoStatusId", "repoStatusId").add(Restrictions.eq("repoStatusId.repoStatusId",repoStatusId )).list();
+       }catch(Exception e)
+       {
+           LOGGER.error(e.getMessage(),e);
+       }
+    return Repos;
+    }
     
     
 }

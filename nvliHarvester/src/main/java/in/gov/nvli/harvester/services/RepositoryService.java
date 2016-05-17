@@ -61,4 +61,5 @@ public interface RepositoryService {
     public boolean changeRepoStatus(short status);
     
     public List<HarRepo> getActiveRepositories();
+    public List<HarRepo> getRepositoriesByStaus(short repoStatusId);
 }

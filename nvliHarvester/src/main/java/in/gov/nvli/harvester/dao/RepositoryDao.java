@@ -32,5 +32,6 @@ public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
     public List<HarRepo> getRepositories();
     
     public List<HarRepo> getActiveRepositories();
+    public List<HarRepo> getRepositoriesByStaus(short repoStatusId);
 
 }

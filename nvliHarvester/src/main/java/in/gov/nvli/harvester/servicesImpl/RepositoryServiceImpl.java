@@ -149,4 +149,10 @@ public class RepositoryServiceImpl implements RepositoryService {
         return repositoryDaoObject.getActiveRepositories();
     }
 
+    @Override
+    public List<HarRepo> getRepositoriesByStaus(short repoStatusId) {
+        return repositoryDaoObject.getRepositoriesByStaus(repoStatusId);
+        
+    }
+
 }
