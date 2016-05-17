@@ -54,6 +54,6 @@
         <appender-ref ref="infoLogs"/>
         <!--<appender-ref ref="warnLogs"/>-->
         <appender-ref ref="errorLogs"/>
-        <appender-ref ref="consoleLogs"/>
+        <!--<appender-ref ref="consoleLogs"/>-->
     </root>
 </log4j:configuration>
