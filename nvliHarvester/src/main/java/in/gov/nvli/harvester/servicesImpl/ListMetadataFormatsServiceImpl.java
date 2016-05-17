@@ -42,7 +42,8 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
     @Autowired
     private HarMetadataTypeRepositoryDao harMetadataTypeRepositoryDao;
 
-    private List<MetadataFormatType> getMetadataFormatTypeList(HttpURLConnection connection) throws IOException, JAXBException {
+    @Override
+    public List<MetadataFormatType> getMetadataFormatTypeList(HttpURLConnection connection) throws IOException, JAXBException {
         String response = OAIResponseUtil.createResponseFromXML(connection);
         OAIPMHtype obj = (OAIPMHtype) UnmarshalUtils.xmlToOaipmh(response);
         return obj.getListMetadataFormats().getMetadataFormat();
