@@ -13,6 +13,7 @@ import in.gov.nvli.harvester.services.HarvesterService;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 import org.slf4j.Logger;
@@ -84,15 +85,18 @@ public class HarvesterServiceImpl implements HarvesterService {
     private void harvestRepository(HarRepo harRepo) {
 
         try {
+            Date beforeHarvestingDate = new Date();
+
             listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-
             listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-
             if (harRepo.getOreEnableFlag() == 1) {
                 listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
             }
+
+            repositoryDao.updateHarRecordCount(harRepo);
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
+            repositoryDao.updateLastSyncDate(harRepo.getRepoUID(), beforeHarvestingDate);
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
@@ -160,16 +164,19 @@ public class HarvesterServiceImpl implements HarvesterService {
         }
 
         try {
+            Date beforeHarvestingDate = new Date();
+
             listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
-
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-
             listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-
             if (harRepo.getOreEnableFlag() == 1) {
                 listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "");
             }
+
+            repositoryDao.updateHarRecordCount(harRepo);
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
+            repositoryDao.updateLastSyncDate(harRepo.getRepoUID(), beforeHarvestingDate);
+
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);

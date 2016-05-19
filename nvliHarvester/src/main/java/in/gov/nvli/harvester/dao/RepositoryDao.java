@@ -7,6 +7,7 @@
 package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarRepo;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,8 +31,15 @@ public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
     boolean changeRepoStatusByHarRepo(List<HarRepo> repos, short status);
 
     public List<HarRepo> getRepositories();
-    
+
     public List<HarRepo> getActiveRepositories();
+
     public List<HarRepo> getRepositoriesByStaus(short repoStatusId);
+
+    public void updateLastSyncDate(String repoUID, Date updatedDate);
+
+    public long getHarRecordCount(HarRepo harRepoObj);
+
+    public void updateHarRecordCount(HarRepo harRepoObj);
 
 }
