@@ -27,7 +27,11 @@ public interface ListRecordsService {
     public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail);
 
     public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
-    
+
     public boolean saveListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
-    
+
+    public boolean saveOrUpdateListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
+
+    public boolean saveOrUpdateListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
+
 }

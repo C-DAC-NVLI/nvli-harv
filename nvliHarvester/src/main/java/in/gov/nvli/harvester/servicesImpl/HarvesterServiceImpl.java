@@ -167,7 +167,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
 
             if (harRepo.getOreEnableFlag() == 1) {
-                //start ore harvesting
+                listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "");
             }
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
         } catch (Exception ex) {
@@ -178,6 +178,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     }
 
     @Override
+    @Async
     public void harvestAllRepositoriesIncremental() {
         List<HarRepo> harRepos = repositoryDao.list();
         harvestRepositoriesIncremental(harRepos);
