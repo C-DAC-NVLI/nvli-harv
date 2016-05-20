@@ -87,12 +87,12 @@ public class HarvesterServiceImpl implements HarvesterService {
         try {
             Date beforeHarvestingDate = new Date();
 
-//            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
-//            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-//            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-//            if (harRepo.getOreEnableFlag() == 1) {
-//                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
-//            }
+            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
+            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            if (harRepo.getOreEnableFlag() == 1) {
+                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
+            }
 
             repositoryDao.updateHarRecordCount(harRepo);
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
