@@ -177,6 +177,18 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
             LOGGER.error(e.getMessage(), e);
         }
     }
+    
+    @Override
+    @TransactionalReadOrWrite
+    public void updateLastSyncEndDate(String repoUID, Date updatedDate) {
+        try {
+            HarRepo tempHarRepo = getRepositoryByUID(repoUID);
+            tempHarRepo.setRepoLastSyncEndDate(updatedDate);
+            saveOrUpdate(tempHarRepo);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
 
     @Override
     public long getHarRecordCount(HarRepo harRepoObj) {
@@ -187,7 +199,6 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @TransactionalReadOrWrite
     public void updateHarRecordCount(HarRepo harRepoObj) {
         try {
-            System.err.println("Count is " + getHarRecordCount(harRepoObj));
             harRepoObj.setRecordCount(getHarRecordCount(harRepoObj));
             saveOrUpdate(harRepoObj);
         } catch (Exception e) {

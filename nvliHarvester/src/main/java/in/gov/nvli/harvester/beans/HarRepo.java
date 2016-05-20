@@ -164,6 +164,10 @@ public class HarRepo implements Serializable {
     @Column(name = "record_count")
     private Long recordCount;
 
+    @Column(name = "repo_last_sync_end_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date repoLastSyncEndDate;
+    
     public HarRepo() {
     }
 
@@ -450,6 +454,14 @@ public class HarRepo implements Serializable {
         this.recordCount = recordCount;
     }
 
+    public Date getRepoLastSyncEndDate() {
+        return repoLastSyncEndDate;
+    }
+
+    public void setRepoLastSyncEndDate(Date repoLastSyncEndDate) {
+        this.repoLastSyncEndDate = repoLastSyncEndDate;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
