@@ -45,7 +45,6 @@ public class HarSet implements Serializable {
     @Column(name = "set_id", nullable = false)
     private Long setId;
     @Basic(optional = false)
-    @NotNull
     @Size(min = 1, max = 500)
     @Column(name = "set_name", nullable = false, length = 500)
     private String setName;
