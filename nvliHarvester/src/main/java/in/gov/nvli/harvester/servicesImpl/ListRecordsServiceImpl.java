@@ -51,10 +51,10 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ListRecordsServiceImpl.class);
 
     private static final int INTERVAL = 60000;
-    
+
     @Value("${repository.data.path}")
     private String repositoryDataPath;
-    
+
     @Autowired
     private HarRecordDao harRecordDao;
 
@@ -72,8 +72,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
     @Autowired
     private RepositoryDao repositoryDao;
-    
-    @Autowired 
+
+    @Autowired
     private ServletContext servletContext;
 
     public ListRecordsServiceImpl() {
@@ -161,7 +161,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                             }
                         }
                         servletContext.removeAttribute(desiredURL);
-                        
+
                         if (oAIPMHtypeObject.getListRecords().getResumptionToken() != null) {
                             resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
                             if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
@@ -213,6 +213,21 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         return false;
     }
 
+    @Override
+    public boolean saveOrUpdateListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
+        HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
+        return saveOrUpdateListHarRecordData(harRepoObj, method, adminEmail);
+    }
+
+    @Override
+    public boolean saveOrUpdateListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException {
+        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + "ore";
+        if (saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, true)) {
+            return saveHarRecordDataIntoFileSystem(harRepoObj);
+        }
+        return false;
+    }
+
     private boolean saveListHarRecordDataRecursive(HarRepo harRepoObj, String desiredURL, MethodEnum method, String adminEmail, boolean incrementalFlag) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException {
         try {
             LOGGER.info("desired URL " + desiredURL);
@@ -225,6 +240,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
             if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
                 String resumptionToken;
                 HarRecordData harRecordDataObject;
+                List<HarRecordData> harRecordDataList = new ArrayList<>();
 
                 String response = OAIResponseUtil.createResponseFromXML(connection);
                 OAIPMHtype oAIPMHtypeObject = UnmarshalUtils.xmlToOaipmh(response);
@@ -234,8 +250,15 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                         for (RecordType recordTypeObj : recordTypeList) {
                             harRecordDataObject = getRecordServiceObject.getHarRecordDataByRecordType(recordTypeObj);
                             if (harRecordDataObject != null) {
-                                harRecordDataDao.createNew(harRecordDataObject);
+                                harRecordDataList.add(harRecordDataObject);
                             }
+                        }
+                        if (incrementalFlag) {
+                            if (!harRecordDataList.isEmpty()) {
+                                harRecordDataDao.saveOrUpdateHarRecordDataList(harRecordDataList);
+                            }
+                        } else if (!harRecordDataList.isEmpty()) {
+                            harRecordDataDao.saveList(harRecordDataList);
                         }
 
                         servletContext.removeAttribute(desiredURL);
@@ -278,9 +301,9 @@ public class ListRecordsServiceImpl implements ListRecordsService {
         File recordDirectory;
         List<HarRecordData> harRecordDataList = harRecordDataDao.list(harRepoObject);
         if (harRecordDataList != null) {
-            repositoryDataPath += File.separator+harRepoObject.getRepoUID();
+            String currentRepositoryDataPath = repositoryDataPath + File.separator + harRepoObject.getRepoUID();
             for (HarRecordData tempHarRecordDataObj : harRecordDataList) {
-                recordDirectory = new File(repositoryDataPath + File.separator + tempHarRecordDataObj.getRecordId().getRecordId());
+                recordDirectory = new File(currentRepositoryDataPath + File.separator + tempHarRecordDataObj.getRecordId().getRecordId());
                 if (!recordDirectory.exists()) {
                     recordDirectory.mkdirs();
                     getRecordServiceObject.saveHarRecordDataInFileSystem(tempHarRecordDataObj, recordDirectory.getPath());

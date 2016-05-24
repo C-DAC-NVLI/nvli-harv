@@ -56,7 +56,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HarRepo.findByRepoActivationDate", query = "SELECT h FROM HarRepo h WHERE h.repoActivationDate = :repoActivationDate"),
     @NamedQuery(name = "HarRepo.findByRepoRowUpdateTime", query = "SELECT h FROM HarRepo h WHERE h.repoRowUpdateTime = :repoRowUpdateTime"),
     @NamedQuery(name = "HarRepo.findByRepoLatitude", query = "SELECT h FROM HarRepo h WHERE h.repoLatitude = :repoLatitude"),
-    @NamedQuery(name = "HarRepo.findByRepoLongitude", query = "SELECT h FROM HarRepo h WHERE h.repoLongitude = :repoLongitude")})
+    @NamedQuery(name = "HarRepo.findByRepoLongitude", query = "SELECT h FROM HarRepo h WHERE h.repoLongitude = :repoLongitude"),
+    @NamedQuery(name = "HarRepo.findByRecordCount", query = "SELECT h FROM HarRepo h WHERE h.recordCount = :recordCount")})
 public class HarRepo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,11 +66,11 @@ public class HarRepo implements Serializable {
     @Basic(optional = false)
     @Column(name = "repo_id", nullable = false)
     private Integer repoId;
-    
+
     @Column(name = "repo_uid", nullable = false)
     @Size(min = 1, max = 200)
     private String repoUID;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 500)
@@ -157,8 +158,15 @@ public class HarRepo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
     private Collection<HarSetRepository> harSetRepositoryCollection;
 
-    @Column(name = "ore_enable_flag",nullable = false)
-    private byte oreEnableFlag=0;//1=enabled,0-disabled/not enabled(default)
+    @Column(name = "ore_enable_flag", nullable = false)
+    private byte oreEnableFlag = 0;//1=enabled,0-disabled/not enabled(default)
+
+    @Column(name = "record_count")
+    private Long recordCount;
+
+    @Column(name = "repo_last_sync_end_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date repoLastSyncEndDate;
     
     public HarRepo() {
     }
@@ -190,10 +198,6 @@ public class HarRepo implements Serializable {
         this.repoUID = repoUID;
     }
 
-   
-
-    
-    
     public String getRepoName() {
         return repoName;
     }
@@ -442,7 +446,21 @@ public class HarRepo implements Serializable {
         this.oreEnableFlag = oreEnableFlag;
     }
 
-    
+    public Long getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(Long recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public Date getRepoLastSyncEndDate() {
+        return repoLastSyncEndDate;
+    }
+
+    public void setRepoLastSyncEndDate(Date repoLastSyncEndDate) {
+        this.repoLastSyncEndDate = repoLastSyncEndDate;
+    }
     
     @Override
     public int hashCode() {
@@ -468,5 +486,5 @@ public class HarRepo implements Serializable {
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRepo[ repoId=" + repoId + " ]";
     }
-    
+
 }

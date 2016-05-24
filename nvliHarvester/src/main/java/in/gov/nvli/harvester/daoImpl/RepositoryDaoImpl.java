@@ -10,13 +10,15 @@ import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
 import in.gov.nvli.harvester.customised.RepoStatusEnum;
+import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
+import java.util.Date;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -27,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implements RepositoryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryDao.class);
+
+    @Autowired
+    private HarRecordDao harRecordDaoObj;
 
     public RepositoryDaoImpl() {
         super(HarRepo.class);
@@ -55,7 +60,7 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
         }
         return harRepo;
     }
-    
+
     @Override
     public HarRepo getRepositoryByUID(String repoUID) {
         HarRepo harRepo = null;
@@ -91,18 +96,17 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
         }
         return harRepos;
     }
-    
-    
+
     @Override
     @TransactionalReadOrWrite
     public boolean changeRepoStatus(List<String> repositoryUIDs, short status) {
-        
-       for(String repositoryUID:repositoryUIDs)
-       {
-           if(!changeRepoStatusInternal(repositoryUID, status))
-               return false;
-       }
-   return true;
+
+        for (String repositoryUID : repositoryUIDs) {
+            if (!changeRepoStatusInternal(repositoryUID, status)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -114,33 +118,27 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @Override
     @TransactionalReadOrWrite
     public boolean changeRepoStatusByHarRepo(List<HarRepo> repos, short status) {
-        try
-        {
-        for(HarRepo repo:repos)
-       {
-        HarRepoStatus repoStatus = (HarRepoStatus) currentSession().createCriteria(HarRepoStatus.class).add(Restrictions.eq("repoStatusId", status)).uniqueResult();
-        repo.setRepoStatusId(repoStatus);
-       currentSession().saveOrUpdate(repo); 
-       }
-        }catch(Exception e)
-        {
+        try {
+            for (HarRepo repo : repos) {
+                HarRepoStatus repoStatus = (HarRepoStatus) currentSession().createCriteria(HarRepoStatus.class).add(Restrictions.eq("repoStatusId", status)).uniqueResult();
+                repo.setRepoStatusId(repoStatus);
+                currentSession().saveOrUpdate(repo);
+            }
+        } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return false;  
+            return false;
         }
         return true;
     }
 
-    private boolean  changeRepoStatusInternal(String repositoryUID, short status)
-    {
-        try
-        {
-        HarRepo repo=(HarRepo) currentSession().createCriteria(HarRepo.class).add(Restrictions.eq("repoUID", repositoryUID)).uniqueResult();
-        HarRepoStatus repoStatus = (HarRepoStatus) currentSession().createCriteria(HarRepoStatus.class).add(Restrictions.eq("repoStatusId", status)).uniqueResult();
-        repo.setRepoStatusId(repoStatus);
-        currentSession().saveOrUpdate(repo);
-        }catch(Exception e)
-        {
-           LOGGER.error(e.getMessage(), e);
+    private boolean changeRepoStatusInternal(String repositoryUID, short status) {
+        try {
+            HarRepo repo = (HarRepo) currentSession().createCriteria(HarRepo.class).add(Restrictions.eq("repoUID", repositoryUID)).uniqueResult();
+            HarRepoStatus repoStatus = (HarRepoStatus) currentSession().createCriteria(HarRepoStatus.class).add(Restrictions.eq("repoStatusId", status)).uniqueResult();
+            repo.setRepoStatusId(repoStatus);
+            currentSession().saveOrUpdate(repo);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return false;
         }
         return true;
@@ -148,29 +146,64 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
 
     @Override
     public List<HarRepo> getActiveRepositories() {
-       List<HarRepo> activeRepos=null;
-        try
-       {
-          activeRepos= currentSession().createCriteria(HarRepo.class).createAlias("repoStatusId", "repoStatusId").add(Restrictions.eq("repoStatusId.repoStatusId",RepoStatusEnum.ACTIVE )).list();
-       }catch(Exception e)
-       {
-           LOGGER.error(e.getMessage(),e);
-       }
-    return activeRepos;
+        List<HarRepo> activeRepos = null;
+        try {
+            activeRepos = currentSession().createCriteria(HarRepo.class).createAlias("repoStatusId", "repoStatusId").add(Restrictions.eq("repoStatusId.repoStatusId", RepoStatusEnum.ACTIVE)).list();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return activeRepos;
     }
 
     @Override
     public List<HarRepo> getRepositoriesByStaus(short repoStatusId) {
-        List<HarRepo> Repos=null;
-        try
-       {
-          Repos= currentSession().createCriteria(HarRepo.class).createAlias("repoStatusId", "repoStatusId").add(Restrictions.eq("repoStatusId.repoStatusId",repoStatusId )).list();
-       }catch(Exception e)
-       {
-           LOGGER.error(e.getMessage(),e);
-       }
-    return Repos;
+        List<HarRepo> Repos = null;
+        try {
+            Repos = currentSession().createCriteria(HarRepo.class).createAlias("repoStatusId", "repoStatusId").add(Restrictions.eq("repoStatusId.repoStatusId", repoStatusId)).list();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return Repos;
+    }
+
+    @Override
+    @TransactionalReadOrWrite
+    public void updateLastSyncDate(String repoUID, Date updatedDate) {
+        try {
+            HarRepo tempHarRepo = getRepositoryByUID(repoUID);
+            tempHarRepo.setRepoLastSyncDate(updatedDate);
+            saveOrUpdate(tempHarRepo);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
     
-    
+    @Override
+    @TransactionalReadOrWrite
+    public void updateLastSyncEndDate(String repoUID, Date updatedDate) {
+        try {
+            HarRepo tempHarRepo = getRepositoryByUID(repoUID);
+            tempHarRepo.setRepoLastSyncEndDate(updatedDate);
+            saveOrUpdate(tempHarRepo);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public long getHarRecordCount(HarRepo harRepoObj) {
+        return harRecordDaoObj.getCount(harRepoObj);
+    }
+
+    @Override
+    @TransactionalReadOrWrite
+    public void updateHarRecordCount(HarRepo harRepoObj) {
+        try {
+            harRepoObj.setRecordCount(getHarRecordCount(harRepoObj));
+            saveOrUpdate(harRepoObj);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
 }

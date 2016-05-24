@@ -6,6 +6,7 @@
 package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarRecord;
+import in.gov.nvli.harvester.beans.HarRepo;
 import java.util.List;
 
 /**
@@ -14,11 +15,10 @@ import java.util.List;
  */
 public interface HarRecordDao extends GenericDao<HarRecord, Long> {
 
-    
-
-    
     public void saveOrUpdateHarRecordList(List<HarRecord> records);
 
     public HarRecord getHarRecordByRecordIdentifier(String recordIdentifier);
+
+    public long getCount(HarRepo harRepoObj);
 
 }
