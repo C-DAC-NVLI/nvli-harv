@@ -63,23 +63,24 @@ public class IdentifyResource {
 //    }
 //   
     @GET
-    @Path("{baseURL}")
+    @Path("{baseURL}/{adminEmail}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
     {
         return identify(baseURL,adminEmail);
     }
     
     @GET
-    @Path("{baseURL}")
+    @Path("{baseURL}/{adminEmail")
     @Produces(MediaType.APPLICATION_XML)
-    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
     {
         return identify(baseURL,adminEmail);
     }  
    private IdentifyTypeCustomised identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException
     {
          baseURL = URLDecoder.decode(baseURL, "UTF-8");
+         adminEmail = URLDecoder.decode(adminEmail, "UTF-8");
         IdentifyType identifyObj=identifyService.getIdentifyTypeObject(baseURL,MethodEnum.GET, adminEmail);
         HttpURLConnection connection = HttpURLConnectionUtil.getConnection(baseURL + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value(), MethodEnum.GET, adminEmail);
         List<MetadataFormatType> metaDataFormats = listMetadataFormatsService.getMetadataFormatTypeList(connection);
