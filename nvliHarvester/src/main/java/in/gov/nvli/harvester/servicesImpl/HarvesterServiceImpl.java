@@ -13,6 +13,7 @@ import in.gov.nvli.harvester.services.HarvesterService;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
+import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -48,7 +49,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     public boolean harvestRepository(String baseURL) {
 
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
-        if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+        if (!harvesterConstraintChecker(harRepo, false)) {
             LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") :::" + harRepo.getRepoStatusId().getRepoStatusName());
             return false;
         }
@@ -67,7 +68,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     public Future<String> harvestRepositoryByUID(String repoUID) {
 
         HarRepo harRepo = repositoryDao.getRepositoryByUID(repoUID);
-        if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+        if (!harvesterConstraintChecker(harRepo, false)) {
             LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
             return new AsyncResult<String>("Can't Start Hravesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
         }
@@ -96,8 +97,8 @@ public class HarvesterServiceImpl implements HarvesterService {
 
             repositoryDao.updateHarRecordCount(harRepo);
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
-            repositoryDao.updateLastSyncDate(harRepo.getRepoUID(), beforeHarvestingDate);
-            repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), new Date());
+            repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
+            repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
@@ -125,7 +126,7 @@ public class HarvesterServiceImpl implements HarvesterService {
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
 
-                if (!harvesterConstraintChecker(harRepo, (byte) 0)) {
+                if (!harvesterConstraintChecker(harRepo, false)) {
                     LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
                     continue;
                 }
@@ -159,7 +160,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     private void harvestRepositoryIncremental(HarRepo harRepo) {
 
-        if (!harvesterConstraintChecker(harRepo, (byte) 1)) {
+        if (!harvesterConstraintChecker(harRepo, true)) {
             LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
             return;
         }
@@ -176,7 +177,8 @@ public class HarvesterServiceImpl implements HarvesterService {
 
             repositoryDao.updateHarRecordCount(harRepo);
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
-            repositoryDao.updateLastSyncDate(harRepo.getRepoUID(), beforeHarvestingDate);
+            repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
+            repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
@@ -206,7 +208,7 @@ public class HarvesterServiceImpl implements HarvesterService {
         }
     }
 
-    private boolean harvesterConstraintChecker(HarRepo repo, byte firstOrIncremental)//0-firstTime,1-Incremental
+    private boolean harvesterConstraintChecker(HarRepo repo, boolean incrementalFlag)//0-firstTime,1-Incremental
     {
         switch (repo.getRepoStatusId().getRepoStatusId()) {
             case 1://not_active
@@ -219,7 +221,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             case 4://harvest_processing_error
                 return false;
             case 5://harvest_complete
-                if (firstOrIncremental == 1) {
+                if (incrementalFlag) {
                     return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
                 } else {
                     return false;
@@ -236,5 +238,5 @@ public class HarvesterServiceImpl implements HarvesterService {
         }
 
     }
-
+    
 }

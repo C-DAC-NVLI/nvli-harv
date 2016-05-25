@@ -168,7 +168,7 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
 
     @Override
     @TransactionalReadOrWrite
-    public void updateLastSyncDate(String repoUID, Date updatedDate) {
+    public void updateLastSyncStartDate(String repoUID, Date updatedDate) {
         try {
             HarRepo tempHarRepo = getRepositoryByUID(repoUID);
             tempHarRepo.setRepoLastSyncDate(updatedDate);

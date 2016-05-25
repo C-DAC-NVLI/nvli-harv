@@ -5,9 +5,11 @@
  */
 package in.gov.nvli.harvester.utilities;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  *
@@ -34,5 +36,31 @@ public class DatesRelatedUtil {
         }
 
         return d;
+    }
+
+    public static Date getDateInUTCFormat(Date inputDate) throws ParseException {
+        final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        final String TIME_ZONE = "UTC";
+
+        TimeZone tz = TimeZone.getTimeZone(TIME_ZONE);
+        DateFormat df1 = new SimpleDateFormat(DATE_FORMAT);
+        df1.setTimeZone(tz);
+        String date = df1.format(inputDate);
+
+        DateFormat df2 = new SimpleDateFormat(DATE_FORMAT);
+        return df2.parse(date);
+    }
+
+    public static Date getCurrentDateTimeInUTCFormat() throws ParseException {
+        final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        final String TIME_ZONE = "UTC";
+
+        TimeZone tz = TimeZone.getTimeZone(TIME_ZONE);
+        DateFormat df1 = new SimpleDateFormat(DATE_FORMAT);
+        df1.setTimeZone(tz);
+        String date = df1.format(new Date());
+
+        DateFormat df2 = new SimpleDateFormat(DATE_FORMAT);
+        return df2.parse(date);
     }
 }

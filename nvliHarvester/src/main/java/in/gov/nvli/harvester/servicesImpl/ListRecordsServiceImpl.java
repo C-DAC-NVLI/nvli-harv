@@ -15,6 +15,7 @@ import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordDataDao;
@@ -80,30 +81,30 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     }
 
     @Override
-    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException{
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
         return saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, false);
     }
 
     @Override
-    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException{
         HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
         return saveListRecords(harRepoObj, metadataPrefix, method, adminEmail);
     }
 
     @Override
-    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException{
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
         return saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, true);
     }
 
     @Override
-    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) {
+    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException{
         HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
         return saveOrUpdateListRecords(harRepoObj, metadataPrefix, method, adminEmail);
     }
 
-    private boolean saveListRecordsRecursive(HarRepo harRepoObj, String desiredURL, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag) {
+    private boolean saveListRecordsRecursive(HarRepo harRepoObj, String desiredURL, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag) throws OAIPMHerrorTypeException {
         try {
             LOGGER.info("desired URL " + desiredURL);
             if (servletContext.getAttribute(desiredURL) != null) {
@@ -123,58 +124,66 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
                 String response = OAIResponseUtil.createResponseFromXML(connection);
                 OAIPMHtype oAIPMHtypeObject = UnmarshalUtils.xmlToOaipmh(response);
-                if (oAIPMHtypeObject != null && oAIPMHtypeObject.getListRecords() != null) {
-                    List<RecordType> recordTypeList = oAIPMHtypeObject.getListRecords().getRecord();
-                    if (recordTypeList != null) {
-                        for (RecordType recordTypeObj : recordTypeList) {
-                            harRecordObj = getRecordServiceObject.getHarRecordByRecordType(recordTypeObj, metadataPrefix, harRepoObj);
-                            tempHarSetRecordList = getRecordServiceObject.getHarSetRecordListByRecordType(recordTypeObj, harRecordObj);
-                            harRecordMetadataDcObj = getRecordServiceObject.getHarRecordMetadataDcByRecordType(recordTypeObj, harRecordObj);
+                if(oAIPMHtypeObject != null){
+//                    if(oAIPMHtypeObject.getError() == null){
+                        if (oAIPMHtypeObject.getListRecords() != null) {
+                            List<RecordType> recordTypeList = oAIPMHtypeObject.getListRecords().getRecord();
+                            if (recordTypeList != null) {
+                                for (RecordType recordTypeObj : recordTypeList) {
+                                    harRecordObj = getRecordServiceObject.getHarRecordByRecordType(recordTypeObj, metadataPrefix, harRepoObj);
+                                    tempHarSetRecordList = getRecordServiceObject.getHarSetRecordListByRecordType(recordTypeObj, harRecordObj);
+                                    harRecordMetadataDcObj = getRecordServiceObject.getHarRecordMetadataDcByRecordType(recordTypeObj, harRecordObj);
 
-                            harRecordList.add(harRecordObj);
-                            harSetRecordList.addAll(tempHarSetRecordList);
-                            if (harRecordMetadataDcObj != null) {
-                                harRecordMetadataDcList.add(harRecordMetadataDcObj);
-                            }
+                                    harRecordList.add(harRecordObj);
+                                    harSetRecordList.addAll(tempHarSetRecordList);
+                                    if (harRecordMetadataDcObj != null) {
+                                        harRecordMetadataDcList.add(harRecordMetadataDcObj);
+                                    }
 
-                        }
+                                }
 
-                        if (incrementalFlag) {
-                            if (!harRecordList.isEmpty()) {
-                                harRecordDao.saveOrUpdateHarRecordList(harRecordList);
-                            }
-                            if (!harSetRecordList.isEmpty()) {
-                                harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecordList);
-                            }
-                            if (!harRecordMetadataDcList.isEmpty()) {
-                                harRecordMetadataDcDao.saveOrUpdateHarRecordMetadataDcList(harRecordMetadataDcList);
+                                if (incrementalFlag) {
+                                    if (!harRecordList.isEmpty()) {
+                                        harRecordDao.saveOrUpdateHarRecordList(harRecordList);
+                                    }
+                                    if (!harSetRecordList.isEmpty()) {
+                                        harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecordList);
+                                    }
+                                    if (!harRecordMetadataDcList.isEmpty()) {
+                                        harRecordMetadataDcDao.saveOrUpdateHarRecordMetadataDcList(harRecordMetadataDcList);
+                                    }
+                                } else {
+                                    if (!harRecordList.isEmpty()) {
+                                        harRecordDao.saveList(harRecordList);
+                                    }
+                                    if (!harSetRecordList.isEmpty()) {
+                                        harSetRecordDao.saveList(harSetRecordList);
+                                    }
+                                    if (!harRecordMetadataDcList.isEmpty()) {
+                                        harRecordMetadataDcDao.saveList(harRecordMetadataDcList);
+                                    }
+                                }
+                                servletContext.removeAttribute(desiredURL);
+
+                                if (oAIPMHtypeObject.getListRecords().getResumptionToken() != null) {
+                                    resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
+                                    if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
+                                        desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
+                                        saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, incrementalFlag);
+                                    }
+                                }
+                            } else {
+                                return false;
                             }
                         } else {
-                            if (!harRecordList.isEmpty()) {
-                                harRecordDao.saveList(harRecordList);
-                            }
-                            if (!harSetRecordList.isEmpty()) {
-                                harSetRecordDao.saveList(harSetRecordList);
-                            }
-                            if (!harRecordMetadataDcList.isEmpty()) {
-                                harRecordMetadataDcDao.saveList(harRecordMetadataDcList);
-                            }
+                            return false;
                         }
-                        servletContext.removeAttribute(desiredURL);
-
-                        if (oAIPMHtypeObject.getListRecords().getResumptionToken() != null) {
-                            resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
-                            if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
-                                desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
-                                saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, incrementalFlag);
-                            }
-                        }
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
+//                    }else{
+//                        throw new OAIPMHerrorTypeException(oAIPMHtypeObject.getError().get(0).getCode().value());
+//                    }
+            }else{
+                return false;
+            }
 
             } else {
                 int tmpCnt = 0;

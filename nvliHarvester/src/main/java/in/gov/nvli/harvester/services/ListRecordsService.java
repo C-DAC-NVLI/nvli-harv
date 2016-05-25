@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.services;
 
 import com.sun.syndication.io.FeedException;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import java.io.IOException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -18,13 +19,13 @@ import javax.xml.transform.TransformerException;
  */
 public interface ListRecordsService {
 
-    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail);
+    public boolean saveListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException;
 
-    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail);
+    public boolean saveListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException;
 
-    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail);
+    public boolean saveOrUpdateListRecords(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException;
 
-    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail);
+    public boolean saveOrUpdateListRecords(String baseURL, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException;
 
     public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, IOException;
 

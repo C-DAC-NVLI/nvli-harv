@@ -36,7 +36,7 @@ public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
 
     public List<HarRepo> getRepositoriesByStaus(short repoStatusId);
 
-    public void updateLastSyncDate(String repoUID, Date updatedDate);
+    public void updateLastSyncStartDate(String repoUID, Date updatedDate);
 
     public long getHarRecordCount(HarRepo harRepoObj);
 
