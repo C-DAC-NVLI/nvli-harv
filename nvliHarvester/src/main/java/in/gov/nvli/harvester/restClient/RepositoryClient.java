@@ -55,7 +55,7 @@ public class RepositoryClient {
     public void test() throws URISyntaxException
     {
        HarRepo repo = repositoryService.getRepositoryByUID("OR0");
-       updateRepositoryStatus(repo);
+       synRepoWithClient(repo);
         
     }
     
@@ -79,6 +79,15 @@ public class RepositoryClient {
     public void updateHarvestEndTime(HarRepo repo) throws URISyntaxException
     {
         updateRepository(repo,updateHrvestEndTimesURL);
+    }
+    
+    public void synRepoWithClient(HarRepo repo) throws URISyntaxException
+    {
+        updateRepositoryStatus(repo);
+        updateRepositoryRecordCount(repo);
+        updateHarvestStartTime(repo);
+        updateHarvestEndTime(repo);
+        
     }
     
     
