@@ -103,7 +103,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
-            //repositoryClient.synRepoWithClient(harRepo);
+            repositoryClient.synRepoWithClient(harRepo);
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
@@ -183,7 +183,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
-            //repositoryClient.synRepoWithClient(harRepo);
+            repositoryClient.synRepoWithClient(harRepo);
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
