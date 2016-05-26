@@ -16,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,10 +48,10 @@ public class RepositoryClient {
     private final static String updateHrvestEndTimesURL = "update/resource/harvest/endtime/";
    
    
-    @RequestMapping("/test")
-    public void test() throws URISyntaxException
+    @RequestMapping("/update/{repoUID}")
+    public void test(@PathVariable("repoUID") String repoUID) throws URISyntaxException
     {
-       HarRepo repo = repositoryService.getRepositoryByUID("OR0");
+       HarRepo repo = repositoryService.getRepositoryByUID(repoUID);
       synRepoWithClient(repo);
         
     }
