@@ -13,7 +13,6 @@ import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
-import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import java.io.IOException;
@@ -67,16 +66,42 @@ public class IdentifyResource {
     @Produces(MediaType.APPLICATION_JSON)
     public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
     {
+        System.out.println("json");
         return identify(baseURL,adminEmail);
     }
     
     @GET
-    @Path("{baseURL}/{adminEmail")
+    @Path("{baseURL}/{adminEmail}")
     @Produces(MediaType.APPLICATION_XML)
     public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
     {
+        System.out.println("xml"+adminEmail+baseURL);
         return identify(baseURL,adminEmail);
-    }  
+    } 
+    
+   
+    @GET
+    @Path("{baseURL}")
+    @Produces(MediaType.APPLICATION_XML)
+    public IdentifyTypeCustomised identifyPathParamXML1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+    {
+        System.out.println("xml"+adminEmail+baseURL);
+        return identify(baseURL,adminEmail);
+    } 
+    
+    @GET
+    @Path("{baseURL}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IdentifyTypeCustomised identifyPathParamJSON1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+    {
+        System.out.println("json");
+        return identify(baseURL,adminEmail);
+    }
+    
+    
+    
+    
+    
    private IdentifyTypeCustomised identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException
     {
          baseURL = URLDecoder.decode(baseURL, "UTF-8");
@@ -94,5 +119,14 @@ public class IdentifyResource {
         }
         return custObj;
     }  
+   
     
+//    @PUT
+//    @Path("update/resource/status/{repoUID}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public HarRepoCustomised identifyPathParamXML11(@PathParam("repoUID") String repoUID,HarRepoCustomised harRepoCustomised) throws IOException, MalformedURLException, JAXBException
+//    {
+//        System.out.println("repoUID"+repoUID);
+//        return harRepoCustomised;
+//    }  
 }
