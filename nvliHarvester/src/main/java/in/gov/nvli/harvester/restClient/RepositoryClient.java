@@ -9,16 +9,12 @@ import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
 import in.gov.nvli.harvester.services.RepositoryService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
@@ -55,7 +51,7 @@ public class RepositoryClient {
     public void test() throws URISyntaxException
     {
        HarRepo repo = repositoryService.getRepositoryByUID("OR0");
-       synRepoWithClient(repo);
+      synRepoWithClient(repo);
         
     }
     
@@ -83,39 +79,32 @@ public class RepositoryClient {
     
     public void synRepoWithClient(HarRepo repo) throws URISyntaxException
     {
-        updateRepositoryStatus(repo);
-        updateRepositoryRecordCount(repo);
-        updateHarvestStartTime(repo);
-        updateHarvestEndTime(repo);
+       updateRepositoryStatus(repo);
+     //  updateRepositoryRecordCount(repo);
+//        updateHarvestStartTime(repo);
+//        updateHarvestEndTime(repo);
         
     }
     
     
     private void updateRepository(HarRepo repo,String serviceURL) throws URISyntaxException
     {
-            
-        String url = getNvliClientURL() + serviceURL + "{repoUID}";
+        HarRepoCustomised harRepoCustomised = null;
         String repoUID = null;
         if (repo != null) {
             repoUID = repo.getRepoUID();
+            harRepoCustomised = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
         }
-
-        
+        String url = getNvliClientURL() + serviceURL + repoUID;
         RestTemplate restTemplate = new RestTemplate();
-        HarRepoCustomised harRepoCustomised = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<HarRepoCustomised> entity = new HttpEntity<>(harRepoCustomised, headers);
-        ResponseEntity<HarRepoCustomised> response = restTemplate.exchange(url, HttpMethod.PUT, entity, HarRepoCustomised.class, repoUID);
-        response.getHeaders().getLocation();
-        response.getStatusCode();
-        harRepoCustomised = response.getBody();
+       restTemplate.put(url, entity);
 
-        System.out.println("har" + harRepoCustomised);
-
-
-           
     }
+    
+    
     
 }
