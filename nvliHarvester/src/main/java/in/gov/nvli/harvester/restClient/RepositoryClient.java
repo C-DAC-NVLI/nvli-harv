@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +54,7 @@ public class RepositoryClient {
     public void test(@PathVariable("repoUID") String repoUID) throws URISyntaxException
     {
        HarRepo repo = repositoryService.getRepositoryByUID(repoUID);
+        System.out.println("in update"+repo.getRecordCount());
       synRepoWithClient(repo);
         
     }
@@ -97,12 +100,16 @@ public class RepositoryClient {
             harRepoCustomised = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
         }
         String url = getNvliClientURL() + serviceURL + repoUID;
+        System.out.println("url"+url);
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<HarRepoCustomised> entity = new HttpEntity<>(harRepoCustomised, headers);
-       restTemplate.put(url, entity);
+       // restTemplate.put(url, entity);
+       ResponseEntity<HarRepoCustomised> response = restTemplate.exchange(url, HttpMethod.PUT, entity, HarRepoCustomised.class);
+        System.out.println("re"+response.getStatusCode());
+        System.out.println("res"+response.getBody().getRecordCount());
 
     }
     
