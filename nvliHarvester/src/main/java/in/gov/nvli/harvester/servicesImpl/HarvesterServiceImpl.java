@@ -16,9 +16,11 @@ import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
 import in.gov.nvli.harvester.utilities.HarvesterLogUtils;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +127,12 @@ public class HarvesterServiceImpl implements HarvesterService {
             
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
+            try {
+                harRepo =  repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
+                repositoryClient.updateRepositoryStatus(harRepo);
+            } catch (URISyntaxException ex1) {
+                LOGGER.error(ex.getMessage(), ex);
+            }
             LOGGER.error(ex.getMessage(), ex);
         }
 
@@ -221,6 +229,12 @@ public class HarvesterServiceImpl implements HarvesterService {
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
+            try {
+                harRepo =  repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
+                repositoryClient.updateRepositoryStatus(harRepo);
+            } catch (URISyntaxException ex1) {
+                LOGGER.error(ex.getMessage(), ex);
+            }
             LOGGER.error(ex.getMessage(), ex);
         }
 
