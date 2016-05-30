@@ -195,7 +195,9 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                 }
 
             } else {
-                connection.disconnect();
+                if(connection != null){
+                    connection.disconnect();
+                }
                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                         + "\nActivity --> " + VerbType.LIST_RECORDS.value()
                         + "\nCallingURL --> " + desiredURL

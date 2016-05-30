@@ -99,7 +99,9 @@ public class ListSetsServiceImpl implements ListSetsService {
                     }
                 }
             } else {
-                connection.disconnect();
+                if(connection != null){
+                    connection.disconnect();
+                }
                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                         + "\nActivity --> ListRecords"
                         + "\nCallingURL --> " + desiredURL
