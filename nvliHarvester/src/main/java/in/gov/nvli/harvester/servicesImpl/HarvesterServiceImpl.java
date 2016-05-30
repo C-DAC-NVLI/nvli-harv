@@ -91,33 +91,33 @@ public class HarvesterServiceImpl implements HarvesterService {
     private void harvestRepository(HarRepo harRepo) {
 
         try {
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_STARTED);
-            Date beforeHarvestingDate = new Date();
-
-            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.SETS_SAVED);
-
-            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.METADATAFORMATS_SAVED);
-
-            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.LISTRECORDS_SAVED);
-
-            if (harRepo.getOreEnableFlag() == 1) {
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_STARTED);
-                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_FINISHED);
-            }
-
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.GETTING_RECORD_COUNT);
-            repositoryDao.updateHarRecordCount(harRepo);
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
-
-            repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
-            repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
-            repositoryClient.synRepoWithClient(harRepo);
-            
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
+//            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_STARTED);
+//            Date beforeHarvestingDate = new Date();
+//
+//            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
+//            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.SETS_SAVED);
+//
+//            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+//            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.METADATAFORMATS_SAVED);
+//
+//            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+//            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.LISTRECORDS_SAVED);
+//
+//            if (harRepo.getOreEnableFlag() == 1) {
+//                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_STARTED);
+//                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
+//                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_FINISHED);
+//            }
+//
+//            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.GETTING_RECORD_COUNT);
+//            repositoryDao.updateHarRecordCount(harRepo);
+//            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
+//
+//            repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
+//            repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
+           repositoryClient.synRepoWithClient(harRepo);
+//            
+//            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
