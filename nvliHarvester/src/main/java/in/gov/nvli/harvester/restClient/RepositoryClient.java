@@ -83,10 +83,10 @@ public class RepositoryClient {
     
     public void synRepoWithClient(HarRepo repo) throws URISyntaxException
     {
-       updateRepositoryStatus(repo);
-     //  updateRepositoryRecordCount(repo);
-//        updateHarvestStartTime(repo);
-//        updateHarvestEndTime(repo);
+        updateRepositoryStatus(repo);
+        updateRepositoryRecordCount(repo);
+        updateHarvestStartTime(repo);
+        updateHarvestEndTime(repo);
         
     }
     
