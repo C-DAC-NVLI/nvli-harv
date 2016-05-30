@@ -9,6 +9,7 @@ import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.customised.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
+import in.gov.nvli.harvester.restClient.RepositoryClient;
 import in.gov.nvli.harvester.services.HarvesterService;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.ListRecordsService;
@@ -46,6 +47,9 @@ public class HarvesterServiceImpl implements HarvesterService {
     @Autowired
     private RepositoryDao repositoryDao;
 
+    @Autowired
+    private RepositoryClient repositoryClient;
+    
     @Override
     public boolean harvestRepository(String baseURL) {
 
@@ -109,11 +113,11 @@ public class HarvesterServiceImpl implements HarvesterService {
             repositoryDao.updateHarRecordCount(harRepo);
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
 
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_FINISHED);
-
+            repositoryClient.synRepoWithClient(harRepo);
+            
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
@@ -205,6 +209,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
+            repositoryClient.synRepoWithClient(harRepo);
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.INCREMENTAL_HARVESTING_FINISHED);
 
         } catch (Exception ex) {

@@ -63,23 +63,51 @@ public class IdentifyResource {
 //    }
 //   
     @GET
-    @Path("{baseURL}")
+    @Path("{baseURL}/{adminEmail}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
+    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
     {
+        System.out.println("json");
         return identify(baseURL,adminEmail);
     }
     
     @GET
+    @Path("{baseURL}/{adminEmail}")
+    @Produces(MediaType.APPLICATION_XML)
+    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
+    {
+        System.out.println("xml"+adminEmail+baseURL);
+        return identify(baseURL,adminEmail);
+    } 
+    
+   
+    @GET
     @Path("{baseURL}")
     @Produces(MediaType.APPLICATION_XML)
-    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
+    public IdentifyTypeCustomised identifyPathParamXML1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
     {
+        
+        System.out.println("xml"+adminEmail+baseURL);
         return identify(baseURL,adminEmail);
-    }  
+    } 
+    
+    @GET
+    @Path("{baseURL}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public IdentifyTypeCustomised identifyPathParamJSON1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
+    {
+        System.out.println("json");
+       return identify(baseURL,adminEmail);
+    }
+    
+    
+    
+    
+    
    private IdentifyTypeCustomised identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
     {
          baseURL = URLDecoder.decode(baseURL, "UTF-8");
+        // adminEmail = URLDecoder.decode(adminEmail, "UTF-8");
         IdentifyType identifyObj=identifyService.getIdentifyTypeObject(baseURL,MethodEnum.GET, adminEmail);
         HttpURLConnection connection = HttpURLConnectionUtil.getConnection(baseURL + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value(), MethodEnum.GET, adminEmail);
         List<MetadataFormatType> metaDataFormats = listMetadataFormatsService.getMetadataFormatTypeList(connection, baseURL);
@@ -93,5 +121,14 @@ public class IdentifyResource {
         }
         return custObj;
     }  
+   
     
+//    @PUT
+//    @Path("update/resource/status/{repoUID}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public HarRepoCustomised identifyPathParamXML11(@PathParam("repoUID") String repoUID,HarRepoCustomised harRepoCustomised) throws IOException, MalformedURLException, JAXBException
+//    {
+//        System.out.println("repoUID"+repoUID);
+//        return harRepoCustomised;
+//    }  
 }

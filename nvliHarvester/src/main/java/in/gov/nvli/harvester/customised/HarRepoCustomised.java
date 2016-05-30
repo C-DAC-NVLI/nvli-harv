@@ -98,7 +98,11 @@ public class HarRepoCustomised implements Serializable {
     private short repoStatusId;
 //
     private int repoTypeId;
-//
+
+    private Long recordCount;
+    private Date harvestStartTime;
+    private Date harvestEndTime;
+
 //    private Collection<HarSetRepository> harSetRepositoryCollection;
 
     public HarRepoCustomised() {
@@ -359,6 +363,30 @@ public class HarRepoCustomised implements Serializable {
 
     public void setOreEnableFlag(byte oreEnableFlag) {
         this.oreEnableFlag = oreEnableFlag;
+    }
+
+    public Long getRecordCount() {
+        return recordCount;
+    }
+
+    public void setRecordCount(Long recordCount) {
+        this.recordCount = recordCount;
+    }
+
+    public Date getHarvestStartTime() {
+        return harvestStartTime;
+    }
+
+    public void setHarvestStartTime(Date harvestStartTime) {
+        this.harvestStartTime = harvestStartTime;
+    }
+
+    public Date getHarvestEndTime() {
+        return harvestEndTime;
+    }
+
+    public void setHarvestEndTime(Date harvestEndTime) {
+        this.harvestEndTime = harvestEndTime;
     }
 
    
