@@ -8,8 +8,8 @@ package in.gov.nvli.harvester.controllers;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
 import in.gov.nvli.harvester.customised.MethodEnum;
-import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.RepositoryService;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class ListMetadataFormatsController {
 
         } catch (MalformedURLException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (JAXBException | IOException ex) {
+        } catch (JAXBException | IOException | OAIPMHerrorTypeException ex) {
             Logger.getLogger(IdentifyController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return mv;

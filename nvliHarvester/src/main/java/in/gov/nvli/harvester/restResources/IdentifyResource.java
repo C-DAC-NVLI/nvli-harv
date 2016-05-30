@@ -9,11 +9,11 @@ import in.gov.nvli.harvester.OAIPMH_beans.IdentifyType;
 import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
 import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
-import in.gov.nvli.harvester.servicesImpl.IdentifyServiceImpl;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import java.io.IOException;
@@ -65,7 +65,7 @@ public class IdentifyResource {
     @GET
     @Path("{baseURL}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
     {
         return identify(baseURL,adminEmail);
     }
@@ -73,16 +73,16 @@ public class IdentifyResource {
     @GET
     @Path("{baseURL}")
     @Produces(MediaType.APPLICATION_XML)
-    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException
+    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
     {
         return identify(baseURL,adminEmail);
     }  
-   private IdentifyTypeCustomised identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException
+   private IdentifyTypeCustomised identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
     {
          baseURL = URLDecoder.decode(baseURL, "UTF-8");
         IdentifyType identifyObj=identifyService.getIdentifyTypeObject(baseURL,MethodEnum.GET, adminEmail);
         HttpURLConnection connection = HttpURLConnectionUtil.getConnection(baseURL + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value(), MethodEnum.GET, adminEmail);
-        List<MetadataFormatType> metaDataFormats = listMetadataFormatsService.getMetadataFormatTypeList(connection);
+        List<MetadataFormatType> metaDataFormats = listMetadataFormatsService.getMetadataFormatTypeList(connection, baseURL);
         IdentifyTypeCustomised custObj = CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identifyObj);
         if (metaDataFormats != null) {
             for (MetadataFormatType metadata : metaDataFormats) {

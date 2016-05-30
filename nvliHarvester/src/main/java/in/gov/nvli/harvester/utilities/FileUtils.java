@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -21,18 +21,17 @@ import org.slf4j.LoggerFactory;
  */
 public class FileUtils {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
 
     public static void saveFile(String url, String filePath, String fileName) throws IOException {
-        URL link;
         InputStream in = null;
         ByteArrayOutputStream out = null;
         FileOutputStream fos = null;
 
         try {
-            link = new URL(url);
-            if (HttpURLConnectionUtil.isConnectionAlive((HttpURLConnection) link.openConnection())) {
-                in = new BufferedInputStream(link.openStream());
+            HttpURLConnection con = HttpURLConnectionUtil.getConnection(url);
+            if (HttpURLConnectionUtil.isConnectionAlive(con)) {
+                in = new BufferedInputStream(con.getInputStream());
                 out = new ByteArrayOutputStream();
                 byte[] buf = new byte[1024];
                 int n = 0;
@@ -45,7 +44,9 @@ public class FileUtils {
                 fos.write(response);
             }
         } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.error("\nActivity --> Downloading ORE Data"
+                        + "\nCallingURL --> " + url
+                        + "\nErrorCode --> " + e.getMessage(),e);
         } finally {
             if (in != null) {
                 in.close();
@@ -68,7 +69,8 @@ public class FileUtils {
     }
 
     public static void main(String[] args) throws IOException {
-        saveFile("http://dyuthi.cusat.ac.in/xmlui/bitstream/handle/purl/500/APSYM2004.pdf?sequence=1", "/home/ankit/.harvester/data/OR1/105", "APSYM2004.pdf");
+        saveFile("http://dyuthi.cusat.ac.in/xmlui/bitstream/handle/purl/500/APSYM2004.pdf?sequence=1", "/home/ankit/.harvester/data/OR2", "APSYM2004.pdf");
+        System.err.println("Saved");
     }
 
 }
