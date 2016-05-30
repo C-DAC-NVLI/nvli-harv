@@ -15,6 +15,7 @@ import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
+import in.gov.nvli.harvester.utilities.HarvesterLogUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -90,20 +91,33 @@ public class HarvesterServiceImpl implements HarvesterService {
     private void harvestRepository(HarRepo harRepo) {
 
         try {
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_STARTED);
             Date beforeHarvestingDate = new Date();
 
             listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.SETS_SAVED);
+
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.METADATAFORMATS_SAVED);
+
             listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.LISTRECORDS_SAVED);
+
             if (harRepo.getOreEnableFlag() == 1) {
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_STARTED);
                 listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_FINISHED);
             }
 
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.GETTING_RECORD_COUNT);
             repositoryDao.updateHarRecordCount(harRepo);
-            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
+
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
             repositoryClient.synRepoWithClient(harRepo);
+            
+            repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
@@ -170,20 +184,34 @@ public class HarvesterServiceImpl implements HarvesterService {
         }
 
         try {
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.INCREMENTAL_HARVESTING_STARTED);
             Date beforeHarvestingDate = new Date();
 
             listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.SETS_SAVED);
+            
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.METADATAFORMATS_SAVED);
+            
             listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.LISTRECORDS_SAVED);
+            
             if (harRepo.getOreEnableFlag() == 1) {
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_INCREMENTAL_HARVESTING_STARTED);
                 listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "");
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_INCREMENTAL_HARVESTING_FINISHED);
             }
-
+            
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.GETTING_RECORD_COUNT);
             repositoryDao.updateHarRecordCount(harRepo);
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
+            
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
             repositoryClient.synRepoWithClient(harRepo);
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.INCREMENTAL_HARVESTING_FINISHED);
+
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
             LOGGER.error(ex.getMessage(), ex);
@@ -242,5 +270,5 @@ public class HarvesterServiceImpl implements HarvesterService {
         }
 
     }
-    
+
 }

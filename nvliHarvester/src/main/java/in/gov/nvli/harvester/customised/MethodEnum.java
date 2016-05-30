@@ -19,8 +19,7 @@ public enum MethodEnum {
         this.text = text;
     }
 
-    @Override
-    public String toString() {
+    public String value() {
         return this.text;
     }
 

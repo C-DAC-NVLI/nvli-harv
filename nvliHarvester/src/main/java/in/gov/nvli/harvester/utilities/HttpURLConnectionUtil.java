@@ -11,6 +11,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.HashMap;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -18,56 +20,127 @@ import java.net.URL;
  */
 public class HttpURLConnectionUtil {
 
-    private static final int RESPONSE_CODE_SUCCESS = 200;
+    private static final int INTERVAL = 60000;
+    private static final int MAX_ATTEMPT = 3;
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HttpURLConnectionUtil.class);
 
-    public static HttpURLConnection getConnection(String baseURL, MethodEnum method, String adminEmail) throws ProtocolException, MalformedURLException, IOException {
+    private static HashMap<String, Integer> map = new HashMap<>();
+
+    public static HttpURLConnection getConnection(String desiredURL, MethodEnum method, String adminEmail) throws IOException {
 //        if (adminEmail == null || adminEmail.isEmpty() || adminEmail == "") {
 //            return null;
 //        }
-        URL identifyRequestURL = new URL(baseURL);
+        try {
+            URL identifyRequestURL = new URL(desiredURL);
+            HttpURLConnection con = (HttpURLConnection) identifyRequestURL.openConnection();
+            // optional default is GET
+            con.setRequestMethod(method.toString());
+            // add request header
+            con.setRequestProperty("User-Agent", "");
+            con.setRequestProperty("From", "From : " + adminEmail);
 
-        HttpURLConnection con = (HttpURLConnection) identifyRequestURL.openConnection();
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                return con;
+            } else {
+                return null;
+            }
 
-        // optional default is GET
-        con.setRequestMethod(method.toString());
-
-        // add request header
-        con.setRequestProperty("User-Agent", "");
-        con.setRequestProperty("From", "From : " + adminEmail);
-        return con;
-    }
-
-    public static boolean isConnectionAlive(HttpURLConnection connection) throws IOException {
-        if (connection != null) {
-            return connection.getResponseCode() == RESPONSE_CODE_SUCCESS;
-        } else {
-            return false;
+        } catch (IOException ex) {
+            if (connectionRetry(desiredURL)) {
+                return getConnection(desiredURL, method, adminEmail);
+            } else {
+                throw ex;
+            }
         }
-
     }
 
-    public static boolean isConnectionAlive(String baseURL, MethodEnum method, String adminEmail) throws ProtocolException, MalformedURLException, IOException {
-        HttpURLConnection connection = getConnection(baseURL, method, adminEmail);
-        if (connection != null) {
-            int responseCode = connection.getResponseCode();
-            if (responseCode == RESPONSE_CODE_SUCCESS) {
-                connection.disconnect();
-                return true;
+    public static HttpURLConnection getConnection(String url) throws IOException {
+        try {
+            URL identifyRequestURL = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) identifyRequestURL.openConnection();
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                return con;
+            } else {
+                return null;
+            }
+
+        } catch (IOException ex) {
+            if (connectionRetry(url)) {
+                return getConnection(url);
+            } else {
+                throw ex;
+            }
+        }
+    }
+
+    public static boolean isConnectionAlive(HttpURLConnection connection) {
+        try {
+            if (connection != null) {
+                return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
             } else {
                 return false;
             }
-        } else {
+        } catch (IOException ex) {
+            LOGGER.error(ex.getMessage(), ex);
             return false;
         }
 
     }
 
-    public static int getConnectionResponseCode(String baseURL, MethodEnum method, String adminEmail) throws ProtocolException, MalformedURLException, IOException {
-        HttpURLConnection con = getConnection(baseURL, method, adminEmail);
+    public static boolean isConnectionAlive(String desiredURL, MethodEnum method, String adminEmail) {
+        try {
+            HttpURLConnection connection = getConnection(desiredURL, method, adminEmail);
+            if (connection != null) {
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    connection.disconnect();
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } catch (IOException ex) {
+            LOGGER.error("CallingURL --> " + desiredURL + ex.getMessage(), ex);
+            return false;
+        }
+
+    }
+
+    public static int getConnectionResponseCode(String desiredURL, MethodEnum method, String adminEmail) throws ProtocolException, MalformedURLException, IOException {
+        HttpURLConnection con = getConnection(desiredURL, method, adminEmail);
         if (con != null) {
             return con.getResponseCode();
         }
         return -1;
     }
 
+    public static boolean connectionRetry(String desiredURL) {
+        try {
+            LOGGER.info("Trying to re-connect --> " + desiredURL);
+            Thread.sleep(INTERVAL);
+            boolean result = isConnectionRetryLimitAvailable(desiredURL);
+            if (!result) {
+                LOGGER.info("Given up --> " + desiredURL);
+            }
+            return result;
+        } catch (InterruptedException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
+        return false;
+    }
+
+    private static boolean isConnectionRetryLimitAvailable(String desiredURL) {
+        if (map.get(desiredURL) == null) {
+            map.put(desiredURL, 1);
+            return true;
+        } else if (map.get(desiredURL) < MAX_ATTEMPT - 1) {
+            map.put(desiredURL, map.get(desiredURL) + 1);
+            return true;
+        } else {
+            map.remove(desiredURL);
+            return false;
+        }
+    }
 }
