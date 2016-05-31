@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration>
+    <appender name="debugLogs" class="org.apache.log4j.RollingFileAppender"> 
+        <param name="Threshold" value="DEBUG" />
+        <param name="File" value="${logfilepath}harvester_log_debug.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="5000KB" />
+        <param name="MaxBackupIndex" value="500" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS}|%p|%C(%M)|%m%n" />
+        </layout>
+    </appender>
+    <appender name="infoLogs" class="org.apache.log4j.RollingFileAppender"> 
+        <param name="Threshold" value="INFO" />
+        <param name="File" value="${logfilepath}harvester_log_info.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="5000KB" />
+        <param name="MaxBackupIndex" value="500" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS}|%p|%C(%M)|%m%n" />
+        </layout>
+    </appender>
+    <appender name="warnLogs" class="org.apache.log4j.RollingFileAppender"> 
+        <param name="Threshold" value="WARN" />
+        <param name="File" value="${logfilepath}harvester_log_warn.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="5000KB" />
+        <param name="MaxBackupIndex" value="500" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS}|%p|%C(%M)|%m%n" />
+        </layout>
+    </appender>
+    <appender name="errorLogs" class="org.apache.log4j.RollingFileAppender">
+        <param name="Threshold" value="ERROR" />
+        <param name="File" value="${logfilepath}harvester_log_error.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="5000KB" />
+        <param name="MaxBackupIndex" value="500" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS}|%p|%C(%M)|%m%n" />
+        </layout>
+    </appender>
+    <appender name="consoleLogs" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="INFO"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS}|%p|%C(%M)|%m%n" />
+        </layout>
+    </appender>
+
+    <root>
+        <priority value="DEBUG"></priority>
+        <appender-ref ref="debugLogs"/>
+        <appender-ref ref="infoLogs"/>
+        <!--<appender-ref ref="warnLogs"/>-->
+        <appender-ref ref="errorLogs"/>
+        <appender-ref ref="consoleLogs"/>
+    </root>
+</log4j:configuration>
