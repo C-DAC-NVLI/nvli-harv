@@ -180,7 +180,7 @@ public class GetRecordServiceImpl implements GetRecordService {
         }
         harRecordObject.setRecordAbout(temp);
 
-        if (recordTypeObject.getHeader().getStatus() != StatusType.DELETED) {
+        if (recordTypeObject.getHeader().getStatus() != StatusType.DELETED && recordTypeObject.getMetadata().getOaidc() != null) {
             harRecordObject.setRecordStatus(CommonConstants.RECORD_NOT_DELETED);
         } else {
             harRecordObject.setRecordStatus(CommonConstants.RECORD_DELETED);
@@ -242,7 +242,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     @Override
     public HarRecordMetadataDc getHarRecordMetadataDcByRecordType(RecordType recordTypeObject, HarRecord harRecordObject) {
         HarRecordMetadataDc recordMetadataDc = null;
-        if (recordTypeObject.getHeader().getStatus() != StatusType.DELETED) {
+        if (recordTypeObject.getHeader().getStatus() != StatusType.DELETED && recordTypeObject.getMetadata().getOaidc() != null) {
             recordMetadataDc = convertOAIDCToHarRecordMetadataDc(recordTypeObject.getMetadata().getOaidc());
             recordMetadataDc.setRecordId(harRecordObject);
             return recordMetadataDc;
@@ -336,14 +336,14 @@ public class GetRecordServiceImpl implements GetRecordService {
 
         StringBuilder columnValue = new StringBuilder();
         for (String tagValue : tagValues) {
-            if (columnValue.length() > 0){
+            if (columnValue.length() > 0) {
                 columnValue.append(CommonConstants.COLUMN_VALUE_SEPARATOR);
             }
             columnValue.append(tagValue);
         }
         return columnValue.toString();
     }
-    
+
     @Override
     public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException {
         HarRecordData harRecordDataObject;
