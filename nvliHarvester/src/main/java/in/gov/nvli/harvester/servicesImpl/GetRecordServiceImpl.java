@@ -334,14 +334,16 @@ public class GetRecordServiceImpl implements GetRecordService {
 
     public String getMetadataTagValueSeparatedBySpecialChar(List<String> tagValues) {
 
-        String columnValue = "";
+        StringBuilder columnValue = new StringBuilder();
         for (String tagValue : tagValues) {
-            columnValue += tagValue + CommonConstants.COLUMN_VALUE_SEPARATOR;
+            if (columnValue.length() > 0){
+                columnValue.append(CommonConstants.COLUMN_VALUE_SEPARATOR);
+            }
+            columnValue.append(tagValue);
         }
-
-        return columnValue;
+        return columnValue.toString();
     }
-
+    
     @Override
     public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException {
         HarRecordData harRecordDataObject;
