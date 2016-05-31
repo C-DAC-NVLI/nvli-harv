@@ -351,7 +351,7 @@ public class GetRecordServiceImpl implements GetRecordService {
         HarRecord harRecordObject;
 
         harRecordObject = recordDao.getHarRecordByRecordIdentifier(recordTypeObject.getHeader().getIdentifier());
-        if (harRecordObject != null && recordTypeObject.getHeader().getStatus() != StatusType.DELETED) {
+        if (harRecordObject != null && recordTypeObject.getHeader().getStatus() != StatusType.DELETED && recordTypeObject.getMetadata().getAny() != null) {
             harRecordDataObject = new HarRecordData();
             harRecordDataObject.setRecordId(harRecordObject);
 
