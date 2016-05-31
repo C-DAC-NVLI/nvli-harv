@@ -272,7 +272,11 @@ public class HarvesterServiceImpl implements HarvesterService {
             case 3://harvest_processing
                 return false;
             case 4://harvest_processing_error
-                return false;
+                if (incrementalFlag) {
+                    return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
+                } else {
+                    return false;
+                }
             case 5://harvest_complete
                 if (incrementalFlag) {
                     return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
