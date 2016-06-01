@@ -18,7 +18,7 @@ public interface HarvesterService {
 
     public boolean harvestRepository(String baseURL);
 
-    public Future<String> harvestRepositoryByUID(String repoUID);
+    public void harvestRepositoryByUID(String repoUID);
 
     public void harvestAllRepositories();
 

@@ -340,7 +340,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                 if (!recordDirectory.exists()) {
                     recordDirectory.mkdirs();
                     getRecordServiceObject.saveHarRecordDataInFileSystem(tempHarRecordDataObj, recordDirectory.getPath());
-                    LOGGER.info("record saved " + tempHarRecordDataObj.getRecordId().getRecordId());
+                    LOGGER.info("RepositoryUID --> " + harRepoObject.getRepoUID() +"\nrecord saved " + tempHarRecordDataObj.getRecordId().getRecordId());
                 }
             }
         }

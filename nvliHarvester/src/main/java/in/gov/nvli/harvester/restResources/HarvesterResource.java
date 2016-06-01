@@ -95,7 +95,7 @@ public class HarvesterResource {
     public String  startHarvesting(@PathParam("repoUID") String repoUID) throws InterruptedException, ExecutionException
     {
         //if(harvesterService.harvestRepositoryByUID(repoUID, context))
-        Future<String> response = harvesterService.harvestRepositoryByUID(repoUID); 
+        harvesterService.harvestRepositoryByUID(repoUID); 
        // return getHarvesterStatus(repoUID);
         return RepoStatusEnum.HARVEST_PROCESSING.getName();
     }

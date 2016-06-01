@@ -54,7 +54,7 @@ public class ListSetsServiceImpl implements ListSetsService {
                 errorMessages += tempOAIPMHerrorType.getValue() + "(" + tempOAIPMHerrorType.getCode() + "),";
             }
             throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                    + "\nActivity --> ListSets"
+                    + "\nActivity --> "+VerbType.LIST_SETS.value()
                     + "\nCallingURL --> " + desiredURL
                     + "\nErrorCode --> " + errorMessages);
         }
@@ -103,13 +103,13 @@ public class ListSetsServiceImpl implements ListSetsService {
                     connection.disconnect();
                 }
                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                        + "\nActivity --> ListRecords"
+                        + "\nActivity --> "+VerbType.LIST_SETS.value()
                         + "\nCallingURL --> " + desiredURL
                         + "\nErrorCode --> " + "Connection response code is not 200");
             }
         } catch (JAXBException | IOException ex) {
             LOGGER.error("RepositoryUID --> " + harRepoObj.getRepoUID()
-                    + "\nActivity --> ListRecords"
+                    + "\nActivity --> "+VerbType.LIST_SETS.value()
                     + "\nCallingURL --> " + desiredURL
                     + ex.getMessage(), ex);
             throw ex;

@@ -19,13 +19,10 @@ import in.gov.nvli.harvester.utilities.HarvesterLogUtils;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 /**
@@ -51,20 +48,16 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     @Autowired
     private RepositoryClient repositoryClient;
-    
+
     @Override
     public boolean harvestRepository(String baseURL) {
 
         HarRepo harRepo = repositoryDao.getRepository(baseURL);
-        if (!harvesterConstraintChecker(harRepo, false)) {
-            LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") :::" + harRepo.getRepoStatusId().getRepoStatusName());
-            return false;
-        }
-
         try {
             harvestRepository(harRepo);
         } catch (Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
+            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                    + ex.getMessage(), ex);
             return false;
         }
         return true;
@@ -72,25 +65,26 @@ public class HarvesterServiceImpl implements HarvesterService {
 
     @Override
     @Async
-    public Future<String> harvestRepositoryByUID(String repoUID) {
+    public void harvestRepositoryByUID(String repoUID) {
 
         HarRepo harRepo = repositoryDao.getRepositoryByUID(repoUID);
-        if (!harvesterConstraintChecker(harRepo, false)) {
-            LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
-            return new AsyncResult<String>("Can't Start Hravesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
-        }
-
         try {
             harvestRepository(harRepo);
 
         } catch (Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
-            return new AsyncResult<String>("ERROR");
+            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                    + ex.getMessage(), ex);
+
         }
-        return new AsyncResult<String>("STARTED");
+
     }
 
     private void harvestRepository(HarRepo harRepo) {
+
+        if (!harvesterConstraintChecker(harRepo, false)) {
+            LOGGER.error("can't Start Harvesting(" + harRepo.getRepoUID() + ") :::" + harRepo.getRepoStatusId().getRepoStatusName());
+            return;
+        }
 
         try {
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_STARTED);
@@ -118,22 +112,23 @@ public class HarvesterServiceImpl implements HarvesterService {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
-            
-            harRepo =  repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
+
+            harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
             repositoryClient.synRepoWithClient(harRepo);
-            
+
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_FINISHED);
-           
-            
+
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
             try {
-                harRepo =  repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
+                harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
                 repositoryClient.updateRepositoryStatus(harRepo);
             } catch (URISyntaxException ex1) {
-                LOGGER.error(ex.getMessage(), ex);
+                LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                        + ex1.getMessage(), ex1);
             }
-            LOGGER.error(ex.getMessage(), ex);
+            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                    + ex.getMessage(), ex);
         }
 
     }
@@ -156,16 +151,11 @@ public class HarvesterServiceImpl implements HarvesterService {
     public void harvestRepositories(List<HarRepo> harRepos) {
         if (harRepos != null) {
             for (HarRepo harRepo : harRepos) {
-
-                if (!harvesterConstraintChecker(harRepo, false)) {
-                    LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
-                    continue;
-                }
-
                 try {
                     harvestRepository(harRepo);
                 } catch (Exception ex) {
-                    LOGGER.error(ex.getMessage(), ex);
+                    LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                            + ex.getMessage(), ex);
                 }
             }
         }
@@ -192,7 +182,7 @@ public class HarvesterServiceImpl implements HarvesterService {
     private void harvestRepositoryIncremental(HarRepo harRepo) {
 
         if (!harvesterConstraintChecker(harRepo, true)) {
-            LOGGER.info("can't Start Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
+            LOGGER.error("can't Start Incremental Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
             return;
         }
 
@@ -202,40 +192,42 @@ public class HarvesterServiceImpl implements HarvesterService {
 
             listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.SETS_SAVED);
-            
+
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.METADATAFORMATS_SAVED);
-            
+
             listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.LISTRECORDS_SAVED);
-            
+
             if (harRepo.getOreEnableFlag() == 1) {
                 LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_INCREMENTAL_HARVESTING_STARTED);
                 listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "");
                 LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_INCREMENTAL_HARVESTING_FINISHED);
             }
-            
+
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.GETTING_RECORD_COUNT);
             repositoryDao.updateHarRecordCount(harRepo);
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
-            
+
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
             repositoryDao.updateLastSyncEndDate(harRepo.getRepoUID(), DatesRelatedUtil.getCurrentDateTimeInUTCFormat());
-            
-            harRepo =  repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
+
+            harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
             repositoryClient.synRepoWithClient(harRepo);
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.INCREMENTAL_HARVESTING_FINISHED);
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
             try {
-                harRepo =  repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
+                harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
                 repositoryClient.updateRepositoryStatus(harRepo);
             } catch (URISyntaxException ex1) {
-                LOGGER.error(ex.getMessage(), ex);
+                LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                        + ex1.getMessage(), ex1);
             }
-            LOGGER.error(ex.getMessage(), ex);
+            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                    + ex.getMessage(), ex);
         }
 
     }
@@ -273,12 +265,14 @@ public class HarvesterServiceImpl implements HarvesterService {
                 return false;
             case 4://harvest_processing_error
                 if (incrementalFlag) {
+                    //change status code to  increment_harvest_processing(i.e 6)
                     return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
                 } else {
                     return false;
                 }
             case 5://harvest_complete
                 if (incrementalFlag) {
+                    //change status code to  increment_harvest_processing(i.e 6)
                     return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
                 } else {
                     return false;
@@ -286,7 +280,12 @@ public class HarvesterServiceImpl implements HarvesterService {
             case 6://increment_harvest_processing
                 return false;
             case 7://increment_harvest_processing_error
-                return false;
+                if (incrementalFlag) {
+                    //change status code to  increment_harvest_processing(i.e 6)
+                    return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING.getId());
+                } else {
+                    return false;
+                }
             case 8://invalid_url
                 return false;
             default:
