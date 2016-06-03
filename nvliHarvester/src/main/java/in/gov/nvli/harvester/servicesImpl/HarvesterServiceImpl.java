@@ -15,7 +15,7 @@ import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
-import in.gov.nvli.harvester.utilities.HarvesterLogUtils;
+import in.gov.nvli.harvester.constants.HarvesterLogConstants;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
@@ -80,34 +80,37 @@ public class HarvesterServiceImpl implements HarvesterService {
     }
 
     private void harvestRepository(HarRepo harRepo) {
-
-        if (!harvesterConstraintChecker(harRepo, false)) {
-            LOGGER.error("can't Start Harvesting(" + harRepo.getRepoUID() + ") :::" + harRepo.getRepoStatusId().getRepoStatusName());
-            return;
-        }
+        Date beforeHarvestingDate;
 
         try {
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_STARTED);
-            Date beforeHarvestingDate = new Date();
 
-            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.SETS_SAVED);
-
-            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.METADATAFORMATS_SAVED);
-
-            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.LISTRECORDS_SAVED);
-
-            if (harRepo.getOreEnableFlag() == 1) {
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_STARTED);
-                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_HARVESTING_FINISHED);
+            if (!harvesterConstraintChecker(harRepo, false)) {
+                LOGGER.error("can't Start Harvesting(" + harRepo.getRepoUID() + ") :::" + harRepo.getRepoStatusId().getRepoStatusName());
+                repositoryClient.updateRepositoryStatus(harRepo);
+                return;
             }
 
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.GETTING_RECORD_COUNT);
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.HARVESTING_STARTED);
+            beforeHarvestingDate = new Date();
+
+            listSetsService.saveHarSets(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.SETS_SAVED);
+
+            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.METADATAFORMATS_SAVED);
+
+            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED);
+
+            if (harRepo.getOreEnableFlag() == 1) {
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_HARVESTING_STARTED);
+                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_HARVESTING_FINISHED);
+            }
+
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.GETTING_RECORD_COUNT);
             repositoryDao.updateHarRecordCount(harRepo);
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.RECORD_COUNT_UPDATED);
 
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
@@ -116,7 +119,7 @@ public class HarvesterServiceImpl implements HarvesterService {
             harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
             repositoryClient.synRepoWithClient(harRepo);
 
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.HARVESTING_FINISHED);
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.HARVESTING_FINISHED);
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
@@ -180,34 +183,45 @@ public class HarvesterServiceImpl implements HarvesterService {
     }
 
     private void harvestRepositoryIncremental(HarRepo harRepo) {
-
-        if (!harvesterConstraintChecker(harRepo, true)) {
-            LOGGER.error("can't Start Incremental Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
-            return;
-        }
+        short repoPreviousStatus;
+        Date beforeHarvestingDate;
 
         try {
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.INCREMENTAL_HARVESTING_STARTED);
-            Date beforeHarvestingDate = new Date();
+            repoPreviousStatus = harRepo.getRepoStatusId().getRepoStatusId();
 
-            listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.SETS_SAVED);
-
-            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.METADATAFORMATS_SAVED);
-
-            listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.LISTRECORDS_SAVED);
-
-            if (harRepo.getOreEnableFlag() == 1) {
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_INCREMENTAL_HARVESTING_STARTED);
-                listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "");
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.ORE_INCREMENTAL_HARVESTING_FINISHED);
+            if (!harvesterConstraintChecker(harRepo, true)) {
+                LOGGER.error("can't Start Incremental Harvesting(" + harRepo.getRepoUID() + ") ::: " + harRepo.getRepoStatusId().getRepoStatusName());
+                repositoryClient.updateRepositoryStatus(harRepo);
+                return;
             }
 
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.GETTING_RECORD_COUNT);
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.INCREMENTAL_HARVESTING_STARTED);
+            beforeHarvestingDate = new Date();
+
+            listSetsService.saveOrUpdateHarSets(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.SETS_SAVED);
+
+            listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.METADATAFORMATS_SAVED);
+
+            if (repoPreviousStatus == RepoStatusEnum.HARVEST_COMPLETE.getId()) {
+                listRecordsService.saveOrUpdateListRecordsViaFromTime(harRepo, "oai_dc", MethodEnum.GET, "");
+            } else if (repoPreviousStatus == RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId() || repoPreviousStatus == RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId()) {
+                listRecordsService.saveOrUpdateListRecordsViaResumptionToken(harRepo, "oai_dc", MethodEnum.GET, "");
+            } else {
+                listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            }
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED);
+
+            if (harRepo.getOreEnableFlag() == 1) {
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_INCREMENTAL_HARVESTING_STARTED);
+                listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "");
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_INCREMENTAL_HARVESTING_FINISHED);
+            }
+
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.GETTING_RECORD_COUNT);
             repositoryDao.updateHarRecordCount(harRepo);
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.RECORD_COUNT_UPDATED);
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.RECORD_COUNT_UPDATED);
 
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_COMPLETE.getId());
             repositoryDao.updateLastSyncStartDate(harRepo.getRepoUID(), DatesRelatedUtil.getDateInUTCFormat(beforeHarvestingDate));
@@ -215,7 +229,11 @@ public class HarvesterServiceImpl implements HarvesterService {
 
             harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
             repositoryClient.synRepoWithClient(harRepo);
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogUtils.INCREMENTAL_HARVESTING_FINISHED);
+
+            harRepo.setResumptionTokenListRecords(null);
+            repositoryDao.merge(harRepo);
+
+            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.INCREMENTAL_HARVESTING_FINISHED);
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
@@ -259,8 +277,12 @@ public class HarvesterServiceImpl implements HarvesterService {
             case 1://not_active
                 return false;
             case 2://active
-                //change status code to  harvest_processing(i.e 3)
-                return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING.getId());
+                if (incrementalFlag) {
+                    return false;
+                } else {
+                    //change status code to  harvest_processing(i.e 3)
+                    return repositoryDao.changeRepoStatus(repo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING.getId());
+                }
             case 3://harvest_processing
                 return false;
             case 4://harvest_processing_error

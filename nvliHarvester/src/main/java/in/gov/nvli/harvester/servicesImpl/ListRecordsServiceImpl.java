@@ -7,6 +7,7 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import com.sun.syndication.io.FeedException;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHerrorType;
+import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHerrorcodeType;
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
 import in.gov.nvli.harvester.OAIPMH_beans.RecordType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
@@ -16,6 +17,7 @@ import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.constants.HarvesterLogConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
 import in.gov.nvli.harvester.customised.MethodEnum;
 import in.gov.nvli.harvester.dao.HarRecordDao;
@@ -25,7 +27,7 @@ import in.gov.nvli.harvester.dao.HarSetRecordDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.GetRecordService;
 import in.gov.nvli.harvester.services.ListRecordsService;
-import in.gov.nvli.harvester.utilities.HarvesterLogUtils;
+import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;
 import in.gov.nvli.harvester.utilities.OAIResponseUtil;
 import in.gov.nvli.harvester.utilities.UnmarshalUtils;
@@ -102,6 +104,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
     private boolean saveListRecordsRecursive(HarRepo harRepoObj, String desiredURL, String metadataPrefix, MethodEnum method, String adminEmail, boolean incrementalFlag) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException {
         try {
+            LOGGER.info("desired URL "+desiredURL);
             HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
 
             if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
@@ -161,6 +164,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                                 if (oAIPMHtypeObject.getListRecords().getResumptionToken() != null) {
                                     resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
                                     if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
+                                        harRepoObj.setResumptionTokenListRecords(resumptionToken);
+                                        repositoryDao.merge(harRepoObj);
                                         desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
                                         saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, incrementalFlag);
                                     }
@@ -169,18 +174,21 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                                         + "\nActivity --> " + VerbType.LIST_RECORDS.value()
                                         + "\nCallingURL --> " + desiredURL
-                                        + "\nErrorCode --> " + HarvesterLogUtils.NO_RECORDS_FOUND);
+                                        + "\nErrorCode --> " + HarvesterLogConstants.NO_RECORDS_FOUND);
                             }
                         } else {
                             throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                                     + "\nActivity --> " + VerbType.LIST_RECORDS.value()
                                     + "\nCallingURL --> " + desiredURL
-                                    + "\nErrorCode --> " + HarvesterLogUtils.NO_LIST_RECORDS_FOUND);
+                                    + "\nErrorCode --> " + HarvesterLogConstants.NO_LIST_RECORDS_FOUND);
                         }
                     } else {
-                        String errorMessages = "";
+                        StringBuilder errorMessages = new StringBuilder();
                         for (OAIPMHerrorType tempOAIPMHerrorType : oAIPMHtypeObject.getError()) {
-                            errorMessages += tempOAIPMHerrorType.getValue() + "(" + tempOAIPMHerrorType.getCode() + "),";
+                            errorMessages.append(tempOAIPMHerrorType.getValue())
+                                    .append("[")
+                                    .append(tempOAIPMHerrorType.getCode())
+                                    .append("]");
                         }
                         throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                                 + "\nActivity --> " + VerbType.LIST_RECORDS.value()
@@ -191,7 +199,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                     throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                             + "\nActivity --> " + VerbType.LIST_RECORDS.value()
                             + "\nCallingURL --> " + desiredURL
-                            + "\nErrorCode --> " + HarvesterLogUtils.NOT_OAI_PMH_COMPATIBLE_RESPONSE);
+                            + "\nErrorCode --> " + HarvesterLogConstants.NOT_OAI_PMH_COMPATIBLE_RESPONSE);
                 }
 
             } else {
@@ -201,7 +209,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                         + "\nActivity --> " + VerbType.LIST_RECORDS.value()
                         + "\nCallingURL --> " + desiredURL
-                        + "\nErrorCode --> " + "Connection response code is not 200");
+                        + "\nErrorCode --> " + HarvesterLogConstants.RESPONSE_CODE_IS_NOT_200);
             }
 
         } catch (ParseException | JAXBException | IOException ex) {
@@ -283,39 +291,44 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                                 }
                             } else {
                                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                                        + "\nActivity --> " + VerbType.LIST_RECORDS.value()
+                                        + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_ORE
                                         + "\nCallingURL --> " + desiredURL
-                                        + "\nErrorCode --> " + HarvesterLogUtils.NO_RECORDS_FOUND);
+                                        + "\nErrorCode --> " + HarvesterLogConstants.NO_RECORDS_FOUND);
                             }
                         } else {
                             throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                                    + "\nActivity --> " + VerbType.LIST_RECORDS.value()
+                                    + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_ORE
                                     + "\nCallingURL --> " + desiredURL
-                                    + "\nErrorCode --> " + HarvesterLogUtils.NO_LIST_RECORDS_FOUND);
+                                    + "\nErrorCode --> " + HarvesterLogConstants.NO_LIST_RECORDS_FOUND);
                         }
                     } else {
-                        String errorMessages = "";
+                        StringBuilder errorMessages = new StringBuilder();
                         for (OAIPMHerrorType tempOAIPMHerrorType : oAIPMHtypeObject.getError()) {
-                            errorMessages += tempOAIPMHerrorType.getValue() + "(" + tempOAIPMHerrorType.getCode() + "),";
+                            errorMessages.append(tempOAIPMHerrorType.getValue())
+                                    .append("[")
+                                    .append(tempOAIPMHerrorType.getCode())
+                                    .append("]");
                         }
                         throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                                + "\nActivity --> " + VerbType.LIST_RECORDS.value()
+                                + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_ORE
                                 + "\nCallingURL --> " + desiredURL
                                 + "\nErrorCode --> " + errorMessages);
                     }
                 } else {
                     throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                            + "\nActivity --> " + VerbType.LIST_RECORDS.value()
+                            + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_ORE
                             + "\nCallingURL --> " + desiredURL
-                            + "\nErrorCode --> " + HarvesterLogUtils.NOT_OAI_PMH_COMPATIBLE_RESPONSE);
+                            + "\nErrorCode --> " + HarvesterLogConstants.NOT_OAI_PMH_COMPATIBLE_RESPONSE);
                 }
 
             } else {
-                connection.disconnect();
+                if(connection != null){
+                    connection.disconnect();
+                }
                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
                         + "\nActivity --> ListRecords-ORE"
                         + "\nCallingURL --> " + desiredURL
-                        + "\nErrorCode --> " + "Connection response code is not 200");
+                        + "\nErrorCode --> " + HarvesterLogConstants.RESPONSE_CODE_IS_NOT_200);
             }
 
         } catch (ParseException | JAXBException | IOException ex) {
@@ -348,6 +361,146 @@ public class ListRecordsServiceImpl implements ListRecordsService {
             file.delete();
         }
         return true;
+    }
+    
+    @Override
+    public boolean saveOrUpdateListRecordsViaResumptionToken(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException {
+        String desiredURL;
+        if(isListRecordsResumptionTokenValid(harRepoObj, method, adminEmail)){
+            LOGGER.info(harRepoObj.getRepoUID()+ " --> Saved Resumption token is valid, List Records - Resuming");
+            desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + harRepoObj.getResumptionTokenListRecords();
+        }else{
+            LOGGER.error(harRepoObj.getRepoUID()+ " --> Saved Resumption token is invalid, List Records - Staring from beginning");
+            desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix;
+        }
+        
+        return saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, true);
+    }
+    
+    @Override
+    public boolean isListRecordsResumptionTokenValid(HarRepo harRepoObj, MethodEnum method, String adminEmail) {
+        String desiredURL = null;
+        try {
+            if (harRepoObj.getResumptionTokenListRecords() != null) {
+                
+                desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + harRepoObj.getResumptionTokenListRecords();
+                HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
+
+                if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
+                    String response = OAIResponseUtil.createResponseFromXML(connection);
+                    OAIPMHtype oAIPMHtypeObject = UnmarshalUtils.xmlToOaipmh(response);
+                    if (oAIPMHtypeObject != null) {
+                        if (oAIPMHtypeObject.getError().isEmpty()) {
+                            return true;
+                        } else {
+                            StringBuilder errorMessages = new StringBuilder();
+                            for (OAIPMHerrorType tempOAIPMHerrorType : oAIPMHtypeObject.getError()) {
+                                errorMessages.append(tempOAIPMHerrorType.getValue())
+                                        .append("[")
+                                        .append(tempOAIPMHerrorType.getCode())
+                                        .append("]");
+                            }
+                            LOGGER.error("RepositoryUID --> " + harRepoObj.getRepoUID()
+                                    + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_RESUMPTION_TOKEN_CHECK
+                                    + "\nCallingURL --> " + desiredURL
+                                    + "\nErrorCode --> " + errorMessages);
+                            return false;
+                        }
+                    } else {
+                        LOGGER.error("RepositoryUID --> " + harRepoObj.getRepoUID()
+                                + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_RESUMPTION_TOKEN_CHECK
+                                + "\nCallingURL --> " + desiredURL
+                                + "\nErrorCode --> " + HarvesterLogConstants.NOT_OAI_PMH_COMPATIBLE_RESPONSE);
+                        return false;
+                    }
+
+                } else {
+                    if(connection != null){
+                        connection.disconnect();
+                    }
+                    LOGGER.error("RepositoryUID --> " + harRepoObj.getRepoUID()
+                            + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_RESUMPTION_TOKEN_CHECK
+                            + "\nCallingURL --> " + desiredURL
+                            + "\nErrorCode --> " + HarvesterLogConstants.RESPONSE_CODE_IS_NOT_200);
+                    return false;
+                }
+            } else {
+                return false;
+            }
+
+        } catch (JAXBException | IOException ex) {
+            LOGGER.error("RepositoryUID --> " + harRepoObj.getRepoUID()
+                    + "\nActivity --> " + VerbType.LIST_RECORDS.value()
+                    + "\nCallingURL --> " + desiredURL
+                    + ex.getMessage(), ex);
+            return false;
+        }
+
+    }
+    
+    @Override
+    public boolean saveOrUpdateListRecordsViaFromTime(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException {
+        LOGGER.info(harRepoObj.getRepoUID()+ " --> List Records - Resuming - From time - "+DatesRelatedUtil.getISOFormat(harRepoObj.getRepoLastSyncDate()));
+        String desiredURL = null;
+        try {
+            desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + metadataPrefix + CommonConstants.FROM + DatesRelatedUtil.getISOFormat(harRepoObj.getRepoLastSyncDate());
+            HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
+
+            if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
+                String response = OAIResponseUtil.createResponseFromXML(connection);
+                OAIPMHtype oAIPMHtypeObject = UnmarshalUtils.xmlToOaipmh(response);
+                if (oAIPMHtypeObject != null) {
+                    if (oAIPMHtypeObject.getError().isEmpty()) {
+                        return saveListRecordsRecursive(harRepoObj, desiredURL, metadataPrefix, method, adminEmail, true);
+                    } else if (oAIPMHtypeObject.getError().size() == 1) {
+                        OAIPMHerrorType tempOAIPMHerrorType = oAIPMHtypeObject.getError().get(0);
+                        if (!(tempOAIPMHerrorType.getCode() == OAIPMHerrorcodeType.NO_RECORDS_MATCH)) {
+                            throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
+                                    + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_FROM_TIME_CHECK
+                                    + "\nCallingURL --> " + desiredURL
+                                    + "\nErrorCode --> " + tempOAIPMHerrorType.getValue() + "(" + tempOAIPMHerrorType.getCode() + "),");
+                        } else {
+                            LOGGER.info(harRepoObj.getRepoUID()+ " --> List Records - No Records have been added From time "+DatesRelatedUtil.getISOFormat(harRepoObj.getRepoLastSyncDate()));
+                            return true;
+                        }
+                    } else {
+                        StringBuilder errorMessages = new StringBuilder();
+                        for (OAIPMHerrorType tempOAIPMHerrorType : oAIPMHtypeObject.getError()) {
+                            errorMessages.append(tempOAIPMHerrorType.getValue())
+                                    .append("[")
+                                    .append(tempOAIPMHerrorType.getCode())
+                                    .append("]");
+                        }
+                        throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
+                                + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_FROM_TIME_CHECK
+                                + "\nCallingURL --> " + desiredURL
+                                + "\nErrorCode --> " + errorMessages.toString());
+                    }
+
+                } else {
+                    throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
+                            + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_FROM_TIME_CHECK
+                            + "\nCallingURL --> " + desiredURL
+                            + "\nErrorCode --> " + HarvesterLogConstants.NOT_OAI_PMH_COMPATIBLE_RESPONSE);
+                }
+
+            } else {
+                if(connection != null){
+                    connection.disconnect();
+                }
+                throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
+                        + "\nActivity --> " + HarvesterLogConstants.LIST_RECORDS_FROM_TIME_CHECK
+                        + "\nCallingURL --> " + desiredURL
+                        + "\nErrorCode --> " + HarvesterLogConstants.RESPONSE_CODE_IS_NOT_200);
+            }
+
+        } catch (JAXBException | IOException ex) {
+            LOGGER.error("RepositoryUID --> " + harRepoObj.getRepoUID()
+                    + "\nActivity --> " + VerbType.LIST_RECORDS.value()
+                    + "\nCallingURL --> " + desiredURL
+                    + ex.getMessage(), ex);
+            throw ex;
+        }
     }
 
 }

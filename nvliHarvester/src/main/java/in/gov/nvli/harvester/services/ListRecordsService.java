@@ -36,5 +36,11 @@ public interface ListRecordsService {
     public boolean saveOrUpdateListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException;
 
     public boolean saveOrUpdateListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException;
+    
+    public boolean saveOrUpdateListRecordsViaResumptionToken(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException;
+            
+    public boolean isListRecordsResumptionTokenValid(HarRepo harRepoObj, MethodEnum method, String adminEmail);
+    
+    public boolean saveOrUpdateListRecordsViaFromTime(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException;
 
 }
