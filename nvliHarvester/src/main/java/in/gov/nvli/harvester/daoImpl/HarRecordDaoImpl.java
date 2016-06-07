@@ -75,4 +75,16 @@ public class HarRecordDaoImpl extends GenericDaoImpl<HarRecord, Long> implements
             return 0;
         }
     }
+
+    @Override
+    public HarRecord getRecord(long recordId) {
+        HarRecord record = null;
+        try {
+            record = get(recordId);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+
+        }
+        return record;
+    }
 }

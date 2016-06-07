@@ -413,4 +413,14 @@ public class GetRecordServiceImpl implements GetRecordService {
         }
 
     }
+
+    @Override
+    public HarRecord getRecord(long recordId) {
+       return  recordDao.getRecord(recordId);
+    }
+
+    @Override
+    public HarRecordMetadataDc GetMetaDataByHarRecord(HarRecord harRecord) {
+       return metadataDcDao.GetByHarRecord(harRecord);
+    }
 }

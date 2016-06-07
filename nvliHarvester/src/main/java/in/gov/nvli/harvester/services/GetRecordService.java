@@ -45,4 +45,7 @@ public interface GetRecordService {
     public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException;
 
     public void saveHarRecordDataInFileSystem(HarRecordData harRecordDataObj, String path) throws IOException;
+    
+    public HarRecord getRecord(long recordId);
+    public HarRecordMetadataDc GetMetaDataByHarRecord(HarRecord harRecord);
 }
