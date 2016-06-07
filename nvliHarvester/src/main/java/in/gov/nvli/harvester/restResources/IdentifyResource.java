@@ -11,7 +11,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
 import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
 import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;

@@ -6,7 +6,7 @@
 package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import java.io.IOException;
 import java.text.ParseException;

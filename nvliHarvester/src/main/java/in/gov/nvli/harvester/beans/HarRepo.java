@@ -57,7 +57,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HarRepo.findByRepoRowUpdateTime", query = "SELECT h FROM HarRepo h WHERE h.repoRowUpdateTime = :repoRowUpdateTime"),
     @NamedQuery(name = "HarRepo.findByRepoLatitude", query = "SELECT h FROM HarRepo h WHERE h.repoLatitude = :repoLatitude"),
     @NamedQuery(name = "HarRepo.findByRepoLongitude", query = "SELECT h FROM HarRepo h WHERE h.repoLongitude = :repoLongitude"),
-    @NamedQuery(name = "HarRepo.findByRecordCount", query = "SELECT h FROM HarRepo h WHERE h.recordCount = :recordCount")})
+    @NamedQuery(name = "HarRepo.findByRecordCount", query = "SELECT h FROM HarRepo h WHERE h.recordCount = :recordCount"),
+    @NamedQuery(name = "HarRepo.findByResumptionTokenListRecords", query = "SELECT h FROM HarRepo h WHERE h.resumptionTokenListRecords = :resumptionTokenListRecords")})
 public class HarRepo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -167,6 +168,10 @@ public class HarRepo implements Serializable {
     @Column(name = "repo_last_sync_end_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoLastSyncEndDate;
+    
+    @Size(max = 255)
+    @Column(name = "resumption_token_list_records", length = 255)
+    private String resumptionTokenListRecords;
     
     public HarRepo() {
     }
@@ -460,6 +465,14 @@ public class HarRepo implements Serializable {
 
     public void setRepoLastSyncEndDate(Date repoLastSyncEndDate) {
         this.repoLastSyncEndDate = repoLastSyncEndDate;
+    }
+    
+    public String getResumptionTokenListRecords() {
+        return resumptionTokenListRecords;
+    }
+
+    public void setResumptionTokenListRecords(String resumptionTokenListRecords) {
+        this.resumptionTokenListRecords = resumptionTokenListRecords;
     }
     
     @Override

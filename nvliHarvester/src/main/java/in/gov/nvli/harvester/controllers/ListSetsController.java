@@ -7,7 +7,7 @@ package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.ListSetsService;
 import java.io.IOException;
 import java.net.MalformedURLException;

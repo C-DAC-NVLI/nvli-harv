@@ -63,14 +63,19 @@ public class FileUtils {
 
     public static String getNameFromURL(String url) {
         if (url != null) {
-            return url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf("?"));
+            if(url.contains("?")){
+                return url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf("?"));
+            }else{
+                return url.substring(url.lastIndexOf("/") + 1);
+            }
         }
         return null;
     }
 
     public static void main(String[] args) throws IOException {
-        saveFile("http://dyuthi.cusat.ac.in/xmlui/bitstream/handle/purl/500/APSYM2004.pdf?sequence=1", "/home/ankit/.harvester/data/OR2", "APSYM2004.pdf");
-        System.err.println("Saved");
+//        saveFile("http://dyuthi.cusat.ac.in/xmlui/bitstream/handle/purl/500/APSYM2004.pdf?sequence=1", "/home/ankit/.harvester/data/OR2", "APSYM2004.pdf");
+//        System.err.println("Saved");
+        System.err.println("Value is "+getNameFromURL("http://localhost:8080/xmlui/bitstream/1849/8/1/license.txt"));
     }
 
 }

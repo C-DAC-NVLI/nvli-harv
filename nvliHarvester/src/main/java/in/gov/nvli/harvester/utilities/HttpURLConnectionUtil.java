@@ -5,7 +5,7 @@
  */
 package in.gov.nvli.harvester.utilities;
 
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -24,7 +24,7 @@ public class HttpURLConnectionUtil {
     private static final int MAX_ATTEMPT = 3;
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HttpURLConnectionUtil.class);
 
-    private static HashMap<String, Integer> map = new HashMap<>();
+    private static final HashMap<String, Integer> URL_MAP = new HashMap<>();
 
     public static HttpURLConnection getConnection(String desiredURL, MethodEnum method, String adminEmail) throws IOException {
 //        if (adminEmail == null || adminEmail.isEmpty() || adminEmail == "") {
@@ -40,6 +40,7 @@ public class HttpURLConnectionUtil {
             con.setRequestProperty("From", "From : " + adminEmail);
 
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                URL_MAP.remove(desiredURL);
                 return con;
             } else {
                 return null;
@@ -132,14 +133,14 @@ public class HttpURLConnectionUtil {
     }
 
     private static boolean isConnectionRetryLimitAvailable(String desiredURL) {
-        if (map.get(desiredURL) == null) {
-            map.put(desiredURL, 1);
+        if (URL_MAP.get(desiredURL) == null) {
+            URL_MAP.put(desiredURL, 1);
             return true;
-        } else if (map.get(desiredURL) < MAX_ATTEMPT - 1) {
-            map.put(desiredURL, map.get(desiredURL) + 1);
+        } else if (URL_MAP.get(desiredURL) < MAX_ATTEMPT - 1) {
+            URL_MAP.put(desiredURL, URL_MAP.get(desiredURL) + 1);
             return true;
         } else {
-            map.remove(desiredURL);
+            URL_MAP.remove(desiredURL);
             return false;
         }
     }

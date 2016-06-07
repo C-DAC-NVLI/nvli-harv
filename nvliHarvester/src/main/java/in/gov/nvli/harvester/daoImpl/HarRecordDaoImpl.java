@@ -34,18 +34,24 @@ public class HarRecordDaoImpl extends GenericDaoImpl<HarRecord, Long> implements
     @Override
     @TransactionalReadOrWrite
     public void saveOrUpdateHarRecordList(List<HarRecord> records) {
-        HarRecord temprecord = null;
+        for (HarRecord record : records){
+            saveOrUpdateHarRecord(record);
+        }
+    }
+    
+    @Override
+    @TransactionalReadOrWrite
+    public void saveOrUpdateHarRecord(HarRecord harRecordObj) {
+        HarRecord tempHarRecord = null;
         try {
-            for (HarRecord record : records) {
-                temprecord = getHarRecordByRecordIdentifier(record.getRecordIdentifier());
-                if (temprecord != null) {
-                    if (temprecord.getRecordSoureDatestamp().compareTo(record.getRecordSoureDatestamp()) < 0) {
-                        record.setRecordId(temprecord.getRecordId());
-                        currentSession().merge(record);
-                    }
-                } else {
-                    createNew(record);
+            tempHarRecord = getHarRecordByRecordIdentifier(harRecordObj.getRecordIdentifier());
+            if (tempHarRecord != null) {
+                if (tempHarRecord.getRecordSoureDatestamp().compareTo(harRecordObj.getRecordSoureDatestamp()) < 0) {
+                    harRecordObj.setRecordId(tempHarRecord.getRecordId());
+                    currentSession().merge(harRecordObj);
                 }
+            } else {
+                createNew(harRecordObj);
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

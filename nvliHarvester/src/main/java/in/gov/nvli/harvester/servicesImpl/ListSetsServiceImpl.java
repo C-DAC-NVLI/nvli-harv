@@ -12,8 +12,9 @@ import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.constants.HarvesterLogConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.dao.HarSetDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListSetsService;
@@ -44,7 +45,7 @@ public class ListSetsServiceImpl implements ListSetsService {
 
     @Autowired
     private RepositoryDao repositoryDao;
-    
+
     private List<SetType> getSetTypeList(OAIPMHtype oAIPMHtypeObject, HarRepo harRepoObj, String desiredURL) throws IOException, JAXBException, OAIPMHerrorTypeException {
         if (oAIPMHtypeObject.getError().isEmpty()) {
             return oAIPMHtypeObject.getListSets().getSet();
@@ -54,7 +55,7 @@ public class ListSetsServiceImpl implements ListSetsService {
                 errorMessages += tempOAIPMHerrorType.getValue() + "(" + tempOAIPMHerrorType.getCode() + "),";
             }
             throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                    + "\nActivity --> ListSets"
+                    + "\nActivity --> " + VerbType.LIST_SETS.value()
                     + "\nCallingURL --> " + desiredURL
                     + "\nErrorCode --> " + errorMessages);
         }
@@ -90,7 +91,7 @@ public class ListSetsServiceImpl implements ListSetsService {
                 } else {
                     harSetDao.saveHarSets(sets);
                 }
-                LOGGER.info(harRepoObj.getRepoUID()+":"+sets.size()+" Sets saved/updated");
+                LOGGER.info(harRepoObj.getRepoUID() + ":" + sets.size() + " Sets saved/updated");
                 if (oAIPMHtypeObject.getListSets().getResumptionToken() != null) {
                     resumptionToken = oAIPMHtypeObject.getListSets().getResumptionToken().getValue();
                     if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
@@ -99,17 +100,17 @@ public class ListSetsServiceImpl implements ListSetsService {
                     }
                 }
             } else {
-                if(connection != null){
+                if (connection != null) {
                     connection.disconnect();
                 }
                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
-                        + "\nActivity --> ListRecords"
+                        + "\nActivity --> " + VerbType.LIST_SETS.value()
                         + "\nCallingURL --> " + desiredURL
-                        + "\nErrorCode --> " + "Connection response code is not 200");
+                        + "\nErrorCode --> " + HarvesterLogConstants.RESPONSE_CODE_IS_NOT_200);
             }
         } catch (JAXBException | IOException ex) {
             LOGGER.error("RepositoryUID --> " + harRepoObj.getRepoUID()
-                    + "\nActivity --> ListRecords"
+                    + "\nActivity --> " + VerbType.LIST_SETS.value()
                     + "\nCallingURL --> " + desiredURL
                     + ex.getMessage(), ex);
             throw ex;

@@ -51,6 +51,13 @@ public class DatesRelatedUtil {
         return df2.parse(date);
     }
 
+    public static String getISOFormat(Date inputDate) throws ParseException {
+        final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        DateFormat df1 = new SimpleDateFormat(DATE_FORMAT);
+        return df1.format(inputDate);
+
+    }
+
     public static Date getCurrentDateTimeInUTCFormat() throws ParseException {
         final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         final String TIME_ZONE = "UTC";

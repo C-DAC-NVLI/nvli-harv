@@ -5,12 +5,8 @@
  */
 package in.gov.nvli.harvester.controllers;
 
-import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
-import in.gov.nvli.harvester.beans.HarRepo;
-import in.gov.nvli.harvester.customised.MethodEnum;
-import in.gov.nvli.harvester.dao.RepositoryDao;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.GetRecordService;
-import in.gov.nvli.harvester.servicesImpl.GetRecordServiceImpl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;

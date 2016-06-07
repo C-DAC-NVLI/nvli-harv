@@ -8,7 +8,7 @@ package in.gov.nvli.harvester.services;
 import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;

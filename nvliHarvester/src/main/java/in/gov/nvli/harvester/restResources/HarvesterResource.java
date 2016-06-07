@@ -6,7 +6,7 @@
 package in.gov.nvli.harvester.restResources;
 
 import in.gov.nvli.harvester.beans.HarRepo;
-import in.gov.nvli.harvester.customised.RepoStatusEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.services.HarvesterService;
 import in.gov.nvli.harvester.services.RepositoryService;
 import java.util.ArrayList;
@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -95,7 +93,7 @@ public class HarvesterResource {
     public String  startHarvesting(@PathParam("repoUID") String repoUID) throws InterruptedException, ExecutionException
     {
         //if(harvesterService.harvestRepositoryByUID(repoUID, context))
-        Future<String> response = harvesterService.harvestRepositoryByUID(repoUID); 
+        harvesterService.harvestRepositoryByUID(repoUID); 
        // return getHarvesterStatus(repoUID);
         return RepoStatusEnum.HARVEST_PROCESSING.getName();
     }

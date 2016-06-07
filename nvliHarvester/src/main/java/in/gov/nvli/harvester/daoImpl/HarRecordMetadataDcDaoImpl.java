@@ -55,6 +55,28 @@ public class HarRecordMetadataDcDaoImpl extends GenericDaoImpl<HarRecordMetadata
             return false;
         }
     }
+    
+    @Override
+    @TransactionalReadOrWrite
+    public boolean saveOrUpdateHarRecordMetadataDc(HarRecordMetadataDc metadataDc) {
+        HarRecordMetadataDc tempHarRecordMetadataDc = null;
+        
+        try {
+            if(metadataDc.getRecordId().getRecordId() != null){
+                tempHarRecordMetadataDc = GetByHarRecord(metadataDc.getRecordId());
+                if(tempHarRecordMetadataDc == null){
+                    createNew(metadataDc);
+                }else{
+                    metadataDc.setRecordMetadataDcId(tempHarRecordMetadataDc.getRecordMetadataDcId());
+                    currentSession().merge(metadataDc);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return false;
+        }
+    }
 
     @Override
     public HarRecordMetadataDc GetByHarRecord(HarRecord harRecord) {

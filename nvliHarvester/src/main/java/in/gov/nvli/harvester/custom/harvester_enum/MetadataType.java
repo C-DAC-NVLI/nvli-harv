@@ -3,24 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package in.gov.nvli.harvester.customised;
+package in.gov.nvli.harvester.custom.harvester_enum;
 
 /**
  *
  * @author ankit
  */
-public enum MethodEnum {
-    POST("POST"),
-    GET("GET");
+public enum MetadataType {
+    OAI_DC("oai_dc"),
+    ORE("ore");
 
     private final String text;
 
-    private MethodEnum(final String text) {
+    private MetadataType(final String text) {
         this.text = text;
     }
 
     public String value() {
         return this.text;
     }
-
 }
