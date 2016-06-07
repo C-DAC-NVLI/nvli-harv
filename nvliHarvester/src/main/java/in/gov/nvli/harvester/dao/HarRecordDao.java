@@ -20,5 +20,7 @@ public interface HarRecordDao extends GenericDao<HarRecord, Long> {
     public HarRecord getHarRecordByRecordIdentifier(String recordIdentifier);
 
     public long getCount(HarRepo harRepoObj);
+    
+    public HarRecord getRecord(long recordId);
 
 }
