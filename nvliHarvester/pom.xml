@@ -15,15 +15,16 @@
         <hibernate-core.version>4.1.9.Final</hibernate-core.version>
         <jersey.version>2.22.2</jersey.version>
     </properties>
-    <repositories>
-        <repository>
+    
+<!--    <repositories>
+ <repository>
 <id>in-project</id>
 <name>In Project Repo</name>
 <url>${project.basedir}/src/main/resources/external_libs</url>
 </repository>
         
     </repositories>
-   
+   -->
         
     <dependencies>
         <!--J2EE Web Dependency-->
@@ -194,6 +195,8 @@
             <groupId>in.gov.nvli</groupId>
             <artifactId>HarvesterToProtalDBMigration</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/external_libs/in/gov/nvli/HarvesterToProtalDBMigration/1.0-SNAPSHOT/HarvesterToProtalDBMigration-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
         
 </dependencies>
