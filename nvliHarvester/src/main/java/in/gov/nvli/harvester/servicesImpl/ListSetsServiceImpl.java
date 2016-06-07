@@ -14,7 +14,7 @@ import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.constants.HarvesterLogConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.dao.HarSetDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListSetsService;

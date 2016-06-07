@@ -5,9 +5,10 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
+import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
-import in.gov.nvli.harvester.customised.MethodEnum;
-import in.gov.nvli.harvester.customised.RepoStatusEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.restClient.RepositoryClient;
 import in.gov.nvli.harvester.services.HarvesterService;
@@ -16,6 +17,7 @@ import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
 import in.gov.nvli.harvester.constants.HarvesterLogConstants;
+import in.gov.nvli.harvester.custom.harvester_enum.MetadataType;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
@@ -99,13 +101,20 @@ public class HarvesterServiceImpl implements HarvesterService {
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.METADATAFORMATS_SAVED);
 
-            listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED);
+            if (listRecordsService.saveListRecords(harRepo, "oai_dc", MethodEnum.GET, "")) {
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED);
+            } else {
+                LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ MetadataType.OAI_DC.value()+" is not saved");
+            }
+            
 
             if (harRepo.getOreEnableFlag() == 1) {
                 LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_HARVESTING_STARTED);
-                listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "");
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_HARVESTING_FINISHED);
+                if(listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "")){
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_HARVESTING_FINISHED);
+                }else{
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ MetadataType.ORE.value()+" is not saved");
+                }
             }
 
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.GETTING_RECORD_COUNT);
@@ -204,19 +213,28 @@ public class HarvesterServiceImpl implements HarvesterService {
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.METADATAFORMATS_SAVED);
 
-            if (repoPreviousStatus == RepoStatusEnum.HARVEST_COMPLETE.getId()) {
-                listRecordsService.saveOrUpdateListRecordsViaFromTime(harRepo, "oai_dc", MethodEnum.GET, "");
-            } else if (repoPreviousStatus == RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId() || repoPreviousStatus == RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId()) {
-                listRecordsService.saveOrUpdateListRecordsViaResumptionToken(harRepo, "oai_dc", MethodEnum.GET, "");
-            } else {
-                listRecordsService.saveOrUpdateListRecords(harRepo, "oai_dc", MethodEnum.GET, "");
+            if(listRecordsService.isListRecordsAvailable(harRepo, MethodEnum.GET, "", MetadataType.OAI_DC.value())){
+                if (repoPreviousStatus == RepoStatusEnum.HARVEST_COMPLETE.getId()) {
+                listRecordsService.saveOrUpdateListRecordsViaFromTime(harRepo, MetadataType.OAI_DC.value(), MethodEnum.GET, "");
+                } else if (repoPreviousStatus == RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId() || repoPreviousStatus == RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId()) {
+                    listRecordsService.saveOrUpdateListRecordsViaResumptionToken(harRepo, MetadataType.OAI_DC.value(), MethodEnum.GET, "");
+                } else {
+                    listRecordsService.saveOrUpdateListRecords(harRepo, MetadataType.OAI_DC.value(), MethodEnum.GET, "");
+                }
+                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED);
+            }else{
+               LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ MetadataType.OAI_DC.value()+" is not saved"); 
             }
-            LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED);
+            
+            
 
             if (harRepo.getOreEnableFlag() == 1) {
                 LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_INCREMENTAL_HARVESTING_STARTED);
-                listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "");
-                LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_INCREMENTAL_HARVESTING_FINISHED);
+                if(listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "")){
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_INCREMENTAL_HARVESTING_FINISHED);
+                }else{
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ MetadataType.ORE.value()+" is not saved");
+                }
             }
 
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.GETTING_RECORD_COUNT);

@@ -24,7 +24,8 @@ import in.gov.nvli.harvester.beans.HarSet;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.constants.CommonConstants;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.HarRecordMetadataDcDao;
@@ -49,6 +50,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -103,23 +106,51 @@ public class GetRecordServiceImpl implements GetRecordService {
         HarRecord record;
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.GET_RECORD.value() + CommonConstants.IDENTIFIER + identifier + CommonConstants.METADATA_PREFIX + metadataPrefix;
         HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
-
         if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
             OAIPMHtype oAIPMHtypeObject = getOAIPMHtypeObject(connection);
             RecordType recordTypeObject = oAIPMHtypeObject.getGetRecord().getRecord();
             record = saveHarRecord(recordTypeObject, metadataPrefix, harRepoObj);
             if (null != record) {
                 if (saveHarSetRecord(recordTypeObject, record)) {
-                    saveHarRecordMetadataDc(recordTypeObject, record);
+                    if(metadataPrefix == MetadataType.OAI_DC.value()){
+                        saveHarRecordMetadataDc(recordTypeObject, record);
+                    }
                 }
             }
             return false;
         } else {
-            connection.disconnect();
+            if(connection != null){
+                connection.disconnect();
+            }   
             return false;
         }
     }
-
+    
+    @Override
+    public boolean saveOrUpdateGetRecord(HarRepo harRepoObj, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException {
+        HarRecord record;
+        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.GET_RECORD.value() + CommonConstants.IDENTIFIER + identifier + CommonConstants.METADATA_PREFIX + metadataPrefix;
+        HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
+        if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
+            OAIPMHtype oAIPMHtypeObject = getOAIPMHtypeObject(connection);
+            RecordType recordTypeObject = oAIPMHtypeObject.getGetRecord().getRecord();
+            record = saveOrUpdateHarRecord(recordTypeObject, metadataPrefix, harRepoObj);
+            if (null != record.getRecordId()) {
+                if (saveOrUpdateHarSetRecord(recordTypeObject, record)) {
+                    if(metadataPrefix == MetadataType.OAI_DC.value()){
+                        saveOrUpdateHarRecordMetadataDc(recordTypeObject, record);
+                    }
+                }
+            }
+            return false;
+        } else {
+            if(connection != null){
+                connection.disconnect();
+            }
+            return false;
+        }
+    }
+    
     /**
      *
      * @param recordTypeList
@@ -160,6 +191,15 @@ public class GetRecordServiceImpl implements GetRecordService {
         return harRecordObject;
 
     }
+    
+    private HarRecord saveOrUpdateHarRecord(RecordType recordTypeObject, String metadataPrefix, HarRepo harRepoObject) throws ParseException {
+        HarRecord harRecordObject = getHarRecordByRecordType(recordTypeObject, metadataPrefix, harRepoObject);
+
+        recordDao.saveOrUpdateHarRecord(harRecordObject);
+
+        return harRecordObject;
+
+    }
 
     @Override
     public HarRecord getHarRecordByRecordType(RecordType recordTypeObject, String metadataPrefix, HarRepo harRepoObject) throws ParseException {
@@ -195,6 +235,12 @@ public class GetRecordServiceImpl implements GetRecordService {
         return harSetRecordDao.saveList(harSetRecords);
 
     }
+    
+    private boolean saveOrUpdateHarSetRecord(RecordType recordTypeObject, HarRecord harRecordObject) {
+        List<HarSetRecord> harSetRecords = getHarSetRecordListByRecordType(recordTypeObject, harRecordObject);
+        return harSetRecordDao.saveOrUpdateHarSetRecords(harSetRecords);
+
+    }
 
     /**
      *
@@ -228,6 +274,15 @@ public class GetRecordServiceImpl implements GetRecordService {
         HarRecordMetadataDc recordMetadataDc = getHarRecordMetadataDcByRecordType(recordTypeObject, harRecordObject);
         if (recordMetadataDc != null) {
             return metadataDcDao.createNew(recordMetadataDc);
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean saveOrUpdateHarRecordMetadataDc(RecordType recordTypeObject, HarRecord harRecordObject) {
+        HarRecordMetadataDc recordMetadataDc = getHarRecordMetadataDcByRecordType(recordTypeObject, harRecordObject);
+        if (recordMetadataDc != null) {
+            return metadataDcDao.saveOrUpdateHarRecordMetadataDc(recordMetadataDc);
         } else {
             return false;
         }
@@ -345,12 +400,21 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
 
     @Override
-    public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException {
+    public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject, String metadataPrefix, HarRepo harRepoObject, boolean incrementalFlag) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException, MalformedURLException, JAXBException {
         HarRecordData harRecordDataObject;
         ElementNSImpl eleNsImplObject;
         HarRecord harRecordObject;
-
+                
         harRecordObject = recordDao.getHarRecordByRecordIdentifier(recordTypeObject.getHeader().getIdentifier());
+        if(incrementalFlag){
+            saveOrUpdateGetRecord(harRepoObject, MethodEnum.POST, "", recordTypeObject.getHeader().getIdentifier(), metadataPrefix);
+        }else{
+            if(harRecordObject == null){
+                saveGetRecord(harRepoObject, MethodEnum.POST, "", recordTypeObject.getHeader().getIdentifier(), metadataPrefix);
+                harRecordObject = recordDao.getHarRecordByRecordIdentifier(recordTypeObject.getHeader().getIdentifier());
+            }
+        }
+        
         if (harRecordObject != null && recordTypeObject.getHeader().getStatus() != StatusType.DELETED && recordTypeObject.getMetadata().getAny() != null) {
             harRecordDataObject = new HarRecordData();
             harRecordDataObject.setRecordId(harRecordObject);
@@ -395,7 +459,6 @@ public class GetRecordServiceImpl implements GetRecordService {
             return harRecordDataObject;
         }
         return null;
-
     }
 
     @Override

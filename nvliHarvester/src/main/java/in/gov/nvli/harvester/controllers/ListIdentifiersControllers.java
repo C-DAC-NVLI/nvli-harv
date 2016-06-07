@@ -7,7 +7,7 @@ package in.gov.nvli.harvester.controllers;
 
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.constants.CommonConstants;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.ListIdentifiersService;
 import in.gov.nvli.harvester.servicesImpl.ListIdentifiersServiceImpl;
 import java.io.IOException;

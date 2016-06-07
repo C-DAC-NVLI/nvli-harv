@@ -12,7 +12,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.ResumptionTokenType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.constants.CommonConstants;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.ListIdentifiersService;
 import in.gov.nvli.harvester.utilities.HttpURLConnectionUtil;

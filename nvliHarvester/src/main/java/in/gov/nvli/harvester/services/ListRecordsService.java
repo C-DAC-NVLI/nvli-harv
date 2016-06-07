@@ -8,7 +8,7 @@ package in.gov.nvli.harvester.services;
 import com.sun.syndication.io.FeedException;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import java.io.IOException;
 import java.text.ParseException;
 import javax.xml.bind.JAXBException;
@@ -42,5 +42,7 @@ public interface ListRecordsService {
     public boolean isListRecordsResumptionTokenValid(HarRepo harRepoObj, MethodEnum method, String adminEmail);
     
     public boolean saveOrUpdateListRecordsViaFromTime(HarRepo harRepoObj, String metadataPrefix, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException;
+    
+    public boolean isListRecordsAvailable(HarRepo harRepoObj, MethodEnum method, String adminEmail, String metadataPrefix);
 
 }

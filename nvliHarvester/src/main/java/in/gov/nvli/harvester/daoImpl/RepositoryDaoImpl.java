@@ -9,7 +9,7 @@ import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
-import in.gov.nvli.harvester.customised.RepoStatusEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import java.util.Date;
@@ -41,7 +41,12 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @TransactionalReadOrWrite
     public HarRepo addRepository(HarRepo repositoryObject) {
         try {
-            createNew(repositoryObject);
+            if(getRepositoryByUID(repositoryObject.getRepoUID()) == null){
+                createNew(repositoryObject);
+            }else{
+                LOGGER.error("Repository with UID --> "+repositoryObject.getRepoUID() +" is already available");
+                return null;
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;

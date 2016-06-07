@@ -8,7 +8,7 @@ package in.gov.nvli.harvester.restResources;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
-import in.gov.nvli.harvester.customised.RepoStatusEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.services.RepositoryService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
 import java.util.ArrayList;

@@ -5,7 +5,7 @@
  */
 package in.gov.nvli.harvester.utilities;
 
-import in.gov.nvli.harvester.customised.MethodEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;

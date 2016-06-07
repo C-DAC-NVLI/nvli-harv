@@ -16,6 +16,8 @@ import java.util.List;
 public interface HarRecordDao extends GenericDao<HarRecord, Long> {
 
     public void saveOrUpdateHarRecordList(List<HarRecord> records);
+    
+    public void saveOrUpdateHarRecord(HarRecord harRecordObj);
 
     public HarRecord getHarRecordByRecordIdentifier(String recordIdentifier);
 
