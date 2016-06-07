@@ -15,7 +15,14 @@
         <hibernate-core.version>4.1.9.Final</hibernate-core.version>
         <jersey.version>2.22.2</jersey.version>
     </properties>
-    
+    <repositories>
+        <repository>
+<id>in-project</id>
+<name>In Project Repo</name>
+<url>${project.basedir}/src/main/resources/external_libs</url>
+</repository>
+        
+    </repositories>
    
         
     <dependencies>
