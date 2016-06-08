@@ -57,18 +57,30 @@ public class RepositoryResource
 
     @POST
     @Produces(MediaType.APPLICATION_XML)
-    public HarRepo saveRepositoryXML(HarRepoCustomised harRepoCustomised)
+    public HarRepoCustomised saveRepositoryXML(HarRepoCustomised harRepoCustomised)
     {
         System.out.println("in xl"+harRepoCustomised.getRepoName());
-        return saveRepository(harRepoCustomised);
+       HarRepo repo = saveRepository(harRepoCustomised);
+       if(repo!=null)
+       {
+           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+       }
+        
+        return null;
     }
   
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public HarRepo saveRepositoryJSON(HarRepoCustomised harRepoCustomised)
+    public HarRepoCustomised saveRepositoryJSON(HarRepoCustomised harRepoCustomised)
     {
         System.out.println("in json"+harRepoCustomised.getRepoName());
-        return saveRepository(harRepoCustomised);
+        HarRepo repo=saveRepository(harRepoCustomised);
+        if(repo!=null)
+       {
+           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+       }
+        
+        return null;
     }
     
     
