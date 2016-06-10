@@ -112,6 +112,9 @@
         <version>${hibernate-core.version}</version>
         <type>jar</type>
     </dependency>
+
+
+    
     <!--Other-->
     <dependency>
         <groupId>javax.servlet</groupId>
@@ -198,7 +201,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/external_libs/in/gov/nvli/HarvesterToProtalDBMigration/1.0-SNAPSHOT/HarvesterToProtalDBMigration-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
-        
+        <dependency>
+    <groupId>c3p0</groupId>
+    <artifactId>c3p0</artifactId>
+    <version>0.9.1.2</version>
+</dependency>
+
 </dependencies>
 
 <build>
