@@ -58,7 +58,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HarRepo.findByRepoLatitude", query = "SELECT h FROM HarRepo h WHERE h.repoLatitude = :repoLatitude"),
     @NamedQuery(name = "HarRepo.findByRepoLongitude", query = "SELECT h FROM HarRepo h WHERE h.repoLongitude = :repoLongitude"),
     @NamedQuery(name = "HarRepo.findByRecordCount", query = "SELECT h FROM HarRepo h WHERE h.recordCount = :recordCount"),
-    @NamedQuery(name = "HarRepo.findByResumptionTokenListRecords", query = "SELECT h FROM HarRepo h WHERE h.resumptionTokenListRecords = :resumptionTokenListRecords")})
+    @NamedQuery(name = "HarRepo.findByResumptionTokenListRecords", query = "SELECT h FROM HarRepo h WHERE h.resumptionTokenListRecords = :resumptionTokenListRecords"),
+    @NamedQuery(name = "HarRepo.findByPublishFlag", query = "SELECT h FROM HarRepo h WHERE h.publishFlag = :publishFlag")})
 public class HarRepo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -172,6 +173,11 @@ public class HarRepo implements Serializable {
     @Size(max = 255)
     @Column(name = "resumption_token_list_records", length = 255)
     private String resumptionTokenListRecords;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "publish_flag", nullable = false)
+    private short publishFlag;
     
     public HarRepo() {
     }
@@ -473,6 +479,14 @@ public class HarRepo implements Serializable {
 
     public void setResumptionTokenListRecords(String resumptionTokenListRecords) {
         this.resumptionTokenListRecords = resumptionTokenListRecords;
+    }
+    
+    public short getPublishFlag() {
+        return publishFlag;
+    }
+
+    public void setPublishFlag(short publishFlag) {
+        this.publishFlag = publishFlag;
     }
     
     @Override

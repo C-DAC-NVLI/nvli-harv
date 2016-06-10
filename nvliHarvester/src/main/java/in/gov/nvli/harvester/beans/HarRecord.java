@@ -40,7 +40,10 @@ import javax.xml.bind.annotation.XmlTransient;
   @NamedQuery(name = "HarRecord.findAll", query = "SELECT h FROM HarRecord h"),
   @NamedQuery(name = "HarRecord.findByRecordId", query = "SELECT h FROM HarRecord h WHERE h.recordId = :recordId"),
   @NamedQuery(name = "HarRecord.findByRecordIdentifier", query = "SELECT h FROM HarRecord h WHERE h.recordIdentifier = :recordIdentifier"),
-  @NamedQuery(name = "HarRecord.findByRecordSoureDatestamp", query = "SELECT h FROM HarRecord h WHERE h.recordSoureDatestamp = :recordSoureDatestamp")})
+  @NamedQuery(name = "HarRecord.findByRecordSoureDatestamp", query = "SELECT h FROM HarRecord h WHERE h.recordSoureDatestamp = :recordSoureDatestamp"),
+  @NamedQuery(name = "HarRecord.findByRecordStatus", query = "SELECT h FROM HarRecord h WHERE h.recordStatus = :recordStatus"),
+  @NamedQuery(name = "HarRecord.findByRecordUid", query = "SELECT h FROM HarRecord h WHERE h.recordUid = :recordUid"),
+  @NamedQuery(name = "HarRecord.findByPublishFlag", query = "SELECT h FROM HarRecord h WHERE h.publishFlag = :publishFlag")})
 public class HarRecord implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -80,7 +83,16 @@ public class HarRecord implements Serializable {
   private Short recordStatus;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
   private Collection<HarRecordData> harRecordDataCollection;
-
+  @Basic(optional = false)
+  @NotNull
+  @Size(min = 1, max = 100)
+  @Column(name = "record_uid", nullable = false, length = 100)
+  private String recordUid;
+  @Basic(optional = false)
+  @NotNull
+  @Column(name = "publish_flag", nullable = false)
+  private short publishFlag;
+    
   public HarRecord() {
   }
 
@@ -192,6 +204,22 @@ public class HarRecord implements Serializable {
 
     public void setHarRecordDataCollection(Collection<HarRecordData> harRecordDataCollection) {
         this.harRecordDataCollection = harRecordDataCollection;
+    }
+    
+    public String getRecordUid() {
+        return recordUid;
+    }
+
+    public void setRecordUid(String recordUid) {
+        this.recordUid = recordUid;
+    }
+
+    public short getPublishFlag() {
+        return publishFlag;
+    }
+
+    public void setPublishFlag(short publishFlag) {
+        this.publishFlag = publishFlag;
     }
   
   
