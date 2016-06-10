@@ -132,6 +132,8 @@ public class HarvesterServiceImpl implements HarvesterService {
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.HARVEST_PROCESSING_ERROR.getId());
+            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                    + ex.getMessage(), ex);
             try {
                 harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
                 repositoryClient.updateRepositoryStatus(harRepo);
@@ -139,8 +141,6 @@ public class HarvesterServiceImpl implements HarvesterService {
                 LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
                         + ex1.getMessage(), ex1);
             }
-            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
-                    + ex.getMessage(), ex);
         }
 
     }
@@ -255,6 +255,8 @@ public class HarvesterServiceImpl implements HarvesterService {
 
         } catch (Exception ex) {
             repositoryDao.changeRepoStatus(harRepo.getRepoUID(), RepoStatusEnum.INCREMENT_HARVEST_PROCESSING_ERROR.getId());
+            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
+                    + ex.getMessage(), ex);
             try {
                 harRepo = repositoryDao.getRepositoryByUID(harRepo.getRepoUID());
                 repositoryClient.updateRepositoryStatus(harRepo);
@@ -262,8 +264,6 @@ public class HarvesterServiceImpl implements HarvesterService {
                 LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
                         + ex1.getMessage(), ex1);
             }
-            LOGGER.error("RepositoryUID --> " + harRepo.getRepoUID()
-                    + ex.getMessage(), ex);
         }
 
     }

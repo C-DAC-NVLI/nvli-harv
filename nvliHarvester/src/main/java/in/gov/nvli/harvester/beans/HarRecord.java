@@ -83,19 +83,17 @@ public class HarRecord implements Serializable {
   private Short recordStatus;
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "recordId")
   private Collection<HarRecordData> harRecordDataCollection;
-  @Basic(optional = false)
-  @NotNull
-  @Size(min = 1, max = 100)
-  @Column(name = "record_uid", nullable = false, length = 100)
+  @Size(max = 100)
+  @Column(name = "record_uid", length = 100)
   private String recordUid;
   @Basic(optional = false)
   @NotNull
-  @Column(name = "publish_flag", nullable = false)
+  @Column(name = "publish_flag", nullable = false, columnDefinition =  "smallint default 0 COMMENT '0-not published/updated/new, 1-published,2-error'")
   private short publishFlag;
-    
+  
   public HarRecord() {
   }
-
+  
   public HarRecord(Long recordId) {
     this.recordId = recordId;
   }
@@ -104,7 +102,7 @@ public class HarRecord implements Serializable {
     this.recordId = recordId;
     this.recordIdentifier = recordIdentifier;
   }
-
+  
   public Long getRecordId() {
     return recordId;
   }
