@@ -1,3 +1,4 @@
+<!--This file used just for Reference Purpose Regards C3p0-->
 <?xml version="1.0" encoding="UTF-8"?>
 <c3p0-config> <default-config> 
     <property name="automaticTestTable">con_test</property> 
