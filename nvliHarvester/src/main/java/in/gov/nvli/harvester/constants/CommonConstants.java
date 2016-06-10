@@ -12,6 +12,7 @@ package in.gov.nvli.harvester.constants;
 public class CommonConstants {
 
     public static String COLUMN_VALUE_SEPARATOR = "<>";
+    public static String RECORD_NAME_SEPARATOR = "_";
     public static Short RECORD_NOT_DELETED = 0;
     public static Short RECORD_DELETED = 1;
 
