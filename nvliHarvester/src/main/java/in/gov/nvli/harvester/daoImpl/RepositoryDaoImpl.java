@@ -41,7 +41,7 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @TransactionalReadOrWrite
     public HarRepo addRepository(HarRepo repositoryObject) {
         try {
-            if(getRepositoryByUID(repositoryObject.getRepoUID()) == null && getRepository(repositoryObject.getRepoBaseUrl())==null){
+            if(getRepositoryByUID(repositoryObject.getRepoUID()) == null){
                 createNew(repositoryObject);
             }else{
                 LOGGER.error("Repository with UID --> "+repositoryObject.getRepoUID() +" is already available");
