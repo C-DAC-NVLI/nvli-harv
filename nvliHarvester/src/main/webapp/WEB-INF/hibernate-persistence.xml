@@ -10,11 +10,17 @@
 
 
     <tx:annotation-driven/>
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-      p:driverClassName="${jdbc.driver}" p:url="${jdbc.url}" p:username="${jdbc.username}"
-      p:password="${jdbc.password}" p:initialSize="1" p:maxActive="2"
-      destroy-method="close">
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close" >
+
+        <property name="driverClass" value="${jdbc.driver}" />
+        <property name="jdbcUrl" value="${jdbc.url}" />
+        <property name="user" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}" />
+        
+        
     </bean>	
+    
     <bean id="sessionFactory"
       class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
@@ -25,12 +31,13 @@
         </property>		
         <property name="hibernateProperties">
             <value>
-                hibernate.dialect=org.hibernate.dialect.MySQLDialect
+                hibernate.dialect=${jdbc.dialect}
                 hibernate.format_sql=true
                 hibernate.show_sql=false
                 hibernate.hbm2ddl.auto=update
             </value>
         </property>
+        
     </bean>
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
