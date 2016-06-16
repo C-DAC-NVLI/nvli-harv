@@ -44,8 +44,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    public boolean editRepository(HarRepo repositoryObject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void editRepository(HarRepo repositoryObject) {
+       repositoryDaoObject.saveOrUpdate(repositoryObject);
     }
 
     @Override
