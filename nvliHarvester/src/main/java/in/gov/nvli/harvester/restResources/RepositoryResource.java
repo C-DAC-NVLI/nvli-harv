@@ -15,12 +15,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -138,6 +141,50 @@ public class RepositoryResource
         List<String> repoUIDSList=splitRepoUIDS(repoUIDS);
       return  changeRepoStatus(repoUIDSList,RepoStatusEnum.NOT_ACTIVE.getId());
     } 
+    
+    
+    
+    @PUT
+    @Path("/{repoUID}")
+    @Produces({ MediaType.APPLICATION_JSON})
+    public Response updateRepository(@PathParam("repoUID") String repoUID, HarRepoCustomised custObj) {
+        HarRepo repoOrginal = repositoryService.getRepositoryByUID(repoUID);
+       
+        if (repoOrginal == null) {
+            System.out.println("in null");
+            return Response.status(400).entity("Repository with repoUID" + repoUID + "not Exist !!").build();
+        }
+        if (custObj == null) {
+            System.out.println("in null");
+            return Response.status(400).entity("Please provide the  HarRepoCustomised object !!").build();
+        }
+        HarRepo repo = CustomBeansGenerator.convertHarRepoCustomisedToHarRepo(custObj);
+        
+        repo.setRepoUID(repoOrginal.getRepoUID());
+        repo.setRepoBaseUrl(repoOrginal.getRepoBaseUrl());
+        repo.setRepoId(repoOrginal.getRepoId());
+       
+        repositoryService.editRepository(repo);
+        custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+        return Response.ok().entity(custObj).build();
+    }
+
+    @GET
+    @Path("/{repoUID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRepository(@PathParam("repoUID") String repoUID) {
+        HarRepo repo = repositoryService.getRepositoryByUID(repoUID);
+        if (repo == null) {
+            System.out.println("in null");
+            return Response.status(400).entity("Repository with repoUID" + repoUID + "not Exist !!").build();
+        }
+        HarRepoCustomised custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+        
+        return Response.ok().entity(custObj).build();
+    }
+
+
+    
     
    private String changeRepoStatus(short status)
    {
