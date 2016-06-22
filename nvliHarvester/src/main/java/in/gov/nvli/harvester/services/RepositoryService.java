@@ -20,7 +20,7 @@ public interface RepositoryService {
 
     List<HarRepo> getRepositoriesByStatus(List<Integer> statusIds);
 
-    boolean editRepository(HarRepo repositoryObject);
+    void editRepository(HarRepo repositoryObject);
 
     boolean deleteRepository(int repositoryId);
 

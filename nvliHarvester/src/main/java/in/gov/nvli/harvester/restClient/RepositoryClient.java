@@ -10,6 +10,8 @@ import in.gov.nvli.harvester.customised.HarRepoCustomised;
 import in.gov.nvli.harvester.services.RepositoryService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,10 +19,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
+import sun.net.www.http.HttpClient;
 
 /**
  *
@@ -112,7 +117,22 @@ public class RepositoryClient {
         System.out.println("res"+response.getBody().getRecordCount());
 
     }
+    @RequestMapping("/test/{repoUID}")
+    public void test1(@PathVariable("repoUID") String repoUID)
+    {
+        System.out.println("in client");
+        HarRepo repo = repositoryService.getRepositoryByUID(repoUID);
+       HarRepoCustomised harRepoCustomised = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+       harRepoCustomised.setRepoName("tetsnew");
+        HttpHeaders headers = new HttpHeaders();
+         RestTemplate restTemplate = new RestTemplate();
+          //  headers.setContentType(MediaType.APPLICATION_JSON);
     
-    
+            HttpEntity<HarRepoCustomised> entity = new HttpEntity<>(harRepoCustomised, headers);
+       ResponseEntity<HarRepoCustomised> response = restTemplate.exchange("http://10.208.27.137:8080/nvliHarvester/rest/repositories/OR202", HttpMethod.PUT, entity, HarRepoCustomised.class);
+            harRepoCustomised=  response.getBody();
+        System.out.println("resonse code"+response.getStatusCode());
+        System.out.println("cust"+harRepoCustomised.getRepoName());
+    }
     
 }
