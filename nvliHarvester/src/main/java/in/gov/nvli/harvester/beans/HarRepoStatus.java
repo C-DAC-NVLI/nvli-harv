@@ -54,6 +54,8 @@ public class HarRepoStatus implements Serializable {
     private String repoStatusDesc;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoStatusId")
     private Collection<HarRepo> harRepoCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "harvestStatus")
+    private Collection<HarRepoMetadata> harRepoMetadataCollection;
 
     public HarRepoStatus() {
     }
@@ -100,6 +102,15 @@ public class HarRepoStatus implements Serializable {
         this.harRepoCollection = harRepoCollection;
     }
 
+    @XmlTransient
+    public Collection<HarRepoMetadata> getHarRepoMetadataCollection() {
+        return harRepoMetadataCollection;
+    }
+
+    public void setHarRepoMetadataCollection(Collection<HarRepoMetadata> harRepoMetadataCollection) {
+        this.harRepoMetadataCollection = harRepoMetadataCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -124,5 +135,5 @@ public class HarRepoStatus implements Serializable {
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarRepoStatus[ repoStatusId=" + repoStatusId + " ]";
     }
-    
+
 }

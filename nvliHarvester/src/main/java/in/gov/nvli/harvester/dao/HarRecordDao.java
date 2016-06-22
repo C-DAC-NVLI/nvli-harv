@@ -16,13 +16,17 @@ import java.util.List;
 public interface HarRecordDao extends GenericDao<HarRecord, Long> {
 
     public void saveOrUpdateHarRecordList(List<HarRecord> records);
-    
+
     public void saveOrUpdateHarRecord(HarRecord harRecordObj);
 
     public HarRecord getHarRecordByRecordIdentifier(String recordIdentifier);
 
     public long getCount(HarRepo harRepoObj);
-    
+
     public HarRecord getRecord(long recordId);
+
+    public Long rowCount(short recordStaus);
+
+    public List<HarRecord> list(int displayStart, int displayLength, short recordStatus);
 
 }

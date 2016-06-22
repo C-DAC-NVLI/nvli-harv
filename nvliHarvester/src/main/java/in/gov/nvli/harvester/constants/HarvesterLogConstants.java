@@ -24,6 +24,7 @@ public class HarvesterLogConstants {
     public static final String LIST_RECORDS_RESUMPTION_TOKEN_CHECK = "ListRecords Resumption Token check";
     public static final String LIST_RECORDS_FROM_TIME_CHECK = "ListRecords From Time check";
     public static final String RESPONSE_CODE_IS_NOT_200 = "Connection response code is not 200";
+    public static final String URL_CHECK = "URL Check";
 
     public static final String INCREMENTAL_HARVESTING_STARTED = "Incremental Harvesting Started";
     public static final String ORE_INCREMENTAL_HARVESTING_STARTED = "ORE Incremental Harvesting Started";

@@ -11,6 +11,7 @@ import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
 import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.HarRecordDao;
+import in.gov.nvli.harvester.dao.HarRepoStatusDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,9 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @Autowired
     private HarRecordDao harRecordDaoObj;
 
+    @Autowired
+    private HarRepoStatusDao harRepoStatusDaoObj;
+
     public RepositoryDaoImpl() {
         super(HarRepo.class);
     }
@@ -41,10 +45,10 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @TransactionalReadOrWrite
     public HarRepo addRepository(HarRepo repositoryObject) {
         try {
-            if(getRepositoryByUID(repositoryObject.getRepoUID()) == null){
+            if (getRepositoryByUID(repositoryObject.getRepoUID()) == null) {
                 createNew(repositoryObject);
-            }else{
-                LOGGER.error("Repository with UID --> "+repositoryObject.getRepoUID() +" is already available");
+            } else {
+                LOGGER.error("Repository with UID --> " + repositoryObject.getRepoUID() + " is already available");
                 return null;
             }
         } catch (Exception e) {
@@ -122,6 +126,14 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
 
     @Override
     @TransactionalReadOrWrite
+    public void changeRepoStatus(HarRepo harRepoObj, short status) {
+        HarRepoStatus harRepoStatusObj = harRepoStatusDaoObj.get(status);
+        harRepoObj.setRepoStatusId(harRepoStatusObj);
+        merge(harRepoObj);
+    }
+
+    @Override
+    @TransactionalReadOrWrite
     public boolean changeRepoStatusByHarRepo(List<HarRepo> repos, short status) {
         try {
             for (HarRepo repo : repos) {
@@ -173,23 +185,21 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
 
     @Override
     @TransactionalReadOrWrite
-    public void updateLastSyncStartDate(String repoUID, Date updatedDate) {
+    public void updateLastSyncStartDate(HarRepo harRepoObj, Date updatedDate) {
         try {
-            HarRepo tempHarRepo = getRepositoryByUID(repoUID);
-            tempHarRepo.setRepoLastSyncDate(updatedDate);
-            saveOrUpdate(tempHarRepo);
+            harRepoObj.setRepoLastSyncDate(updatedDate);
+            merge(harRepoObj);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
-    
+
     @Override
     @TransactionalReadOrWrite
-    public void updateLastSyncEndDate(String repoUID, Date updatedDate) {
+    public void updateLastSyncEndDate(HarRepo harRepoObj, Date updatedDate) {
         try {
-            HarRepo tempHarRepo = getRepositoryByUID(repoUID);
-            tempHarRepo.setRepoLastSyncEndDate(updatedDate);
-            saveOrUpdate(tempHarRepo);
+            harRepoObj.setRepoLastSyncEndDate(updatedDate);
+            merge(harRepoObj);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

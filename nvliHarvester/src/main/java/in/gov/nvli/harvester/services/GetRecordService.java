@@ -13,14 +13,18 @@ import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.beans.OAIDC;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
+import in.gov.nvli.harvester.customised.HarRecordDataCustomised;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -31,7 +35,7 @@ public interface GetRecordService {
     public boolean saveGetRecord(String baseURL, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException;
 
     public boolean saveGetRecord(HarRepo repository, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException;
-    
+
     public boolean saveOrUpdateGetRecord(HarRepo harRepoObj, MethodEnum method, String adminEmail, String identifier, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException;
 
     public boolean saveGetRecordList(List<RecordType> recordTypeList, HarRepo repository, String metadataPrefix) throws MalformedURLException, IOException, JAXBException, ParseException;
@@ -47,7 +51,14 @@ public interface GetRecordService {
     public HarRecordData getHarRecordDataByRecordType(RecordType recordTypeObject, String metadataPrefix, HarRepo harRepoObject, boolean incrementalFlag) throws ParseException, TransformerConfigurationException, TransformerException, IOException, IllegalArgumentException, FeedException, MalformedURLException, JAXBException;
 
     public void saveHarRecordDataInFileSystem(HarRecordData harRecordDataObj, String path) throws IOException;
-    
+
     public HarRecord getRecord(long recordId);
+
     public HarRecordMetadataDc GetMetaDataByHarRecord(HarRecord harRecord);
+
+    public HarRecord getHarRecordByRecordType(RecordType recordTypeObject, HarRepo harRepoObject, boolean incrementalFlag) throws IOException, MalformedURLException, JAXBException, ParseException;
+
+    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj);
+
+    public List<HarRecordDataCustomised> readHarRecordDataFromXML(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj, List<HarRecord> harRecordList) throws SAXException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, ParserConfigurationException, JAXBException;
 }

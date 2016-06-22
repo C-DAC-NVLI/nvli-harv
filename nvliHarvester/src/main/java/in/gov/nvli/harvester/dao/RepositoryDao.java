@@ -28,6 +28,8 @@ public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
 
     boolean changeRepoStatus(String repositoryUID, short status);
 
+    void changeRepoStatus(HarRepo harRepoObj, short status);
+
     boolean changeRepoStatusByHarRepo(List<HarRepo> repos, short status);
 
     public List<HarRepo> getRepositories();
@@ -36,11 +38,11 @@ public interface RepositoryDao extends GenericDao<HarRepo, Integer> {
 
     public List<HarRepo> getRepositoriesByStaus(short repoStatusId);
 
-    public void updateLastSyncStartDate(String repoUID, Date updatedDate);
+    public void updateLastSyncStartDate(HarRepo harRepoObj, Date updatedDate);
 
     public long getHarRecordCount(HarRepo harRepoObj);
 
     public void updateHarRecordCount(HarRepo harRepoObj);
-    
-    public void updateLastSyncEndDate(String repoUID, Date updatedDate);
+
+    public void updateLastSyncEndDate(HarRepo harRepoObj, Date updatedDate);
 }

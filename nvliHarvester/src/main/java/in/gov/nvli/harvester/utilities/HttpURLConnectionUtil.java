@@ -144,4 +144,35 @@ public class HttpURLConnectionUtil {
             return false;
         }
     }
+
+    public static String getBaseURL(String inputURL) {
+        try {
+            URL url = new URL(inputURL);
+            StringBuilder baseUrl = new StringBuilder();
+            if (url.getPort() == -1) {
+                baseUrl.append(url.getProtocol()).append("://").append(url.getHost());
+            } else {
+                baseUrl.append(url.getProtocol()).append("://").append(url.getHost()).append(":").append(url.getPort());
+            }
+            return baseUrl.toString();
+        } catch (MalformedURLException ex) {
+            LOGGER.error("URL --> " + inputURL
+                    + ex.getMessage(), ex);
+            return null;
+        }
+    }
+
+    public static String updateBaseURL(String inputURL, String targetBaseURL) {
+        String baseUrl = getBaseURL(inputURL);
+
+        if (targetBaseURL.endsWith("/")) {
+            targetBaseURL = targetBaseURL.substring(0, targetBaseURL.length() - 1);
+        }
+        return inputURL.replace(baseUrl, targetBaseURL);
+
+    }
+
+    public static void main(String[] args) {
+        System.out.println("updated " + updateBaseURL("http://server.iiap.res.in:8080/xmlui/bitstream/2248/3/1/Ananthkrishnan1.pdf", "http://prints.iiap.res.in/"));
+    }
 }

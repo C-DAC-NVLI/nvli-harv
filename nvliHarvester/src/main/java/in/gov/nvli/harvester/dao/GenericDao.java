@@ -94,4 +94,8 @@ public interface GenericDao<T, ID extends Serializable> {
      * @param list
      */
     public void saveOrUpdateList(List<T> list);
+
+    public Long rowCount();
+
+    public List<T> list(int displayStart, int displayLength, String sortColumnName);
 }

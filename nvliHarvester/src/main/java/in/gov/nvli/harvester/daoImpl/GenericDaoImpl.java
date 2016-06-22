@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -161,5 +163,23 @@ public class GenericDaoImpl<T, ID extends Serializable> implements GenericDao<T,
         for (T temp : list) {
             saveOrUpdate(temp);
         }
+    }
+
+    @Override
+    public Long rowCount() {
+        return (Long) currentSession()
+                .createCriteria(persistentClass)
+                .setProjection(Projections.rowCount())
+                .uniqueResult();
+    }
+
+    @Override
+    public List<T> list(int displayStart, int displayLength, String sortColumnName) {
+        return currentSession()
+                .createCriteria(persistentClass)
+                .addOrder(Order.asc(sortColumnName))
+                .setFirstResult(displayStart)
+                .setMaxResults(displayLength)
+                .list();
     }
 }

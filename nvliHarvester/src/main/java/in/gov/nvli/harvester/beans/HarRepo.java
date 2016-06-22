@@ -159,6 +159,8 @@ public class HarRepo implements Serializable {
     private HarRepoType repoTypeId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
     private Collection<HarSetRepository> harSetRepositoryCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
+    private Collection<HarRepoMetadata> harRepoMetadataCollection;
 
     @Column(name = "ore_enable_flag", nullable = false)
     private byte oreEnableFlag = 0;//1=enabled,0-disabled/not enabled(default)
@@ -169,16 +171,16 @@ public class HarRepo implements Serializable {
     @Column(name = "repo_last_sync_end_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoLastSyncEndDate;
-    
+
     @Size(max = 255)
     @Column(name = "resumption_token_list_records", length = 255)
     private String resumptionTokenListRecords;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "publish_flag", nullable = false)
     private short publishFlag;
-    
+
     public HarRepo() {
     }
 
@@ -472,7 +474,7 @@ public class HarRepo implements Serializable {
     public void setRepoLastSyncEndDate(Date repoLastSyncEndDate) {
         this.repoLastSyncEndDate = repoLastSyncEndDate;
     }
-    
+
     public String getResumptionTokenListRecords() {
         return resumptionTokenListRecords;
     }
@@ -480,7 +482,7 @@ public class HarRepo implements Serializable {
     public void setResumptionTokenListRecords(String resumptionTokenListRecords) {
         this.resumptionTokenListRecords = resumptionTokenListRecords;
     }
-    
+
     public short getPublishFlag() {
         return publishFlag;
     }
@@ -488,7 +490,16 @@ public class HarRepo implements Serializable {
     public void setPublishFlag(short publishFlag) {
         this.publishFlag = publishFlag;
     }
-    
+
+    @XmlTransient
+    public Collection<HarRepoMetadata> getHarRepoMetadataCollection() {
+        return harRepoMetadataCollection;
+    }
+
+    public void setHarRepoMetadataCollection(Collection<HarRepoMetadata> harRepoMetadataCollection) {
+        this.harRepoMetadataCollection = harRepoMetadataCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;

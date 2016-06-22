@@ -63,6 +63,8 @@ public class HarMetadataType implements Serializable {
     private Collection<HarMetadataTypeRepository> harMetadataTypeRepositoryCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadataTypeId")
     private Collection<HarRecord> harRecordCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadataTypeId")
+    private Collection<HarRepoMetadata> harRepoMetadataCollection;
 
     public HarMetadataType() {
     }
@@ -72,12 +74,11 @@ public class HarMetadataType implements Serializable {
     }
 
     public HarMetadataType(String metadataPrefix, String metadataSchema, String metadataNamespace) {
-        this.metadataId = metadataId;
         this.metadataPrefix = metadataPrefix;
         this.metadataSchema = metadataSchema;
         this.metadataNamespace = metadataNamespace;
     }
-    
+
     public HarMetadataType(Short metadataId, String metadataPrefix, String metadataSchema, String metadataNamespace) {
         this.metadataId = metadataId;
         this.metadataPrefix = metadataPrefix;
@@ -135,6 +136,15 @@ public class HarMetadataType implements Serializable {
         this.harRecordCollection = harRecordCollection;
     }
 
+    @XmlTransient
+    public Collection<HarRepoMetadata> getHarRepoMetadataCollection() {
+        return harRepoMetadataCollection;
+    }
+
+    public void setHarRepoMetadataCollection(Collection<HarRepoMetadata> harRepoMetadataCollection) {
+        this.harRepoMetadataCollection = harRepoMetadataCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -159,5 +169,5 @@ public class HarMetadataType implements Serializable {
     public String toString() {
         return "in.gov.nvli.harvester.beans.HarMetadataType[ metadataId=" + metadataId + " ]";
     }
-    
+
 }

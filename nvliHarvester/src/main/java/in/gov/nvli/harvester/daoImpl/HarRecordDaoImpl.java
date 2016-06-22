@@ -11,6 +11,7 @@ import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
 import in.gov.nvli.harvester.dao.HarRecordDao;
 import java.util.List;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
@@ -34,11 +35,11 @@ public class HarRecordDaoImpl extends GenericDaoImpl<HarRecord, Long> implements
     @Override
     @TransactionalReadOrWrite
     public void saveOrUpdateHarRecordList(List<HarRecord> records) {
-        for (HarRecord record : records){
+        for (HarRecord record : records) {
             saveOrUpdateHarRecord(record);
         }
     }
-    
+
     @Override
     @TransactionalReadOrWrite
     public void saveOrUpdateHarRecord(HarRecord harRecordObj) {
@@ -92,5 +93,25 @@ public class HarRecordDaoImpl extends GenericDaoImpl<HarRecord, Long> implements
 
         }
         return record;
+    }
+
+    @Override
+    public Long rowCount(short recordStaus) {
+        return (Long) currentSession()
+                .createCriteria(HarRecord.class)
+                .add(Restrictions.eq("recordStatus", recordStaus))
+                .setProjection(Projections.rowCount())
+                .uniqueResult();
+    }
+
+    @Override
+    public List<HarRecord> list(int displayStart, int displayLength, short recordStatus) {
+        return currentSession()
+                .createCriteria(HarRecord.class)
+                .addOrder(Order.asc("recordId"))
+                .add(Restrictions.eq("recordStatus", recordStatus))
+                .setFirstResult(displayStart)
+                .setMaxResults(displayLength)
+                .list();
     }
 }

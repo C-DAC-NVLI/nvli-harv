@@ -6,7 +6,9 @@
 package in.gov.nvli.harvester.utilities;
 
 import in.gov.nvli.harvester.OAIPMH_beans.OAIPMHtype;
+import in.gov.nvli.harvester.beans.mets.Mets;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
@@ -35,13 +37,18 @@ public class UnmarshalUtils {
         } catch (JAXBException e) {
             Pattern p = Pattern.compile(PATTERN_CODE);
             String filteredData = p.matcher(response).replaceAll(REPLACE_CODE);
-            
+
             stream = new ByteArrayInputStream(filteredData.getBytes(StandardCharsets.UTF_8));
             data = (JAXBElement) context.createUnmarshaller().unmarshal(stream);
             element = OAIPMHtype.class.cast(data.getValue());
         }
         return element;
 
+    }
+
+    public static Mets xmlToMETS(File inputFile) throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(Mets.class);
+        return Mets.class.cast(context.createUnmarshaller().unmarshal(inputFile));
     }
 
 }

@@ -22,6 +22,11 @@ public class CommonConstants {
     public static final String IDENTIFIER = "&identifier=";
     public static final String FROM = "&from=";
     public static final String PATH_PARAM_SEPERATOR = ",";
-    public static final String ORE = "ore";
+
+    public static final String DIRECTORY_Name_ORE = "ore";
+    public static final String DIRECTORY_Name_OAI_DC = "oai_dc";
+    public static final String DIRECTORY_Name_MARC = "marc";
+    public static final String DIRECTORY_Name_METS = "mets";
+    public static final String DIRECTORY_Name_RECORD_DATA = "data";
 
 }
