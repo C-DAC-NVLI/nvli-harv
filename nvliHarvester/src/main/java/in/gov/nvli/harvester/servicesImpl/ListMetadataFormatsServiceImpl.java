@@ -79,6 +79,13 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value();
         return saveOrUpdateRecursive(harRepoObj,desiredURL, method, adminEmail);
     }
+    
+    @Override
+    public boolean saveHarMetadataTypes(String baseURL, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException, OAIPMHerrorTypeException {
+        HarRepo harRepoObj = repositoryDaoObj.getRepository(baseURL);
+        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value();
+        return saveOrUpdateRecursive(harRepoObj,desiredURL, method, adminEmail);
+    }
 
     private boolean saveOrUpdateRecursive(HarRepo harRepoObj, String desiredURL, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException, OAIPMHerrorTypeException {
         HttpURLConnection connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
@@ -115,5 +122,5 @@ public class ListMetadataFormatsServiceImpl implements ListMetadataFormatsServic
         }
         return harMetadataTypeRepositoryDao.saveHarMetadataTypesOfRepository(metadatOfRepo);
     }
-
+    
 }

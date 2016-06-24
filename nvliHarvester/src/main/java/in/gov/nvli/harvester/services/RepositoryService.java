@@ -1,5 +1,6 @@
 package in.gov.nvli.harvester.services;
 
+import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRepo;
 import java.util.List;
 
@@ -62,4 +63,6 @@ public interface RepositoryService {
     
     public List<HarRepo> getActiveRepositories();
     public List<HarRepo> getRepositoriesByStaus(short repoStatusId);
+    
+    public List<HarMetadataTypeRepository> list(HarRepo harRepoObj);
 }

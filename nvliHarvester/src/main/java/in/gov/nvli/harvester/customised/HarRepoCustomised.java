@@ -5,9 +5,12 @@
  */
 package in.gov.nvli.harvester.customised;
 
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -80,9 +83,7 @@ public class HarRepoCustomised implements Serializable {
     private String organizationLink;
    
    
-    private byte oreEnableFlag;//1=enabled,0-disabled/not enabled
-    
-    
+    private Map<HarRecordMetadataType, Boolean> supportedMetadataTypes = new HashMap<>();
     
     
 
@@ -357,14 +358,6 @@ public class HarRepoCustomised implements Serializable {
         this.repoUID = repoUID;
     }
 
-    public byte getOreEnableFlag() {
-        return oreEnableFlag;
-    }
-
-    public void setOreEnableFlag(byte oreEnableFlag) {
-        this.oreEnableFlag = oreEnableFlag;
-    }
-
     public Long getRecordCount() {
         return recordCount;
     }
@@ -387,6 +380,14 @@ public class HarRepoCustomised implements Serializable {
 
     public void setHarvestEndTime(Date harvestEndTime) {
         this.harvestEndTime = harvestEndTime;
+    }
+
+    public Map<HarRecordMetadataType, Boolean> getSupportedMetadataTypes() {
+        return supportedMetadataTypes;
+    }
+
+    public void setSupportedMetadataTypes(Map<HarRecordMetadataType, Boolean> supportedMetadataTypes) {
+        this.supportedMetadataTypes = supportedMetadataTypes;
     }
 
    

@@ -8,22 +8,31 @@ package in.gov.nvli.harvester.utilities;
 import in.gov.nvli.harvester.OAIPMH_beans.DescriptionType;
 import in.gov.nvli.harvester.OAIPMH_beans.IdentifyType;
 import in.gov.nvli.harvester.OAIPMH_beans.toolkit.ToolkitType;
+import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.beans.HarRepoMetadata;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.beans.HarRepoType;
+import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
 import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author vootla
  */
 public class CustomBeansGenerator {
-
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomBeansGenerator.class);
+    
     public static HarRepoCustomised convertHarRepoToHarRepoCustomised(HarRepo harRepo) {
         HarRepoCustomised repositoryObject = new HarRepoCustomised();
         repositoryObject.setRepoName(harRepo.getRepoName());
@@ -46,12 +55,52 @@ public class CustomBeansGenerator {
         repositoryObject.setRepoLastSyncDate(harRepo.getRepoLastSyncDate());
         repositoryObject.setRepoActivationDate(harRepo.getRepoActivationDate());
         repositoryObject.setRepoUID(harRepo.getRepoUID());
-        repositoryObject.setOreEnableFlag(harRepo.getOreEnableFlag());
+        
         
         repositoryObject.setRecordCount(harRepo.getRecordCount());
         repositoryObject.setHarvestStartTime(harRepo.getRepoLastSyncDate());
         repositoryObject.setHarvestEndTime(harRepo.getRepoLastSyncEndDate());
-
+        
+        return repositoryObject;
+    }
+    
+    public static HarRepoCustomised convertHarRepoToHarRepoCustomised(HarRepo harRepo, List<HarRepoMetadata> harRepoMetadataList) {
+        HarRepoCustomised repositoryObject = convertHarRepoToHarRepoCustomised(harRepo);
+        
+        Map<HarRecordMetadataType, Boolean> supportedMetadataTypesMap = new HashMap<>();
+        HarRecordMetadataType harRecordMetadataTypeObj;
+        for(HarRepoMetadata tempHarRepoMetadataObj : harRepoMetadataList){
+            harRecordMetadataTypeObj = HarRecordMetadataType.valueOf(tempHarRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
+            if(tempHarRepoMetadataObj.getHarvestStatus().getRepoStatusId() == RepoStatusEnum.NOT_ACTIVE.getId()
+                    || tempHarRepoMetadataObj.getHarvestStatus().getRepoStatusId() == RepoStatusEnum.INVALID_URL.getId()){
+                supportedMetadataTypesMap.put(harRecordMetadataTypeObj, Boolean.FALSE);
+            }else{
+                supportedMetadataTypesMap.put(harRecordMetadataTypeObj, Boolean.TRUE);
+            }
+            
+        }
+        
+        repositoryObject.setSupportedMetadataTypes(supportedMetadataTypesMap);
+        return repositoryObject;
+    }
+    
+    public static HarRepoCustomised convertHarRepoToHarRepoCustomisedByHarMetadataTypeRepository(HarRepo harRepo, List<HarMetadataTypeRepository> harMetadataTypeRepositoryList) {
+        HarRepoCustomised repositoryObject = convertHarRepoToHarRepoCustomised(harRepo);
+        
+        Map<HarRecordMetadataType, Boolean> supportedMetadataTypesMap = new HashMap<>();
+        HarRecordMetadataType harRecordMetadataTypeObj;
+        for(HarMetadataTypeRepository tempHarMetadataTypeRepository : harMetadataTypeRepositoryList){
+            try{
+                harRecordMetadataTypeObj = HarRecordMetadataType.valueOf(tempHarMetadataTypeRepository.getMetadataTypeId().getMetadataPrefix().toUpperCase());
+                supportedMetadataTypesMap.put(harRecordMetadataTypeObj, Boolean.FALSE);
+            }catch(IllegalArgumentException ex){
+                LOGGER.error(CommonConstants.WEB_SERVICES_LOG_MESSAGES + tempHarMetadataTypeRepository.getMetadataTypeId().getMetadataPrefix() +" is not supported by System");
+            }
+            
+            
+        }
+        
+        repositoryObject.setSupportedMetadataTypes(supportedMetadataTypesMap);
         return repositoryObject;
     }
 
@@ -78,7 +127,7 @@ public class CustomBeansGenerator {
         repositoryObject.setRepoLastSyncDate(harRepoCustomised.getRepoLastSyncDate());
         repositoryObject.setRepoActivationDate(harRepoCustomised.getRepoActivationDate());
         repositoryObject.setRepoUID(harRepoCustomised.getRepoUID());
-        repositoryObject.setOreEnableFlag(harRepoCustomised.getOreEnableFlag());
+        
         
        
 
@@ -131,5 +180,5 @@ public class CustomBeansGenerator {
         return obj;
 
     }
-
+    
 }

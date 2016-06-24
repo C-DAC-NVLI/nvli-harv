@@ -19,4 +19,6 @@ public interface HarMetadataTypeRepositoryDao extends GenericDao<HarMetadataType
     public boolean saveHarMetadataTypesOfRepository(List<HarMetadataTypeRepository> metadataTypesOfRepo);
 
     public HarMetadataTypeRepository getMetadataTypeRepository(HarMetadataType metadataType, HarRepo repository);
+    
+    public List<HarMetadataTypeRepository> list(HarRepo repository);
 }

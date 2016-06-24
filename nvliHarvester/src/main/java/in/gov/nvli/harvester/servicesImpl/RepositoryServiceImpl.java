@@ -5,7 +5,9 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
+import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.dao.HarMetadataTypeRepositoryDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import in.gov.nvli.harvester.services.RepositoryService;
 import java.util.List;
@@ -21,6 +23,9 @@ public class RepositoryServiceImpl implements RepositoryService {
 
     @Autowired
     private RepositoryDao repositoryDaoObject;
+    
+    @Autowired
+    private HarMetadataTypeRepositoryDao harMetadataTypeRepositoryDaoObj;
 
     @Override
     public HarRepo addRepository(HarRepo repositoryObject) {
@@ -153,6 +158,11 @@ public class RepositoryServiceImpl implements RepositoryService {
     public List<HarRepo> getRepositoriesByStaus(short repoStatusId) {
         return repositoryDaoObject.getRepositoriesByStaus(repoStatusId);
         
+    }
+    
+    @Override
+    public List<HarMetadataTypeRepository> list(HarRepo harRepoObj){
+        return harMetadataTypeRepositoryDaoObj.list(harRepoObj);
     }
 
 }

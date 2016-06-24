@@ -8,7 +8,10 @@
 
 package in.gov.nvli.harvester.customised;
 
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -65,7 +68,7 @@ public class IdentifyTypeCustomised {
     protected String granularity;
     protected List<String> compression;
     protected String description;
-    protected byte oreEnableFlag;//1=enabled,0-disabled/not enabled
+    protected Map<HarRecordMetadataType, Boolean> supportedMetadataTypes = new HashMap<>();
     
     
     
@@ -142,14 +145,11 @@ public class IdentifyTypeCustomised {
         this.description = description;
     }
 
-    public byte getOreEnableFlag() {
-        return oreEnableFlag;
+    public Map<HarRecordMetadataType, Boolean> getSupportedMetadataTypes() {
+        return supportedMetadataTypes;
     }
 
-    public void setOreEnableFlag(byte oreEnableFlag) {
-        this.oreEnableFlag = oreEnableFlag;
+    public void setSupportedMetadataTypes(Map<HarRecordMetadataType, Boolean> supportedMetadataTypes) {
+        this.supportedMetadataTypes = supportedMetadataTypes;
     }
-
-   
-    
 }

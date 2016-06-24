@@ -58,7 +58,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HarRepo.findByRepoLatitude", query = "SELECT h FROM HarRepo h WHERE h.repoLatitude = :repoLatitude"),
     @NamedQuery(name = "HarRepo.findByRepoLongitude", query = "SELECT h FROM HarRepo h WHERE h.repoLongitude = :repoLongitude"),
     @NamedQuery(name = "HarRepo.findByRecordCount", query = "SELECT h FROM HarRepo h WHERE h.recordCount = :recordCount"),
-    @NamedQuery(name = "HarRepo.findByResumptionTokenListRecords", query = "SELECT h FROM HarRepo h WHERE h.resumptionTokenListRecords = :resumptionTokenListRecords"),
     @NamedQuery(name = "HarRepo.findByPublishFlag", query = "SELECT h FROM HarRepo h WHERE h.publishFlag = :publishFlag")})
 public class HarRepo implements Serializable {
 
@@ -162,19 +161,12 @@ public class HarRepo implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "repoId")
     private Collection<HarRepoMetadata> harRepoMetadataCollection;
 
-    @Column(name = "ore_enable_flag", nullable = false)
-    private byte oreEnableFlag = 0;//1=enabled,0-disabled/not enabled(default)
-
     @Column(name = "record_count")
     private Long recordCount;
 
     @Column(name = "repo_last_sync_end_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date repoLastSyncEndDate;
-
-    @Size(max = 255)
-    @Column(name = "resumption_token_list_records", length = 255)
-    private String resumptionTokenListRecords;
 
     @Basic(optional = false)
     @NotNull
@@ -451,14 +443,6 @@ public class HarRepo implements Serializable {
         this.harSetRepositoryCollection = harSetRepositoryCollection;
     }
 
-    public byte getOreEnableFlag() {
-        return oreEnableFlag;
-    }
-
-    public void setOreEnableFlag(byte oreEnableFlag) {
-        this.oreEnableFlag = oreEnableFlag;
-    }
-
     public Long getRecordCount() {
         return recordCount;
     }
@@ -473,14 +457,6 @@ public class HarRepo implements Serializable {
 
     public void setRepoLastSyncEndDate(Date repoLastSyncEndDate) {
         this.repoLastSyncEndDate = repoLastSyncEndDate;
-    }
-
-    public String getResumptionTokenListRecords() {
-        return resumptionTokenListRecords;
-    }
-
-    public void setResumptionTokenListRecords(String resumptionTokenListRecords) {
-        this.resumptionTokenListRecords = resumptionTokenListRecords;
     }
 
     public short getPublishFlag() {

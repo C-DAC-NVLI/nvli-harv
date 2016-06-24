@@ -5,6 +5,7 @@
  */
 package in.gov.nvli.harvester.daoImpl;
 
+import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoMetadata;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
@@ -12,7 +13,9 @@ import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
 import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
 import in.gov.nvli.harvester.dao.HarRepoMetadataDao;
 import in.gov.nvli.harvester.dao.HarRepoStatusDao;
+import in.gov.nvli.harvester.dao.RepositoryDao;
 import java.util.Date;
+import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,9 @@ public class HarRepoMetadataDaoImpl extends GenericDaoImpl<HarRepoMetadata, Inte
 
     @Autowired
     private HarRepoStatusDao harRepoStatusDaoObj;
+    
+    @Autowired
+    private RepositoryDao repositoryDaoObj;
 
     public HarRepoMetadataDaoImpl() {
         super(HarRepoMetadata.class);
@@ -44,6 +50,20 @@ public class HarRepoMetadataDaoImpl extends GenericDaoImpl<HarRepoMetadata, Inte
                 .createAlias("metadataTypeId", "metadataType")
                 .add(Restrictions.and(
                         Restrictions.eq("harRepo.repoId", harRepoId),
+                        Restrictions.eq("metadataType.metadataPrefix", harRecordMetadataTypeObj.value())
+                )
+                ).uniqueResult();
+
+    }
+    
+    @Override
+    public HarRepoMetadata get(String repoUID, HarRecordMetadataType harRecordMetadataTypeObj) {
+        return (HarRepoMetadata) currentSession()
+                .createCriteria(HarRepoMetadata.class)
+                .createAlias("repoId", "harRepo")
+                .createAlias("metadataTypeId", "metadataType")
+                .add(Restrictions.and(
+                        Restrictions.eq("harRepo.repoUID", repoUID),
                         Restrictions.eq("metadataType.metadataPrefix", harRecordMetadataTypeObj.value())
                 )
                 ).uniqueResult();
@@ -78,5 +98,55 @@ public class HarRepoMetadataDaoImpl extends GenericDaoImpl<HarRepoMetadata, Inte
     public void updateEndTime(HarRepoMetadata harRepoMetadataObj, Date updatedDate) {
         harRepoMetadataObj.setHarvestEndTime(updatedDate);
         merge(harRepoMetadataObj);
+    }
+    
+    @Override
+    @TransactionalReadOrWrite
+    public boolean changeRepositoryMetadataStatus(HarRepo harRepoObj, short status) {
+        List<HarRepoMetadata> harRepoMetadataList = list(harRepoObj);
+        if(harRepoMetadataList != null){
+            HarRepoStatus harRepoStatusObj = harRepoStatusDaoObj.get(status);
+            for(HarRepoMetadata tempHarRepoMetadata : harRepoMetadataList){
+                tempHarRepoMetadata.setHarvestStatus(harRepoStatusObj);
+                merge(tempHarRepoMetadata);
+            }
+        }
+        return true;
+    }
+    
+    @Override
+    @TransactionalReadOrWrite
+    public boolean changeRepositoryMetadataStatus(String repoUID, short status) {
+        HarRepo harRepoObj = repositoryDaoObj.getRepositoryByUID(repoUID);
+        List<HarRepoMetadata> harRepoMetadataList = list(harRepoObj);
+        if(harRepoMetadataList != null){
+            HarRepoStatus harRepoStatusObj = harRepoStatusDaoObj.get(status);
+            for(HarRepoMetadata tempHarRepoMetadata : harRepoMetadataList){
+                tempHarRepoMetadata.setHarvestStatus(harRepoStatusObj);
+                merge(tempHarRepoMetadata);
+            }
+        }
+        return true;
+    }
+    
+    
+    @Override
+    public List<HarRepoMetadata> list(HarRepo harRepoObj) {
+        return currentSession()
+                .createCriteria(HarRepoMetadata.class)
+                .createAlias("repoId", "harRepo")
+                .add(Restrictions.eq("harRepo.repoId", harRepoObj.getRepoId()))
+                .list();
+                
+    }
+
+    @Override
+    public List<HarRepoMetadata> list(String repoUID) {
+        return currentSession()
+                .createCriteria(HarRepoMetadata.class)
+                .createAlias("repoId", "harRepo")
+                .add(Restrictions.eq("harRepo.repoId", repoUID))
+                .list();
+                
     }
 }

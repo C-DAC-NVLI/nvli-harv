@@ -70,7 +70,6 @@ public void test() throws URISyntaxException
             harRepoCustomised.setRepoStatusId((short) 1);
             harRepoCustomised.setRepoTypeId(1);
             harRepoCustomised.setRepoUID("1");
-            harRepoCustomised.setOreEnableFlag((byte)1);
             ResponseEntity<HarRepoCustomised> responseObj = restTemplate.postForEntity(webServiceURL, harRepoCustomised, HarRepoCustomised.class);
             System.out.println("Has done " + responseObj.getStatusCode());
     

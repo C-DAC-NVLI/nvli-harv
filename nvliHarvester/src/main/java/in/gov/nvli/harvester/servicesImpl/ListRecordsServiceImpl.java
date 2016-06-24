@@ -807,7 +807,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                                     }
 
                                     if (harRecordObj != null && recordTypeObj.getHeader().getStatus() != StatusType.DELETED && recordTypeObj.getMetadata() != null) {
-                                        MarshalUtils.oaipmhToXML(recordTypeObj.getMetadata(), harRecordObj, harRecordMetadataType);
+                                        MarshalUtils.oaipmhToXML(recordTypeObj.getMetadata(), harRecordObj, harRecordMetadataType, repositoryDataPath);
                                     }
                                 }
                                 LOGGER.info(harRepoObj.getRepoUID() + ":" + recordTypeList.size() + " " + harRecordMetadataType.value() + " XML saved");

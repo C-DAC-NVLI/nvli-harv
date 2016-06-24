@@ -63,5 +63,16 @@ public class HarMetadataTypeRepositoryDaoImpl extends GenericDaoImpl<HarMetadata
         }
         return harMetadataTypeRepository;
     }
+    
+    @Override
+    public List<HarMetadataTypeRepository> list(HarRepo repository) {
+        return currentSession()
+                .createCriteria(HarMetadataTypeRepository.class)
+                .createAlias("repoId", "repo")
+                .add(Restrictions.eq("repo.repoId", repository.getRepoId()))
+                .list();
+
+        
+    }
 
 }

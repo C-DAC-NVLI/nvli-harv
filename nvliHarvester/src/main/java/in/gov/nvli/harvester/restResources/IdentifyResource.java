@@ -10,6 +10,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
 import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
@@ -28,6 +29,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +41,8 @@ import org.springframework.stereotype.Component;
 @Path("/identifies")
 @Component
 public class IdentifyResource {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdentifyResource.class);
     
     @Autowired
     public IdentifyService identifyService;
@@ -114,15 +119,17 @@ public class IdentifyResource {
         IdentifyTypeCustomised custObj = CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identifyObj);
         if (metaDataFormats != null) {
             for (MetadataFormatType metadata : metaDataFormats) {
-                if (metadata.getMetadataPrefix().trim().equals("ore")) {
-                    custObj.setOreEnableFlag((byte) 1);
+                try{
+                    custObj.getSupportedMetadataTypes().put(HarRecordMetadataType.valueOf(metadata.getMetadataPrefix().trim().toUpperCase()), Boolean.FALSE);
+                }catch(IllegalArgumentException ex){
+                    LOGGER.error(CommonConstants.WEB_SERVICES_LOG_MESSAGES + metadata.getMetadataPrefix() +" is not supported by System");
                 }
             }
         }
         return custObj;
     }  
    
-    
+       
 //    @PUT
 //    @Path("update/resource/status/{repoUID}")
 //    @Produces(MediaType.APPLICATION_JSON)

@@ -20,7 +20,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -28,14 +27,12 @@ import org.w3c.dom.Element;
  *
  * @author ankit
  */
-@Component
 public class MarshalUtils {
 
-    private static final String repositoryDataPath = "/home/ankit/.harvester/data";
-
+    
     private static final String FILE_EXTENSION = ".xml";
 
-    public static boolean oaipmhToXML(MetadataType metadataTypeObj, HarRecord harRecord, HarRecordMetadataType harRecordMetadataType) throws JAXBException, IOException, TransformerException {
+    public static boolean oaipmhToXML(MetadataType metadataTypeObj, HarRecord harRecord, HarRecordMetadataType harRecordMetadataType, String baseFilePath) throws JAXBException, IOException, TransformerException {
         Class targetClass = null;
         String targetDirectory = null;
         Object targetObject = null;
@@ -69,7 +66,7 @@ public class MarshalUtils {
         }
 
 //      JAXBContext context = JAXBContext.newInstance(targetClass);
-        File xmlFile = new File(repositoryDataPath + File.separator + harRecord.getRepoId().getRepoUID() + File.separator + harRecord.getRecordUid() + File.separator + targetDirectory + File.separator + harRecord.getRecordUid() + FILE_EXTENSION);
+        File xmlFile = new File(baseFilePath + File.separator + harRecord.getRepoId().getRepoUID() + File.separator + harRecord.getRecordUid() + File.separator + targetDirectory + File.separator + harRecord.getRecordUid() + FILE_EXTENSION);
         xmlFile.getParentFile().mkdirs();
         xmlFile.createNewFile();
 

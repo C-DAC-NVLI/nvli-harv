@@ -24,5 +24,7 @@ public interface ListMetadataFormatsService {
     public boolean saveHarMetadataTypes(HarRepo reposotory, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException, OAIPMHerrorTypeException;
 
     public List<MetadataFormatType> getMetadataFormatTypeList(HttpURLConnection connection, String desiredURL) throws IOException, JAXBException, OAIPMHerrorTypeException;
+    
+    public boolean saveHarMetadataTypes(String baseURL, MethodEnum method, String adminEmail) throws MalformedURLException, IOException, JAXBException, OAIPMHerrorTypeException;
 
 }

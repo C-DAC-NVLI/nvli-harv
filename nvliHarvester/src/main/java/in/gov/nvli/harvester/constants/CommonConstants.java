@@ -28,5 +28,7 @@ public class CommonConstants {
     public static final String DIRECTORY_Name_MARC = "marc";
     public static final String DIRECTORY_Name_METS = "mets";
     public static final String DIRECTORY_Name_RECORD_DATA = "data";
+    
+    public static final String WEB_SERVICES_LOG_MESSAGES = "Web Service Logs :";
 
 }

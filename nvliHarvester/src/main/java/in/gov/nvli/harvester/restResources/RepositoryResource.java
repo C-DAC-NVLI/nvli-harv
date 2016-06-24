@@ -5,17 +5,20 @@
  */
 package in.gov.nvli.harvester.restResources;
 
+import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.beans.HarRepoMetadata;
 import in.gov.nvli.harvester.constants.CommonConstants;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
 import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
+import in.gov.nvli.harvester.services.RepositoryMetadataService;
 import in.gov.nvli.harvester.services.RepositoryService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletContext;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -37,6 +40,9 @@ public class RepositoryResource
 {
    @Autowired
     private RepositoryService repositoryService;
+   
+   @Autowired
+   private RepositoryMetadataService repositoryMetadataServiceObj;
     
     @javax.ws.rs.core.Context 
     ServletContext context;
@@ -66,7 +72,8 @@ public class RepositoryResource
        HarRepo repo = saveRepository(harRepoCustomised);
        if(repo!=null)
        {
-           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+           List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
        }
         
         return null;
@@ -80,7 +87,8 @@ public class RepositoryResource
         HarRepo repo=saveRepository(harRepoCustomised);
         if(repo!=null)
        {
-           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+           List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
        }
         
         return null;
@@ -165,7 +173,16 @@ public class RepositoryResource
         repo.setRepoId(repoOrginal.getRepoId());
        
         repositoryService.editRepository(repo);
-        custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+        repositoryMetadataServiceObj.saveOrUpdateRepositoryMetadata(custObj, repo);
+        
+        List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+        if(harRepoMetadataList.isEmpty()){
+            List<HarMetadataTypeRepository> harMetadataTypeRepositoryList = repositoryService.list(repo);
+            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomisedByHarMetadataTypeRepository(repo, harMetadataTypeRepositoryList);
+        }else{
+            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
+        }
+        
         return Response.ok().entity(custObj).build();
     }
 
@@ -174,11 +191,19 @@ public class RepositoryResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRepository(@PathParam("repoUID") String repoUID) {
         HarRepo repo = repositoryService.getRepositoryByUID(repoUID);
+        HarRepoCustomised custObj;
         if (repo == null) {
             System.out.println("in null");
             return Response.status(400).entity("Repository with repoUID" + repoUID + "not Exist !!").build();
         }
-        HarRepoCustomised custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo);
+        List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+        if(harRepoMetadataList.isEmpty()){
+            List<HarMetadataTypeRepository> harMetadataTypeRepositoryList = repositoryService.list(repo);
+            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomisedByHarMetadataTypeRepository(repo, harMetadataTypeRepositoryList);
+        }else{
+            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
+        }
+        
         
         return Response.ok().entity(custObj).build();
     }
@@ -232,6 +257,11 @@ public class RepositoryResource
     {
         HarRepo repo=CustomBeansGenerator.convertHarRepoCustomisedToHarRepo(harRepoCustomised);
          repo = repositoryService.addRepository(repo);
+         if(repo != null){
+             if(repositoryMetadataServiceObj.saveRepositoryMetadata(harRepoCustomised, MethodEnum.GET, "")){
+                 return repo;
+             }
+         }
          return repo;
     }
     
@@ -240,9 +270,12 @@ public class RepositoryResource
     {
         List<HarRepoCustomised> harRepoCustomisedList=new ArrayList<>();
         List<HarRepo> harRepos=repositoryService.getAllRepositories();
+        List<HarRepoMetadata> harRepoMetadataList;
         for(HarRepo repo:harRepos)
         {
-            harRepoCustomisedList.add(CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo));
+            harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+            harRepoCustomisedList.add(CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList));
+            
         }
        return harRepoCustomisedList;
     }
