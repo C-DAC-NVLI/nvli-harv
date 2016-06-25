@@ -9,7 +9,7 @@ import com.sun.syndication.io.FeedException;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoMetadata;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import java.io.IOException;
 import java.text.ParseException;
@@ -25,11 +25,11 @@ public interface ListRecordsService {
 
     public boolean saveListRecords(HarRepoMetadata harRepoMetadataObj, MethodEnum method, String adminEmail);
 
-    public boolean saveListRecords(String baseURL, HarRecordMetadataType harRecordMetadataTypeObj, MethodEnum method, String adminEmail);
+    public boolean saveListRecords(String baseURL, HarRecordMetadataTypeEnum harRecordMetadataTypeObj, MethodEnum method, String adminEmail);
 
     public boolean saveOrUpdateListRecords(HarRepoMetadata harRepoMetadataObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException;
 
-    public boolean saveOrUpdateListRecords(String baseURL, HarRecordMetadataType harRecordMetadataTypeObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException;
+    public boolean saveOrUpdateListRecords(String baseURL, HarRecordMetadataTypeEnum harRecordMetadataTypeObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException;
 
     public boolean saveListHarRecordData(String baseURL, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException;
 
@@ -45,6 +45,6 @@ public interface ListRecordsService {
 
     public boolean saveOrUpdateListRecordsXML(HarRepoMetadata harRepoMetadataObj, MethodEnum method, String adminEmail, boolean saveDataInFileSystem);
 
-    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj);
+    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataTypeEnum harRecordMetadataTypeObj);
 
 }

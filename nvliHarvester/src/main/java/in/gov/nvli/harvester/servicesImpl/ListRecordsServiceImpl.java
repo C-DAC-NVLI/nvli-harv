@@ -21,7 +21,7 @@ import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.constants.HarvesterLogConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.HarRecordDao;
@@ -136,7 +136,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     }
 
     @Override
-    public boolean saveListRecords(String baseURL, HarRecordMetadataType harRecordMetadataTypeObj, MethodEnum method, String adminEmail) {
+    public boolean saveListRecords(String baseURL, HarRecordMetadataTypeEnum harRecordMetadataTypeObj, MethodEnum method, String adminEmail) {
         HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
         HarRepoMetadata harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepoObj.getRepoId(), harRecordMetadataTypeObj);
         return saveListRecords(harRepoMetadataObj, method, adminEmail);
@@ -201,7 +201,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     }
 
     @Override
-    public boolean saveOrUpdateListRecords(String baseURL, HarRecordMetadataType harRecordMetadataTypeObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException {
+    public boolean saveOrUpdateListRecords(String baseURL, HarRecordMetadataTypeEnum harRecordMetadataTypeObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException {
         HarRepo harRepoObj = repositoryDao.getRepository(baseURL);
         HarRepoMetadata harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepoObj.getRepoId(), harRecordMetadataTypeObj);
         return saveOrUpdateListRecords(harRepoMetadataObj, method, adminEmail);
@@ -344,7 +344,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     @Override
     public boolean saveListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException {
         String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + "ore";
-        if (isListRecordsAvailable(harRepoObj, method, adminEmail, HarRecordMetadataType.ORE.value())) {
+        if (isListRecordsAvailable(harRepoObj, method, adminEmail, HarRecordMetadataTypeEnum.ORE.value())) {
             if (saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, false)) {
                 return saveHarRecordDataIntoFileSystem(harRepoObj);
             }
@@ -360,8 +360,8 @@ public class ListRecordsServiceImpl implements ListRecordsService {
 
     @Override
     public boolean saveOrUpdateListHarRecordData(HarRepo harRepoObj, MethodEnum method, String adminEmail) throws OAIPMHerrorTypeException, ParseException, JAXBException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException {
-        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + HarRecordMetadataType.ORE.value();
-        if (isListRecordsAvailable(harRepoObj, method, adminEmail, HarRecordMetadataType.ORE.value())) {
+        String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + HarRecordMetadataTypeEnum.ORE.value();
+        if (isListRecordsAvailable(harRepoObj, method, adminEmail, HarRecordMetadataTypeEnum.ORE.value())) {
             if (saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, true)) {
                 return saveHarRecordDataIntoFileSystem(harRepoObj);
             }
@@ -386,7 +386,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                             List<RecordType> recordTypeList = oAIPMHtypeObject.getListRecords().getRecord();
                             if (recordTypeList != null) {
                                 for (RecordType recordTypeObj : recordTypeList) {
-                                    harRecordDataObject = getRecordServiceObject.getHarRecordDataByRecordType(recordTypeObj, HarRecordMetadataType.OAI_DC.value(), harRepoObj, incrementalFlag);
+                                    harRecordDataObject = getRecordServiceObject.getHarRecordDataByRecordType(recordTypeObj, HarRecordMetadataTypeEnum.OAI_DC.value(), harRepoObj, incrementalFlag);
                                     if (harRecordDataObject != null) {
                                         harRecordDataList.add(harRecordDataObject);
                                     }
@@ -653,7 +653,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     public boolean saveListRecordsXML(HarRepoMetadata harRepoMetadataObj, MethodEnum method, String adminEmail, boolean saveDataInFileSystem) {
         if (listRecordsConstraintChecker(harRepoMetadataObj, false)) {
             HarRepo harRepoObj = harRepoMetadataObj.getRepoId();
-            HarRecordMetadataType harRecordMetadataType = HarRecordMetadataType.valueOf(harRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
+            HarRecordMetadataTypeEnum harRecordMetadataType = HarRecordMetadataTypeEnum.valueOf(harRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
             String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + harRecordMetadataType.value();
             boolean result;
 
@@ -664,7 +664,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                     if (saveListRecordsXMLRecursive(harRepoMetadataObj, desiredURL, method, adminEmail, false)) {
                         result = true;
                         if (saveDataInFileSystem
-                                && (harRecordMetadataType == HarRecordMetadataType.METS || harRecordMetadataType == HarRecordMetadataType.ORE)) {
+                                && (harRecordMetadataType == HarRecordMetadataTypeEnum.METS || harRecordMetadataType == HarRecordMetadataTypeEnum.ORE)) {
                             if (saveHarRecordDataInFileSystem(harRepoObj, harRecordMetadataType)) {
                                 result = true;
                             } else {
@@ -715,7 +715,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     public boolean saveOrUpdateListRecordsXML(HarRepoMetadata harRepoMetadataObj, MethodEnum method, String adminEmail, boolean saveDataInFileSystem) {
         if (listRecordsConstraintChecker(harRepoMetadataObj, true)) {
             HarRepo harRepoObj = harRepoMetadataObj.getRepoId();
-            HarRecordMetadataType harRecordMetadataType = HarRecordMetadataType.valueOf(harRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
+            HarRecordMetadataTypeEnum harRecordMetadataType = HarRecordMetadataTypeEnum.valueOf(harRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
             String desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.METADATA_PREFIX + harRecordMetadataType.value();
             boolean result;
             short listRecordsPreviousStatus;
@@ -781,12 +781,12 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     private boolean saveListRecordsXMLRecursive(HarRepoMetadata harRepoMetadataObj, String desiredURL, MethodEnum method, String adminEmail, boolean incrementalFlag) {
         HttpURLConnection connection = null;
         HarRepo harRepoObj = null;
-        HarRecordMetadataType harRecordMetadataType = null;
+        HarRecordMetadataTypeEnum harRecordMetadataType = null;
 
         try {
             connection = HttpURLConnectionUtil.getConnection(desiredURL, method, adminEmail);
             harRepoObj = harRepoMetadataObj.getRepoId();
-            harRecordMetadataType = HarRecordMetadataType.valueOf(harRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
+            harRecordMetadataType = HarRecordMetadataTypeEnum.valueOf(harRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
 
             if (HttpURLConnectionUtil.isConnectionAlive(connection)) {
                 String resumptionToken;
@@ -877,7 +877,7 @@ public class ListRecordsServiceImpl implements ListRecordsService {
     }
 
     @Override
-    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj) {
+    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataTypeEnum harRecordMetadataTypeObj) {
         return getRecordServiceObject.saveHarRecordDataInFileSystem(harRepoObj, harRecordMetadataTypeObj);
     }
 

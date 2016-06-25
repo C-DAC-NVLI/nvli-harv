@@ -9,7 +9,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.MetadataType;
 import in.gov.nvli.harvester.beans.HarRecord;
 import in.gov.nvli.harvester.beans.OAIDC;
 import in.gov.nvli.harvester.constants.CommonConstants;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.bind.JAXBContext;
@@ -32,7 +32,7 @@ public class MarshalUtils {
     
     private static final String FILE_EXTENSION = ".xml";
 
-    public static boolean oaipmhToXML(MetadataType metadataTypeObj, HarRecord harRecord, HarRecordMetadataType harRecordMetadataType, String baseFilePath) throws JAXBException, IOException, TransformerException {
+    public static boolean oaipmhToXML(MetadataType metadataTypeObj, HarRecord harRecord, HarRecordMetadataTypeEnum harRecordMetadataType, String baseFilePath) throws JAXBException, IOException, TransformerException {
         Class targetClass = null;
         String targetDirectory = null;
         Object targetObject = null;
@@ -73,7 +73,7 @@ public class MarshalUtils {
 //        OutputStream out = new FileOutputStream(xmlFile);
 //        Marshaller m = context.createMarshaller();
 //        m.marshal(targetObject, out);
-        if (harRecordMetadataType == HarRecordMetadataType.OAI_DC) {
+        if (harRecordMetadataType == HarRecordMetadataTypeEnum.OAI_DC) {
             DOMResult res = new DOMResult();
             JAXBContext context = JAXBContext.newInstance(OAIDC.class);
             context.createMarshaller().marshal(metadataTypeObj.getOaidc(), res);

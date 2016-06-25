@@ -12,6 +12,7 @@ import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
 import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
+import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.RepositoryMetadataService;
 import in.gov.nvli.harvester.services.RepositoryService;
 import in.gov.nvli.harvester.utilities.CustomBeansGenerator;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -43,6 +45,9 @@ public class RepositoryResource
    
    @Autowired
    private RepositoryMetadataService repositoryMetadataServiceObj;
+   
+   @Autowired
+   private ListMetadataFormatsService listMetadataFormatsServiceObj;
     
     @javax.ws.rs.core.Context 
     ServletContext context;
@@ -66,51 +71,33 @@ public class RepositoryResource
 
     @POST
     @Produces(MediaType.APPLICATION_XML)
-    public HarRepoCustomised saveRepositoryXML(HarRepoCustomised harRepoCustomised)
-    {
-        System.out.println("in xl"+harRepoCustomised.getRepoName());
-       HarRepo repo = saveRepository(harRepoCustomised);
-       if(repo!=null)
-       {
-           List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
-           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
-       }
-        
-        return null;
+    public HarRepoCustomised saveRepositoryXML(HarRepoCustomised harRepoCustomised){
+        return saveRepository(harRepoCustomised);
     }
   
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public HarRepoCustomised saveRepositoryJSON(HarRepoCustomised harRepoCustomised)
-    {
-        System.out.println("in json"+harRepoCustomised.getRepoName());
-        HarRepo repo=saveRepository(harRepoCustomised);
-        if(repo!=null)
-       {
-           List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
-           return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
-       }
-        
-        return null;
+    public HarRepoCustomised saveRepositoryJSON(HarRepoCustomised harRepoCustomised){
+        return saveRepository(harRepoCustomised);
     }
     
     
-    @GET
-    @Path("/activate")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String repositoriesActivate()
-    {
-       
-       return changeRepoStatus(RepoStatusEnum.ACTIVE.getId());
-    }
-    
-    @GET
-    @Path("/deactivate")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String repositoriesDeActivate()
-    {
-      return changeRepoStatus(RepoStatusEnum.NOT_ACTIVE.getId());
-    }
+//    @GET
+//    @Path("/activate")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String repositoriesActivate()
+//    {
+//       
+//       return changeRepoStatus(RepoStatusEnum.ACTIVE.getId());
+//    }
+//    
+//    @GET
+//    @Path("/deactivate")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String repositoriesDeActivate()
+//    {
+//      return changeRepoStatus(RepoStatusEnum.NOT_ACTIVE.getId());
+//    }
     
     @GET
     @Path("/activate/{repoUID}")
@@ -132,80 +119,54 @@ public class RepositoryResource
     
     
     
-    @GET
-    @Path("/activate/list/{repoUIDS}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String   repositoriesActivateList(@PathParam("repoUIDS") String repoUIDS)
-    {
-        List<String> repoUIDSList=splitRepoUIDS(repoUIDS);
-       return  changeRepoStatus(repoUIDSList,RepoStatusEnum.ACTIVE.getId());
-    } 
-    
-    @GET
-    @Path("/deactivate/list/{repoUIDS}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String   repositoriesDeActivateList(@PathParam("repoUIDS") String repoUIDS)
-    { 
-        List<String> repoUIDSList=splitRepoUIDS(repoUIDS);
-      return  changeRepoStatus(repoUIDSList,RepoStatusEnum.NOT_ACTIVE.getId());
-    } 
+//    @GET
+//    @Path("/activate/list/{repoUIDS}")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String   repositoriesActivateList(@PathParam("repoUIDS") String repoUIDS)
+//    {
+//        List<String> repoUIDSList=splitRepoUIDS(repoUIDS);
+//       return  changeRepoStatus(repoUIDSList,RepoStatusEnum.ACTIVE.getId());
+//    } 
+//    
+//    @GET
+//    @Path("/deactivate/list/{repoUIDS}")
+//    @Produces(MediaType.TEXT_PLAIN)
+//    public String   repositoriesDeActivateList(@PathParam("repoUIDS") String repoUIDS)
+//    { 
+//        List<String> repoUIDSList=splitRepoUIDS(repoUIDS);
+//      return  changeRepoStatus(repoUIDSList,RepoStatusEnum.NOT_ACTIVE.getId());
+//    } 
     
     
     
     @PUT
     @Path("/{repoUID}")
     @Produces({ MediaType.APPLICATION_JSON})
-    public Response updateRepository(@PathParam("repoUID") String repoUID, HarRepoCustomised custObj) {
-        HarRepo repoOrginal = repositoryService.getRepositoryByUID(repoUID);
-       
-        if (repoOrginal == null) {
-            System.out.println("in null");
-            return Response.status(400).entity("Repository with repoUID" + repoUID + "not Exist !!").build();
-        }
-        if (custObj == null) {
-            System.out.println("in null");
-            return Response.status(400).entity("Please provide the  HarRepoCustomised object !!").build();
-        }
-        HarRepo repo = CustomBeansGenerator.convertHarRepoCustomisedToHarRepo(custObj);
-        
-        repo.setRepoUID(repoOrginal.getRepoUID());
-        repo.setRepoBaseUrl(repoOrginal.getRepoBaseUrl());
-        repo.setRepoId(repoOrginal.getRepoId());
-       
-        repositoryService.editRepository(repo);
-        repositoryMetadataServiceObj.saveOrUpdateRepositoryMetadata(custObj, repo);
-        
-        List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
-        if(harRepoMetadataList.isEmpty()){
-            List<HarMetadataTypeRepository> harMetadataTypeRepositoryList = repositoryService.list(repo);
-            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomisedByHarMetadataTypeRepository(repo, harMetadataTypeRepositoryList);
-        }else{
-            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
-        }
-        
-        return Response.ok().entity(custObj).build();
+    @Consumes({ MediaType.APPLICATION_JSON})
+    public Response updateRepositoryJSON(@PathParam("repoUID") String repoUID, HarRepoCustomised custObj) {
+        return updateRepository(repoUID, custObj);
+    }
+    
+    @PUT
+    @Path("/{repoUID}")
+    @Produces({ MediaType.APPLICATION_XML})
+    @Consumes({ MediaType.APPLICATION_XML})
+    public Response updateRepositoryXML(@PathParam("repoUID") String repoUID, HarRepoCustomised custObj) {
+        return updateRepository(repoUID, custObj);
     }
 
     @GET
     @Path("/{repoUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRepository(@PathParam("repoUID") String repoUID) {
-        HarRepo repo = repositoryService.getRepositoryByUID(repoUID);
-        HarRepoCustomised custObj;
-        if (repo == null) {
-            System.out.println("in null");
-            return Response.status(400).entity("Repository with repoUID" + repoUID + "not Exist !!").build();
-        }
-        List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
-        if(harRepoMetadataList.isEmpty()){
-            List<HarMetadataTypeRepository> harMetadataTypeRepositoryList = repositoryService.list(repo);
-            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomisedByHarMetadataTypeRepository(repo, harMetadataTypeRepositoryList);
-        }else{
-            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
-        }
-        
-        
-        return Response.ok().entity(custObj).build();
+    public Response getRepositoryJSON(@PathParam("repoUID") String repoUID) {
+        return getRepository(repoUID);
+    }
+    
+    @GET
+    @Path("/{repoUID}")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response getRepositoryXML(@PathParam("repoUID") String repoUID) {
+        return getRepository(repoUID);
     }
 
 
@@ -226,7 +187,18 @@ public class RepositoryResource
     
     
     private String changeRepoStatus(String repositoryUID, short status) {
-          return  RepoStatusMsg(repositoryService.changeRepoStatus(repositoryUID, status),status);
+        HarRepo harRepoObj = repositoryService.getRepositoryByUID(repositoryUID);
+        if(status == RepoStatusEnum.ACTIVE.getId()){
+            if(harRepoObj.getRepoStatusId().getRepoStatusId() == RepoStatusEnum.NOT_ACTIVE.getId()
+                    || harRepoObj.getRepoStatusId().getRepoStatusId() == RepoStatusEnum.INVALID_URL.getId()){
+                return  RepoStatusMsg(repositoryService.changeRepoStatus(repositoryUID, status),status);
+            }
+        }else if(status == RepoStatusEnum.NOT_ACTIVE.getId()){
+            if(harRepoObj.getRepoStatusId().getRepoStatusId() == RepoStatusEnum.ACTIVE.getId()){
+                return  RepoStatusMsg(repositoryService.changeRepoStatus(repositoryUID, status),status);
+            }
+        }
+        return "Invalid Request";
     }
     
     private String changeRepoStatus( List<String> repoUIDSList, short status) {
@@ -253,16 +225,25 @@ public class RepositoryResource
     }
     
     
-    private HarRepo saveRepository(HarRepoCustomised harRepoCustomised)
+    private HarRepoCustomised saveRepository(HarRepoCustomised harRepoCustomised)
     {
+        HarRepoCustomised harRepoCustomisedObj;
         HarRepo repo=CustomBeansGenerator.convertHarRepoCustomisedToHarRepo(harRepoCustomised);
-         repo = repositoryService.addRepository(repo);
-         if(repo != null){
-             if(repositoryMetadataServiceObj.saveRepositoryMetadata(harRepoCustomised, MethodEnum.GET, "")){
-                 return repo;
-             }
-         }
-         return repo;
+        repo = repositoryService.addRepository(repo);
+        if(repo != null){
+            if(repositoryMetadataServiceObj.saveRepositoryMetadata(harRepoCustomised, MethodEnum.GET, "")){
+                List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+                return CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
+            }else{
+                harRepoCustomisedObj = new HarRepoCustomised();
+                harRepoCustomisedObj.setErrorMessage("Repository Metadata can't be saved");
+            }
+        }else{
+            harRepoCustomisedObj = new HarRepoCustomised();
+            harRepoCustomisedObj.setErrorMessage("Repository can't be saved");
+            
+        }
+        return harRepoCustomisedObj;
     }
     
     
@@ -278,5 +259,50 @@ public class RepositoryResource
             
         }
        return harRepoCustomisedList;
+    }
+    
+    private Response updateRepository(String repoUID, HarRepoCustomised custObj) {
+        HarRepo repoOrginal = repositoryService.getRepositoryByUID(repoUID);
+       
+        if (repoOrginal == null) {
+            System.out.println("in null");
+            return Response.status(400).entity("Repository with repoUID" + repoUID + "not Exist !!").build();
+        }
+        if (custObj == null) {
+            System.out.println("in null");
+            return Response.status(400).entity("Please provide the  HarRepoCustomised object !!").build();
+        }
+        HarRepo repo = CustomBeansGenerator.convertHarRepoCustomisedToHarRepo(custObj);
+        
+        repo.setRepoUID(repoOrginal.getRepoUID());
+        repo.setRepoBaseUrl(repoOrginal.getRepoBaseUrl());
+        repo.setRepoId(repoOrginal.getRepoId());
+       
+        repositoryService.editRepository(repo);
+        repositoryMetadataServiceObj.saveOrUpdateRepositoryMetadata(custObj, repo);
+        
+        List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+        custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
+                
+        return Response.ok().entity(custObj).build();
+    }
+    
+    private Response getRepository(String repoUID) {
+        HarRepo repo = repositoryService.getRepositoryByUID(repoUID);
+        HarRepoCustomised custObj;
+        if (repo == null) {
+            return Response.status(400).entity("Repository with repoUID" + repoUID + "not Exist !!").build();
+        }
+        repositoryService.saveHarMetadataTypes(repo);
+        List<HarRepoMetadata> harRepoMetadataList = repositoryMetadataServiceObj.list(repo);
+        if(harRepoMetadataList.isEmpty()){
+            List<HarMetadataTypeRepository> harMetadataTypeRepositoryList = repositoryService.list(repo);
+            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomisedByHarMetadataTypeRepository(repo, harMetadataTypeRepositoryList);
+        }else{
+            custObj = CustomBeansGenerator.convertHarRepoToHarRepoCustomised(repo, harRepoMetadataList);
+        }
+        
+        
+        return Response.ok().entity(custObj).build();
     }
 }

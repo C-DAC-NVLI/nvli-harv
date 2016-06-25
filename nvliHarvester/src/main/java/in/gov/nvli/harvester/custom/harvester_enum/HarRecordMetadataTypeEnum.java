@@ -9,7 +9,7 @@ package in.gov.nvli.harvester.custom.harvester_enum;
  *
  * @author ankit
  */
-public enum HarRecordMetadataType {
+public enum HarRecordMetadataTypeEnum {
     OAI_DC("oai_dc"),
     ORE("ore"),
     METS("mets"),
@@ -17,7 +17,7 @@ public enum HarRecordMetadataType {
 
     private final String text;
 
-    private HarRecordMetadataType(final String text) {
+    private HarRecordMetadataTypeEnum(final String text) {
         this.text = text;
     }
 

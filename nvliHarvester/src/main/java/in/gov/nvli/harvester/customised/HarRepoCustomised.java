@@ -5,7 +5,7 @@
  */
 package in.gov.nvli.harvester.customised;
 
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
@@ -83,7 +83,8 @@ public class HarRepoCustomised implements Serializable {
     private String organizationLink;
    
    
-    private Map<HarRecordMetadataType, Boolean> supportedMetadataTypes = new HashMap<>();
+    private Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypes = new HashMap<>();
+    private String errorMessage;
     
     
 
@@ -382,13 +383,19 @@ public class HarRepoCustomised implements Serializable {
         this.harvestEndTime = harvestEndTime;
     }
 
-    public Map<HarRecordMetadataType, Boolean> getSupportedMetadataTypes() {
+    public Map<HarRecordMetadataTypeEnum, Boolean> getSupportedMetadataTypes() {
         return supportedMetadataTypes;
     }
 
-    public void setSupportedMetadataTypes(Map<HarRecordMetadataType, Boolean> supportedMetadataTypes) {
+    public void setSupportedMetadataTypes(Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypes) {
         this.supportedMetadataTypes = supportedMetadataTypes;
     }
 
-   
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 }

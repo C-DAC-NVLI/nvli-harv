@@ -10,7 +10,7 @@ import in.gov.nvli.harvester.OAIPMH_beans.MetadataFormatType;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.IdentifyService;
@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.util.List;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -70,18 +71,14 @@ public class IdentifyResource {
     @GET
     @Path("{baseURL}/{adminEmail}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
-    {
-        System.out.println("json");
+    public IdentifyTypeCustomised identifyPathParamJSON(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail){
         return identify(baseURL,adminEmail);
     }
     
     @GET
     @Path("{baseURL}/{adminEmail}")
     @Produces(MediaType.APPLICATION_XML)
-    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
-    {
-        System.out.println("xml"+adminEmail+baseURL);
+    public IdentifyTypeCustomised identifyPathParamXML(@PathParam("baseURL") String baseURL,@PathParam("adminEmail") String adminEmail){
         return identify(baseURL,adminEmail);
     } 
     
@@ -89,42 +86,60 @@ public class IdentifyResource {
     @GET
     @Path("{baseURL}")
     @Produces(MediaType.APPLICATION_XML)
-    public IdentifyTypeCustomised identifyPathParamXML1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
-    {
-        
-        System.out.println("xml"+adminEmail+baseURL);
+    public IdentifyTypeCustomised identifyPathParamXML1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail){
         return identify(baseURL,adminEmail);
     } 
     
     @GET
     @Path("{baseURL}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IdentifyTypeCustomised identifyPathParamJSON1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
-    {
-        System.out.println("json");
-       return identify(baseURL,adminEmail);
+    public IdentifyTypeCustomised identifyPathParamJSON1(@PathParam("baseURL") String baseURL,@QueryParam("adminEmail") String adminEmail){
+        return identify(baseURL,adminEmail);
     }
     
     
     
     
     
-   private IdentifyTypeCustomised identify(String baseURL,String adminEmail) throws IOException, MalformedURLException, JAXBException, OAIPMHerrorTypeException
+   private IdentifyTypeCustomised identify(String baseURL,String adminEmail)
     {
-         baseURL = URLDecoder.decode(baseURL, "UTF-8");
-        // adminEmail = URLDecoder.decode(adminEmail, "UTF-8");
-        IdentifyType identifyObj=identifyService.getIdentifyTypeObject(baseURL,MethodEnum.GET, adminEmail);
-        HttpURLConnection connection = HttpURLConnectionUtil.getConnection(baseURL + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value(), MethodEnum.GET, adminEmail);
-        List<MetadataFormatType> metaDataFormats = listMetadataFormatsService.getMetadataFormatTypeList(connection, baseURL);
-        IdentifyTypeCustomised custObj = CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identifyObj);
-        if (metaDataFormats != null) {
-            for (MetadataFormatType metadata : metaDataFormats) {
-                try{
-                    custObj.getSupportedMetadataTypes().put(HarRecordMetadataType.valueOf(metadata.getMetadataPrefix().trim().toUpperCase()), Boolean.FALSE);
-                }catch(IllegalArgumentException ex){
-                    LOGGER.error(CommonConstants.WEB_SERVICES_LOG_MESSAGES + metadata.getMetadataPrefix() +" is not supported by System");
+        IdentifyTypeCustomised custObj;
+        
+        LOGGER.info(CommonConstants.WEB_SERVICES_LOG_MESSAGES
+                +"\nActivity --> "+VerbType.IDENTIFY.value()
+                +"\nBase URL --> "+baseURL);
+        
+        try{
+            baseURL = URLDecoder.decode(baseURL, "UTF-8");
+            // adminEmail = URLDecoder.decode(adminEmail, "UTF-8");
+            IdentifyType identifyObj=identifyService.getIdentifyTypeObject(baseURL,MethodEnum.GET, adminEmail);
+            HttpURLConnection connection = HttpURLConnectionUtil.getConnection(baseURL + CommonConstants.VERB + VerbType.LIST_METADATA_FORMATS.value(), MethodEnum.GET, adminEmail);
+            List<MetadataFormatType> metaDataFormats = listMetadataFormatsService.getMetadataFormatTypeList(connection, baseURL);
+            custObj = CustomBeansGenerator.convertIdentifyTypeToIdentifyTypeCustomised(identifyObj);
+            if (metaDataFormats != null) {
+                for (MetadataFormatType metadata : metaDataFormats) {
+                    try{
+                        custObj.getSupportedMetadataTypes().put(HarRecordMetadataTypeEnum.valueOf(metadata.getMetadataPrefix().trim().toUpperCase()), Boolean.FALSE);
+                    }catch(IllegalArgumentException ex){
+                        LOGGER.error(CommonConstants.WEB_SERVICES_LOG_MESSAGES + metadata.getMetadataPrefix() +" is not supported by System");
+                    }
                 }
             }
+            return custObj;
+        }catch(IOException | JAXBException | OAIPMHerrorTypeException ex){
+            custObj = new IdentifyTypeCustomised();
+            custObj.setErrorMessage(ex.getMessage());
+            LOGGER.error(CommonConstants.WEB_SERVICES_LOG_MESSAGES
+                   +"\nActivity --> "+VerbType.IDENTIFY.value()
+                   +"\nBase URL --> "+baseURL
+                   +"\nError --> "+ex.getMessage(), ex);
+        }catch(Exception  ex){
+            custObj = new IdentifyTypeCustomised();
+            custObj.setErrorMessage(ex.getMessage());
+            LOGGER.error(CommonConstants.WEB_SERVICES_LOG_MESSAGES
+                   +"\nActivity --> "+VerbType.IDENTIFY.value()
+                   +"\nBase URL --> "+baseURL
+                   +"\nError --> "+ex.getMessage(), ex);
         }
         return custObj;
     }  

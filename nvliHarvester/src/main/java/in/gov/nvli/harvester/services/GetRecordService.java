@@ -13,7 +13,7 @@ import in.gov.nvli.harvester.beans.HarRecordMetadataDc;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarSetRecord;
 import in.gov.nvli.harvester.beans.OAIDC;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.customised.HarRecordDataCustomised;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public interface GetRecordService {
 
     public HarRecord getHarRecordByRecordType(RecordType recordTypeObject, HarRepo harRepoObject, boolean incrementalFlag) throws IOException, MalformedURLException, JAXBException, ParseException;
 
-    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj);
+    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataTypeEnum harRecordMetadataTypeObj);
 
-    public List<HarRecordDataCustomised> readHarRecordDataFromXML(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj, List<HarRecord> harRecordList) throws SAXException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, ParserConfigurationException, JAXBException;
+    public List<HarRecordDataCustomised> readHarRecordDataFromXML(HarRepo harRepoObj, HarRecordMetadataTypeEnum harRecordMetadataTypeObj, List<HarRecord> harRecordList) throws SAXException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, ParserConfigurationException, JAXBException;
 }

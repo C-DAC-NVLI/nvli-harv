@@ -7,10 +7,18 @@ package in.gov.nvli.harvester.servicesImpl;
 
 import in.gov.nvli.harvester.beans.HarMetadataTypeRepository;
 import in.gov.nvli.harvester.beans.HarRepo;
+import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
+import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.dao.HarMetadataTypeRepositoryDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
+import in.gov.nvli.harvester.services.ListMetadataFormatsService;
 import in.gov.nvli.harvester.services.RepositoryService;
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +29,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class RepositoryServiceImpl implements RepositoryService {
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(RepositoryServiceImpl.class);
+    
     @Autowired
     private RepositoryDao repositoryDaoObject;
     
     @Autowired
     private HarMetadataTypeRepositoryDao harMetadataTypeRepositoryDaoObj;
+    
+    @Autowired
+    private ListMetadataFormatsService listMetadataFormatsServiceObj;
 
     @Override
     public HarRepo addRepository(HarRepo repositoryObject) {
@@ -163,6 +176,15 @@ public class RepositoryServiceImpl implements RepositoryService {
     @Override
     public List<HarMetadataTypeRepository> list(HarRepo harRepoObj){
         return harMetadataTypeRepositoryDaoObj.list(harRepoObj);
+    }
+    
+    @Override
+    public void saveHarMetadataTypes(HarRepo harRepoObj){
+        try {
+            listMetadataFormatsServiceObj.saveHarMetadataTypes(harRepoObj.getRepoBaseUrl(), MethodEnum.GET, "");
+        } catch (IOException| JAXBException | OAIPMHerrorTypeException ex) {
+            LOGGER.error(ex.getMessage(), ex);
+        }
     }
 
 }

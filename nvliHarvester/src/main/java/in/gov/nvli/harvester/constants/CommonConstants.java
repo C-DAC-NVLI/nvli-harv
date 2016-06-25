@@ -30,5 +30,8 @@ public class CommonConstants {
     public static final String DIRECTORY_Name_RECORD_DATA = "data";
     
     public static final String WEB_SERVICES_LOG_MESSAGES = "Web Service Logs :";
+    
+    public static final short ENABLED = 1;
+    public static final short DISABLED = 0;
 
 }

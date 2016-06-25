@@ -10,7 +10,7 @@ import in.gov.nvli.harvester.beans.HarRepoMetadata;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.dao.HarRepoMetadataDao;
 import in.gov.nvli.harvester.dao.HarRepoStatusDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
@@ -43,7 +43,7 @@ public class HarRepoMetadataDaoImpl extends GenericDaoImpl<HarRepoMetadata, Inte
     }
 
     @Override
-    public HarRepoMetadata get(int harRepoId, HarRecordMetadataType harRecordMetadataTypeObj) {
+    public HarRepoMetadata get(int harRepoId, HarRecordMetadataTypeEnum harRecordMetadataTypeObj) {
         return (HarRepoMetadata) currentSession()
                 .createCriteria(HarRepoMetadata.class)
                 .createAlias("repoId", "harRepo")
@@ -57,7 +57,7 @@ public class HarRepoMetadataDaoImpl extends GenericDaoImpl<HarRepoMetadata, Inte
     }
     
     @Override
-    public HarRepoMetadata get(String repoUID, HarRecordMetadataType harRecordMetadataTypeObj) {
+    public HarRepoMetadata get(String repoUID, HarRecordMetadataTypeEnum harRecordMetadataTypeObj) {
         return (HarRepoMetadata) currentSession()
                 .createCriteria(HarRepoMetadata.class)
                 .createAlias("repoId", "harRepo")

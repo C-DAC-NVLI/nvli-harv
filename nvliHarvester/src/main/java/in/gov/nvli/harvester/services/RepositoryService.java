@@ -65,4 +65,5 @@ public interface RepositoryService {
     public List<HarRepo> getRepositoriesByStaus(short repoStatusId);
     
     public List<HarMetadataTypeRepository> list(HarRepo harRepoObj);
+    public void saveHarMetadataTypes(HarRepo harRepoObj);
 }

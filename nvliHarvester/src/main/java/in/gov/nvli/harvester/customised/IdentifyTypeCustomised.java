@@ -8,7 +8,7 @@
 
 package in.gov.nvli.harvester.customised;
 
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +68,8 @@ public class IdentifyTypeCustomised {
     protected String granularity;
     protected List<String> compression;
     protected String description;
-    protected Map<HarRecordMetadataType, Boolean> supportedMetadataTypes = new HashMap<>();
+    protected Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypes = new HashMap<>();
+    protected String errorMessage;
     
     
     
@@ -145,11 +146,20 @@ public class IdentifyTypeCustomised {
         this.description = description;
     }
 
-    public Map<HarRecordMetadataType, Boolean> getSupportedMetadataTypes() {
+    public Map<HarRecordMetadataTypeEnum, Boolean> getSupportedMetadataTypes() {
         return supportedMetadataTypes;
     }
 
-    public void setSupportedMetadataTypes(Map<HarRecordMetadataType, Boolean> supportedMetadataTypes) {
+    public void setSupportedMetadataTypes(Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypes) {
         this.supportedMetadataTypes = supportedMetadataTypes;
     }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+    
 }

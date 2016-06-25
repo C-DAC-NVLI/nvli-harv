@@ -5,7 +5,7 @@
  */
 package in.gov.nvli.harvester.controllers;
 
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.services.ListRecordsService;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +32,7 @@ public class ListRecordsController {
 
     @RequestMapping("/listrecords")
     public String listRecord(@RequestParam("baseURL") String baseURL, @RequestParam("metadataPrefix") String metadataPrefix, HttpServletRequest servletRequest) {
-        listRecordsService.saveListRecords(baseURL, HarRecordMetadataType.OAI_DC, MethodEnum.GET, "");
+        listRecordsService.saveListRecords(baseURL, HarRecordMetadataTypeEnum.OAI_DC, MethodEnum.GET, "");
         return "example";
     }
 

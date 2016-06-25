@@ -5,13 +5,13 @@
  */
 package in.gov.nvli.harvester.servicesImpl;
 
-import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarMetadataType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoMetadata;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.custom.exception.OAIPMHerrorTypeException;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
@@ -77,24 +77,24 @@ public class RepositoryMetadataServiceImpl implements RepositoryMetadataService{
     
     private void createNew(HarRepoCustomised harRepoCustomisedObj){
         HarRepoMetadata harRepoMetadataObj;
-        HarRepoStatus harRepoStatusObj;
         HarMetadataType harMetadataTypeObj;
         
         HarRepo harRepoObj = repositoryDaoObj.getRepositoryByUID(harRepoCustomisedObj.getRepoUID());
-        harRepoStatusObj = harRepoObj.getRepoStatusId();
         
-        Map<HarRecordMetadataType, Boolean> supportedMetadataTypes = harRepoCustomisedObj.getSupportedMetadataTypes();
-        for(Map.Entry<HarRecordMetadataType, Boolean> tempHarRecordMetadataTypeObj : supportedMetadataTypes.entrySet()){
+        Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypes = harRepoCustomisedObj.getSupportedMetadataTypes();
+        for(Map.Entry<HarRecordMetadataTypeEnum, Boolean> tempHarRecordMetadataTypeObj : supportedMetadataTypes.entrySet()){
+            harRepoMetadataObj = new HarRepoMetadata();
+            harMetadataTypeObj = harMetadataTypeDaoObj.getMetadataTypeByMetadatPrefix(tempHarRecordMetadataTypeObj.getKey().value());
+            harRepoMetadataObj.setMetadataTypeId(harMetadataTypeObj);
+            harRepoMetadataObj.setRepoId(harRepoObj);
+            harRepoMetadataObj.setHarvestStatus(new HarRepoStatus(RepoStatusEnum.ACTIVE.getId()));
+            
             if(Objects.equals(tempHarRecordMetadataTypeObj.getValue(), Boolean.TRUE)){
-                harRepoMetadataObj = new HarRepoMetadata();
-                harMetadataTypeObj = harMetadataTypeDaoObj.getMetadataTypeByMetadatPrefix(tempHarRecordMetadataTypeObj.getKey().value());
-                
-                harRepoMetadataObj.setHarvestStatus(harRepoStatusObj);
-                harRepoMetadataObj.setRepoId(harRepoObj);
-                harRepoMetadataObj.setMetadataTypeId(harMetadataTypeObj);
-                
-                harRepoMetadataDaoObj.createNew(harRepoMetadataObj);
+                harRepoMetadataObj.setEnableFlag(CommonConstants.ENABLED);
+            }else{
+                harRepoMetadataObj.setEnableFlag(CommonConstants.DISABLED);
             }
+            harRepoMetadataDaoObj.createNew(harRepoMetadataObj);
         }
     }
     
@@ -106,33 +106,28 @@ public class RepositoryMetadataServiceImpl implements RepositoryMetadataService{
     @Override
     public void saveOrUpdateRepositoryMetadata(HarRepoCustomised harRepoCustomisedObj, HarRepo harRepoObj){
         HarRepoMetadata harRepoMetadataObj;
-        Map<HarRecordMetadataType, Boolean> supportedMetadataTypes = harRepoCustomisedObj.getSupportedMetadataTypes();
-        short statusId;
+        Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypes = harRepoCustomisedObj.getSupportedMetadataTypes();
         
-        for(Map.Entry<HarRecordMetadataType, Boolean> tempEntryObj : supportedMetadataTypes.entrySet()){
+        for(Map.Entry<HarRecordMetadataTypeEnum, Boolean> tempEntryObj : supportedMetadataTypes.entrySet()){
             
             harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepoCustomisedObj.getRepoUID(), tempEntryObj.getKey());
             
             if(harRepoMetadataObj == null){
                 harRepoMetadataObj = new HarRepoMetadata();
                 harRepoMetadataObj.setRepoId(harRepoObj);
-                harRepoMetadataObj.setHarvestStatus(new HarRepoStatus(harRepoCustomisedObj.getRepoStatusId()));
+                harRepoMetadataObj.setHarvestStatus(new HarRepoStatus(RepoStatusEnum.ACTIVE.getId()));
                 harRepoMetadataObj.setMetadataTypeId(harMetadataTypeDaoObj.getMetadataTypeByMetadatPrefix(tempEntryObj.getKey().value()));
                 harRepoMetadataDaoObj.createNew(harRepoMetadataObj);
             }
             
-            statusId = harRepoMetadataObj.getHarvestStatus().getRepoStatusId();
-            
             if(Objects.equals(tempEntryObj.getValue(), Boolean.TRUE)){
-                if(Objects.equals(statusId, RepoStatusEnum.NOT_ACTIVE.getId())){
-                    harRepoMetadataDaoObj.updateStatus(harRepoMetadataObj, RepoStatusEnum.ACTIVE.getId());
-                }
+                harRepoMetadataObj.setEnableFlag(CommonConstants.ENABLED);
+                
             }else{
-                if(Objects.equals(statusId, RepoStatusEnum.ACTIVE.getId())){
-                    harRepoMetadataDaoObj.updateStatus(harRepoMetadataObj, RepoStatusEnum.NOT_ACTIVE.getId());
-                }
+                harRepoMetadataObj.setEnableFlag(CommonConstants.DISABLED);
             }
             
+            harRepoMetadataDaoObj.saveOrUpdate(harRepoMetadataObj);
         }
     }
     

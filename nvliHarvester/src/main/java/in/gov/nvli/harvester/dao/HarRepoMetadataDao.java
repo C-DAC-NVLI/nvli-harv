@@ -7,7 +7,7 @@ package in.gov.nvli.harvester.dao;
 
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoMetadata;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public interface HarRepoMetadataDao extends GenericDao<HarRepoMetadata, Integer> {
 
-    public HarRepoMetadata get(int harRepoId, HarRecordMetadataType harRecordMetadataTypeObj);
+    public HarRepoMetadata get(int harRepoId, HarRecordMetadataTypeEnum harRecordMetadataTypeObj);
 
     public boolean updateStatus(HarRepoMetadata harRepoMetadataObj, short status);
 
@@ -33,5 +33,5 @@ public interface HarRepoMetadataDao extends GenericDao<HarRepoMetadata, Integer>
     
     public List<HarRepoMetadata> list(String repoUID);
     
-    public HarRepoMetadata get(String repoUID, HarRecordMetadataType harRecordMetadataTypeObj);
+    public HarRepoMetadata get(String repoUID, HarRecordMetadataTypeEnum harRecordMetadataTypeObj);
 }

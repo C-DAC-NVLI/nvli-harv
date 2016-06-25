@@ -11,7 +11,6 @@ import in.gov.nvli.harvester.custom.annotation.TransactionalReadOnly;
 import in.gov.nvli.harvester.custom.annotation.TransactionalReadOrWrite;
 import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.HarRecordDao;
-import in.gov.nvli.harvester.dao.HarRepoMetadataDao;
 import in.gov.nvli.harvester.dao.HarRepoStatusDao;
 import in.gov.nvli.harvester.dao.RepositoryDao;
 import java.util.Date;
@@ -38,9 +37,6 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @Autowired
     private HarRepoStatusDao harRepoStatusDaoObj;
     
-    @Autowired
-    private HarRepoMetadataDao harRepoMetadataDaoObj;
-
     public RepositoryDaoImpl() {
         super(HarRepo.class);
     }
@@ -49,7 +45,7 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @TransactionalReadOrWrite
     public HarRepo addRepository(HarRepo repositoryObject) {
         try {
-            if (getRepositoryByUID(repositoryObject.getRepoUID()) == null) {
+            if (getRepositoryByUID(repositoryObject.getRepoUID()) == null && getRepository(repositoryObject.getRepoBaseUrl()) == null) {
                 createNew(repositoryObject);
             } else {
                 LOGGER.error("Repository with UID --> " + repositoryObject.getRepoUID() + " is already available");
@@ -125,10 +121,7 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
     @Override
     @TransactionalReadOrWrite
     public boolean changeRepoStatus(String repositoryUID, short status) {
-        if(changeRepoStatusInternal(repositoryUID, status)){
-            return harRepoMetadataDaoObj.changeRepositoryMetadataStatus(repositoryUID, status);
-        }
-        return false;
+        return changeRepoStatusInternal(repositoryUID, status);
     }
 
     @Override
@@ -147,8 +140,6 @@ public class RepositoryDaoImpl extends GenericDaoImpl<HarRepo, Integer> implemen
                 HarRepoStatus repoStatus = (HarRepoStatus) currentSession().createCriteria(HarRepoStatus.class).add(Restrictions.eq("repoStatusId", status)).uniqueResult();
                 repo.setRepoStatusId(repoStatus);
                 currentSession().saveOrUpdate(repo);
-                
-                harRepoMetadataDaoObj.changeRepositoryMetadataStatus(repo, status);
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

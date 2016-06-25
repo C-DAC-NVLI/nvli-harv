@@ -27,7 +27,7 @@ import in.gov.nvli.harvester.beans.mets.FileType;
 import in.gov.nvli.harvester.beans.mets.Mets;
 import in.gov.nvli.harvester.beans.mets.MetsType;
 import in.gov.nvli.harvester.constants.CommonConstants;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.customised.HarRecordDataCustomised;
 import in.gov.nvli.harvester.dao.HarMetadataTypeDao;
@@ -130,7 +130,7 @@ public class GetRecordServiceImpl implements GetRecordService {
             record = saveHarRecord(recordTypeObject, metadataPrefix, harRepoObj);
             if (null != record) {
                 if (saveHarSetRecord(recordTypeObject, record)) {
-                    if (metadataPrefix.equals(HarRecordMetadataType.OAI_DC.value())) {
+                    if (metadataPrefix.equals(HarRecordMetadataTypeEnum.OAI_DC.value())) {
                         saveHarRecordMetadataDc(recordTypeObject, record);
                         return true;
                     }
@@ -156,7 +156,7 @@ public class GetRecordServiceImpl implements GetRecordService {
             record = saveOrUpdateHarRecord(recordTypeObject, metadataPrefix, harRepoObj);
             if (null != record.getRecordId()) {
                 if (saveOrUpdateHarSetRecord(recordTypeObject, record)) {
-                    if (metadataPrefix.equals(HarRecordMetadataType.OAI_DC.value())) {
+                    if (metadataPrefix.equals(HarRecordMetadataTypeEnum.OAI_DC.value())) {
                         saveOrUpdateHarRecordMetadataDc(recordTypeObject, record);
                         return true;
                     }
@@ -485,9 +485,9 @@ public class GetRecordServiceImpl implements GetRecordService {
 
         harRecordObj = recordDao.getHarRecordByRecordIdentifier(recordTypeObject.getHeader().getIdentifier());
         if (harRecordObj == null) {
-            saveGetRecord(harRepoObject, MethodEnum.GET, "", recordTypeObject.getHeader().getIdentifier(), HarRecordMetadataType.OAI_DC.value());
+            saveGetRecord(harRepoObject, MethodEnum.GET, "", recordTypeObject.getHeader().getIdentifier(), HarRecordMetadataTypeEnum.OAI_DC.value());
         } else if (incrementalFlag) {
-            saveOrUpdateGetRecord(harRepoObject, MethodEnum.GET, "", recordTypeObject.getHeader().getIdentifier(), HarRecordMetadataType.OAI_DC.value());
+            saveOrUpdateGetRecord(harRepoObject, MethodEnum.GET, "", recordTypeObject.getHeader().getIdentifier(), HarRecordMetadataTypeEnum.OAI_DC.value());
         } else {
             return harRecordObj;
         }
@@ -523,7 +523,7 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
 
     @Override
-    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj) {
+    public boolean saveHarRecordDataInFileSystem(HarRepo harRepoObj, HarRecordMetadataTypeEnum harRecordMetadataTypeObj) {
 
         List<HarRecord> harRecordList;
         List<HarRecordDataCustomised> harRecordDataCustomisedList;
@@ -554,10 +554,10 @@ public class GetRecordServiceImpl implements GetRecordService {
     }
 
     @Override
-    public List<HarRecordDataCustomised> readHarRecordDataFromXML(HarRepo harRepoObj, HarRecordMetadataType harRecordMetadataTypeObj, List<HarRecord> harRecordList) throws SAXException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, ParserConfigurationException, JAXBException {
-        if (harRecordMetadataTypeObj == HarRecordMetadataType.ORE) {
+    public List<HarRecordDataCustomised> readHarRecordDataFromXML(HarRepo harRepoObj, HarRecordMetadataTypeEnum harRecordMetadataTypeObj, List<HarRecord> harRecordList) throws SAXException, IOException, TransformerException, TransformerConfigurationException, IllegalArgumentException, FeedException, ParserConfigurationException, JAXBException {
+        if (harRecordMetadataTypeObj == HarRecordMetadataTypeEnum.ORE) {
             return readHarRecordDataFromORE(harRepoObj, harRecordList);
-        } else if (harRecordMetadataTypeObj == HarRecordMetadataType.METS) {
+        } else if (harRecordMetadataTypeObj == HarRecordMetadataTypeEnum.METS) {
             return readHarRecordDataFromMETS(harRepoObj, harRecordList);
         }
         return new ArrayList<>();

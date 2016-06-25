@@ -8,6 +8,7 @@ package in.gov.nvli.harvester.servicesImpl;
 import in.gov.nvli.harvester.OAIPMH_beans.VerbType;
 import in.gov.nvli.harvester.beans.HarRepo;
 import in.gov.nvli.harvester.beans.HarRepoMetadata;
+import in.gov.nvli.harvester.constants.CommonConstants;
 import in.gov.nvli.harvester.custom.harvester_enum.MethodEnum;
 import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
 import in.gov.nvli.harvester.dao.RepositoryDao;
@@ -18,7 +19,7 @@ import in.gov.nvli.harvester.services.ListRecordsService;
 import in.gov.nvli.harvester.services.ListSetsService;
 import in.gov.nvli.harvester.utilities.DatesRelatedUtil;
 import in.gov.nvli.harvester.constants.HarvesterLogConstants;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.dao.HarRepoMetadataDao;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -109,43 +110,43 @@ public class HarvesterServiceImpl implements HarvesterService {
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.METADATAFORMATS_SAVED);
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.OAI_DC);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.OAI_DC);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveListRecords(harRepoMetadataObj, MethodEnum.GET, "")) {
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataType.OAI_DC.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataTypeEnum.OAI_DC.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.OAI_DC.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.OAI_DC.value() + " is not saved");
                     error = true;
                 }
             }
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.ORE);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.ORE);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveListRecordsXML(harRepoMetadataObj, MethodEnum.GET, "", true)) {
                     dataSaved = true;
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataType.ORE.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataTypeEnum.ORE.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.ORE.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.ORE.value() + " is not saved");
                     error = true;
                 }
             }
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.METS);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.METS);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveListRecordsXML(harRepoMetadataObj, MethodEnum.GET, "", !dataSaved)) {
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataType.METS.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataTypeEnum.METS.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.METS.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.METS.value() + " is not saved");
                     error = true;
                 }
             }
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.MARC);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.MARC);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveListRecordsXML(harRepoMetadataObj, MethodEnum.GET, "", false)) {
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataType.MARC.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + " : " + HarRecordMetadataTypeEnum.MARC.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.MARC.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.MARC.value() + " is not saved");
                     error = true;
                 }
             }
@@ -155,7 +156,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 //                if(listRecordsService.saveListHarRecordData(harRepo, MethodEnum.GET, "")){
 //                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_HARVESTING_FINISHED);
 //                }else{
-//                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ HarRecordMetadataType.ORE.value()+" is not saved");
+//                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ HarRecordMetadataTypeEnum.ORE.value()+" is not saved");
 //                }
 //            }
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.GETTING_RECORD_COUNT);
@@ -258,43 +259,43 @@ public class HarvesterServiceImpl implements HarvesterService {
             listMetadataFormatsService.saveHarMetadataTypes(harRepo, MethodEnum.GET, "");
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.METADATAFORMATS_SAVED);
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.OAI_DC);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.OAI_DC);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveOrUpdateListRecords(harRepoMetadataObj, MethodEnum.GET, "")) {
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataType.OAI_DC.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataTypeEnum.OAI_DC.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.OAI_DC.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.OAI_DC.value() + " is not saved");
                     error = true;
                 }
             }
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.ORE);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.ORE);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveOrUpdateListRecordsXML(harRepoMetadataObj, MethodEnum.GET, "", true)) {
                     dataSaved = true;
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataType.ORE.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataTypeEnum.ORE.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.ORE.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.ORE.value() + " is not saved");
                     error = true;
                 }
             }
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.METS);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.METS);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveOrUpdateListRecordsXML(harRepoMetadataObj, MethodEnum.GET, "", !dataSaved)) {
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataType.METS.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataTypeEnum.METS.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.METS.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.METS.value() + " is not saved");
                     error = true;
                 }
             }
 
-            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataType.MARC);
-            if (harRepoMetadataObj != null) {
+            harRepoMetadataObj = harRepoMetadataDaoObj.get(harRepo.getRepoId(), HarRecordMetadataTypeEnum.MARC);
+            if (harRepoMetadataObj != null && harRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED) {
                 if (listRecordsService.saveOrUpdateListRecordsXML(harRepoMetadataObj, MethodEnum.GET, "", !dataSaved)) {
-                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataType.MARC.value());
+                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.LISTRECORDS_SAVED + ":" + HarRecordMetadataTypeEnum.MARC.value());
                 } else {
-                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataType.MARC.value() + " is not saved");
+                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value() + " : " + HarRecordMetadataTypeEnum.MARC.value() + " is not saved");
                     error = true;
                 }
             }
@@ -304,7 +305,7 @@ public class HarvesterServiceImpl implements HarvesterService {
 //                if(listRecordsService.saveOrUpdateListHarRecordData(harRepo, MethodEnum.GET, "")){
 //                    LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.ORE_INCREMENTAL_HARVESTING_FINISHED);
 //                }else{
-//                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ HarRecordMetadataType.ORE.value()+" is not saved");
+//                    LOGGER.error(harRepo.getRepoUID() + ":" + VerbType.LIST_RECORDS.value()+ HarRecordMetadataTypeEnum.ORE.value()+" is not saved");
 //                }
 //            }
             LOGGER.info(harRepo.getRepoUID() + ":" + HarvesterLogConstants.GETTING_RECORD_COUNT);

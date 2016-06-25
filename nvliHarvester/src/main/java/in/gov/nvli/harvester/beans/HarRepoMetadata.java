@@ -20,6 +20,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -35,7 +36,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "HarRepoMetadata.findByRepoMetadataId", query = "SELECT h FROM HarRepoMetadata h WHERE h.repoMetadataId = :repoMetadataId"),
     @NamedQuery(name = "HarRepoMetadata.findByHarvestEndTime", query = "SELECT h FROM HarRepoMetadata h WHERE h.harvestEndTime = :harvestEndTime"),
     @NamedQuery(name = "HarRepoMetadata.findByHarvestStartTime", query = "SELECT h FROM HarRepoMetadata h WHERE h.harvestStartTime = :harvestStartTime"),
-    @NamedQuery(name = "HarRepoMetadata.findByResumptionTokenListRecords", query = "SELECT h FROM HarRepoMetadata h WHERE h.resumptionTokenListRecords = :resumptionTokenListRecords")})
+    @NamedQuery(name = "HarRepoMetadata.findByResumptionTokenListRecords", query = "SELECT h FROM HarRepoMetadata h WHERE h.resumptionTokenListRecords = :resumptionTokenListRecords"),
+    @NamedQuery(name = "HarRepoMetadata.findByEnableFlag", query = "SELECT h FROM HarRepoMetadata h WHERE h.enableFlag = :enableFlag")})
 public class HarRepoMetadata implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -62,6 +64,10 @@ public class HarRepoMetadata implements Serializable {
     @JoinColumn(name = "metadata_type_id", referencedColumnName = "metadata_id", nullable = false)
     @ManyToOne(optional = false)
     private HarMetadataType metadataTypeId;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "enable_flag", nullable = false, columnDefinition = "smallint default 0 COMMENT '0-disabled, 1-enabled'")
+    private short enableFlag;
 
     public HarRepoMetadata() {
     }
@@ -131,6 +137,14 @@ public class HarRepoMetadata implements Serializable {
         int hash = 0;
         hash += (repoMetadataId != null ? repoMetadataId.hashCode() : 0);
         return hash;
+    }
+
+    public short getEnableFlag() {
+        return enableFlag;
+    }
+
+    public void setEnableFlag(short enableFlag) {
+        this.enableFlag = enableFlag;
     }
 
     @Override

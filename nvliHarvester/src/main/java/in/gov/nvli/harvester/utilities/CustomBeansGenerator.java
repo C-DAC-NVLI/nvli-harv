@@ -14,8 +14,7 @@ import in.gov.nvli.harvester.beans.HarRepoMetadata;
 import in.gov.nvli.harvester.beans.HarRepoStatus;
 import in.gov.nvli.harvester.beans.HarRepoType;
 import in.gov.nvli.harvester.constants.CommonConstants;
-import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataType;
-import in.gov.nvli.harvester.custom.harvester_enum.RepoStatusEnum;
+import in.gov.nvli.harvester.custom.harvester_enum.HarRecordMetadataTypeEnum;
 import in.gov.nvli.harvester.customised.HarRepoCustomised;
 import in.gov.nvli.harvester.customised.IdentifyTypeCustomised;
 import java.util.ArrayList;
@@ -67,15 +66,14 @@ public class CustomBeansGenerator {
     public static HarRepoCustomised convertHarRepoToHarRepoCustomised(HarRepo harRepo, List<HarRepoMetadata> harRepoMetadataList) {
         HarRepoCustomised repositoryObject = convertHarRepoToHarRepoCustomised(harRepo);
         
-        Map<HarRecordMetadataType, Boolean> supportedMetadataTypesMap = new HashMap<>();
-        HarRecordMetadataType harRecordMetadataTypeObj;
+        Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypesMap = new HashMap<>();
+        HarRecordMetadataTypeEnum harRecordMetadataTypeObj;
         for(HarRepoMetadata tempHarRepoMetadataObj : harRepoMetadataList){
-            harRecordMetadataTypeObj = HarRecordMetadataType.valueOf(tempHarRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
-            if(tempHarRepoMetadataObj.getHarvestStatus().getRepoStatusId() == RepoStatusEnum.NOT_ACTIVE.getId()
-                    || tempHarRepoMetadataObj.getHarvestStatus().getRepoStatusId() == RepoStatusEnum.INVALID_URL.getId()){
-                supportedMetadataTypesMap.put(harRecordMetadataTypeObj, Boolean.FALSE);
-            }else{
+            harRecordMetadataTypeObj = HarRecordMetadataTypeEnum.valueOf(tempHarRepoMetadataObj.getMetadataTypeId().getMetadataPrefix().toUpperCase());
+            if(tempHarRepoMetadataObj.getEnableFlag() == CommonConstants.ENABLED){
                 supportedMetadataTypesMap.put(harRecordMetadataTypeObj, Boolean.TRUE);
+            }else{
+                supportedMetadataTypesMap.put(harRecordMetadataTypeObj, Boolean.FALSE);
             }
             
         }
@@ -87,11 +85,11 @@ public class CustomBeansGenerator {
     public static HarRepoCustomised convertHarRepoToHarRepoCustomisedByHarMetadataTypeRepository(HarRepo harRepo, List<HarMetadataTypeRepository> harMetadataTypeRepositoryList) {
         HarRepoCustomised repositoryObject = convertHarRepoToHarRepoCustomised(harRepo);
         
-        Map<HarRecordMetadataType, Boolean> supportedMetadataTypesMap = new HashMap<>();
-        HarRecordMetadataType harRecordMetadataTypeObj;
+        Map<HarRecordMetadataTypeEnum, Boolean> supportedMetadataTypesMap = new HashMap<>();
+        HarRecordMetadataTypeEnum harRecordMetadataTypeObj;
         for(HarMetadataTypeRepository tempHarMetadataTypeRepository : harMetadataTypeRepositoryList){
             try{
-                harRecordMetadataTypeObj = HarRecordMetadataType.valueOf(tempHarMetadataTypeRepository.getMetadataTypeId().getMetadataPrefix().toUpperCase());
+                harRecordMetadataTypeObj = HarRecordMetadataTypeEnum.valueOf(tempHarMetadataTypeRepository.getMetadataTypeId().getMetadataPrefix().toUpperCase());
                 supportedMetadataTypesMap.put(harRecordMetadataTypeObj, Boolean.FALSE);
             }catch(IllegalArgumentException ex){
                 LOGGER.error(CommonConstants.WEB_SERVICES_LOG_MESSAGES + tempHarMetadataTypeRepository.getMetadataTypeId().getMetadataPrefix() +" is not supported by System");

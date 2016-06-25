@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 public class FileUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
+    private static final String SPACE = " ";
+    private static final String COMMA = ", ";
 
     public static void saveFile(String url, String filePath, String fileName) throws IOException {
         InputStream in = null;
@@ -84,6 +86,7 @@ public class FileUtils {
         String fileName;
         if (harRecordDataCustomisedObj.getFileName() == null || harRecordDataCustomisedObj.getFileName().isEmpty()) {
             fileName = getNameFromURL(harRecordDataCustomisedObj.getFileURL());
+            fileName = fileName.replaceAll("%20", SPACE).replaceAll("%2c", COMMA);
         } else {
             fileName = harRecordDataCustomisedObj.getFileName();
         }
