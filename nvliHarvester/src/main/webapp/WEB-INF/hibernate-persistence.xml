@@ -35,6 +35,9 @@
                 hibernate.format_sql=true
                 hibernate.show_sql=false
                 hibernate.hbm2ddl.auto=update
+                hibernate.connection.CharSet=utf8
+                hibernate.connection.characterEncoding=utf8
+                hibernate.connection.useUnicode=true
             </value>
         </property>
         
