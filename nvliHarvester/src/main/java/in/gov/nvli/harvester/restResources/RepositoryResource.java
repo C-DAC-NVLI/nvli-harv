@@ -277,6 +277,12 @@ public class RepositoryResource
         repo.setRepoUID(repoOrginal.getRepoUID());
         repo.setRepoBaseUrl(repoOrginal.getRepoBaseUrl());
         repo.setRepoId(repoOrginal.getRepoId());
+        repo.setRepoActivationDate(repoOrginal.getRepoActivationDate());
+        repo.setRepoLastSyncDate(repoOrginal.getRepoLastSyncDate());
+        repo.setRepoRegistrationDate(repoOrginal.getRepoRegistrationDate());
+        repo.setRepoRowUpdateTime(repoOrginal.getRepoRowUpdateTime());
+        repo.setRecordCount(repoOrginal.getRecordCount());
+        repo.setRepoLastSyncEndDate(repoOrginal.getRepoLastSyncEndDate());
        
         repositoryService.editRepository(repo);
         repositoryMetadataServiceObj.saveOrUpdateRepositoryMetadata(custObj, repo);
