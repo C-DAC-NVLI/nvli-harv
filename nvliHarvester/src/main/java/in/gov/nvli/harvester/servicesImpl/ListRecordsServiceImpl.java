@@ -400,11 +400,12 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                                     harRecordDataDao.saveList(harRecordDataList);
                                     LOGGER.info(harRepoObj.getRepoUID() + ":" + harRecordDataList.size() + " Records saved");
                                 }
-
-                                resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
-                                if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
-                                    desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
-                                    saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, incrementalFlag);
+                                if (oAIPMHtypeObject.getListRecords().getResumptionToken() != null) {
+                                    resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
+                                    if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
+                                        desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
+                                        saveListHarRecordDataRecursive(harRepoObj, desiredURL, method, adminEmail, incrementalFlag);
+                                    }
                                 }
                             } else {
                                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
