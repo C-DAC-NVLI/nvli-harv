@@ -26,6 +26,7 @@ public class FileUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
     private static final String SPACE = " ";
     private static final String COMMA = ", ";
+    private static final String PLUS = "+";
 
     public static void saveFile(String url, String filePath, String fileName) throws IOException {
         InputStream in = null;
@@ -86,7 +87,7 @@ public class FileUtils {
         String fileName;
         if (harRecordDataCustomisedObj.getFileName() == null || harRecordDataCustomisedObj.getFileName().isEmpty()) {
             fileName = getNameFromURL(harRecordDataCustomisedObj.getFileURL());
-            fileName = fileName.replaceAll("%20", SPACE).replaceAll("%2c", COMMA);
+            fileName = fileName.toLowerCase().replaceAll("%20", SPACE).replaceAll("%2c", COMMA).replaceAll("%2b", PLUS);
         } else {
             fileName = harRecordDataCustomisedObj.getFileName();
         }

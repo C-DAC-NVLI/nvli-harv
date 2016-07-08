@@ -811,14 +811,16 @@ public class ListRecordsServiceImpl implements ListRecordsService {
                                     }
                                 }
                                 LOGGER.info(harRepoObj.getRepoUID() + ":" + recordTypeList.size() + " " + harRecordMetadataType.value() + " XML saved");
-                                resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
-                                if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
-                                    desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
+                                if (oAIPMHtypeObject.getListRecords().getResumptionToken() != null) {
+                                    resumptionToken = oAIPMHtypeObject.getListRecords().getResumptionToken().getValue();
+                                    if (resumptionToken != null && !resumptionToken.equals("") && !resumptionToken.isEmpty()) {
+                                        desiredURL = harRepoObj.getRepoBaseUrl() + CommonConstants.VERB + VerbType.LIST_RECORDS.value() + CommonConstants.RESUMPTION_TOKEN + resumptionToken;
 
-                                    harRepoMetadataObj.setResumptionTokenListRecords(resumptionToken);
-                                    harRepoMetadataDaoObj.merge(harRepoMetadataObj);
+                                        harRepoMetadataObj.setResumptionTokenListRecords(resumptionToken);
+                                        harRepoMetadataDaoObj.merge(harRepoMetadataObj);
 
-                                    return saveListRecordsXMLRecursive(harRepoMetadataObj, desiredURL, method, adminEmail, incrementalFlag);
+                                        return saveListRecordsXMLRecursive(harRepoMetadataObj, desiredURL, method, adminEmail, incrementalFlag);
+                                    }
                                 }
                             } else {
                                 throw new OAIPMHerrorTypeException("RepositoryUID --> " + harRepoObj.getRepoUID()
