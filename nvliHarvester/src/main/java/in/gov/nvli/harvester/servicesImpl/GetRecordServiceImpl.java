@@ -532,10 +532,10 @@ public class GetRecordServiceImpl implements GetRecordService {
         int displayStart = 0;
 
         try {
-            recordCount = recordDao.rowCount(CommonConstants.RECORD_NOT_DELETED);
+            recordCount = recordDao.rowCount(harRepoObj, CommonConstants.RECORD_NOT_DELETED);
 
             while (displayStart <= recordCount) {
-                harRecordList = recordDao.list(displayStart, DISPLAY_LENGTH, CommonConstants.RECORD_NOT_DELETED);
+                harRecordList = recordDao.list(harRepoObj, displayStart, DISPLAY_LENGTH, CommonConstants.RECORD_NOT_DELETED);
                 harRecordDataCustomisedList = readHarRecordDataFromXML(harRepoObj, harRecordMetadataTypeObj, harRecordList);
                 for (HarRecordDataCustomised tempHarRecordDataCustomised : harRecordDataCustomisedList) {
                     filePath = repositoryDataPath + File.separator + harRepoObj.getRepoUID() + File.separator + tempHarRecordDataCustomised.getRecordUID() + File.separator + CommonConstants.DIRECTORY_Name_RECORD_DATA;

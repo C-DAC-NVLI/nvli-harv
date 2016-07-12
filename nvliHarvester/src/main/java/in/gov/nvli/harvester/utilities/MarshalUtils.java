@@ -36,7 +36,7 @@ public class MarshalUtils {
         Class targetClass = null;
         String targetDirectory = null;
         Object targetObject = null;
-        Document document;
+        Document document = null;
 
         if (null != harRecordMetadataType) {
             switch (harRecordMetadataType) {
@@ -80,18 +80,24 @@ public class MarshalUtils {
             document = (Document) res.getNode();
         } else {
             Element elementObj = (Element) metadataTypeObj.getAny();
-            document = elementObj.getOwnerDocument();
+            if(elementObj != null){
+                document = elementObj.getOwnerDocument();
+            }
         }
 
-        DOMSource source = new DOMSource(document);
-        StreamResult result = new StreamResult(xmlFile);
+        if(document != null){
+            DOMSource source = new DOMSource(document);
+            StreamResult result = new StreamResult(xmlFile);
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
 
-        transformer.transform(source, result);
+            transformer.transform(source, result);
 
-        return true;
-
+            return true;
+        }else{
+            return false;
+        }
+        
     }
 }

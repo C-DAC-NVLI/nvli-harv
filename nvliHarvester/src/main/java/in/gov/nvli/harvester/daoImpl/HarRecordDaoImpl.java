@@ -103,12 +103,36 @@ public class HarRecordDaoImpl extends GenericDaoImpl<HarRecord, Long> implements
                 .setProjection(Projections.rowCount())
                 .uniqueResult();
     }
+    
+    @Override
+    public Long rowCount(HarRepo harRepoObj, short recordStaus) {
+        return (Long) currentSession()
+                .createCriteria(HarRecord.class)
+                .createAlias("repoId", "harRepo")
+                .add(Restrictions.eq("harRepo.repoId", harRepoObj.getRepoId()))
+                .add(Restrictions.eq("recordStatus", recordStaus))
+                .setProjection(Projections.rowCount())
+                .uniqueResult();
+    }
 
     @Override
     public List<HarRecord> list(int displayStart, int displayLength, short recordStatus) {
         return currentSession()
                 .createCriteria(HarRecord.class)
                 .addOrder(Order.asc("recordId"))
+                .add(Restrictions.eq("recordStatus", recordStatus))
+                .setFirstResult(displayStart)
+                .setMaxResults(displayLength)
+                .list();
+    }
+    
+    @Override
+    public List<HarRecord> list(HarRepo harRepoObj, int displayStart, int displayLength, short recordStatus) {
+        return currentSession()
+                .createCriteria(HarRecord.class)
+                .createAlias("repoId", "harRepo")
+                .addOrder(Order.asc("recordId"))
+                .add(Restrictions.eq("harRepo.repoId", harRepoObj.getRepoId()))
                 .add(Restrictions.eq("recordStatus", recordStatus))
                 .setFirstResult(displayStart)
                 .setMaxResults(displayLength)

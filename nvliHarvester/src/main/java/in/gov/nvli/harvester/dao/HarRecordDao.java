@@ -27,6 +27,9 @@ public interface HarRecordDao extends GenericDao<HarRecord, Long> {
 
     public Long rowCount(short recordStaus);
 
+    public Long rowCount(HarRepo harRepoObj, short recordStaus);
+            
     public List<HarRecord> list(int displayStart, int displayLength, short recordStatus);
-
+    
+    public List<HarRecord> list(HarRepo harRepoObj, int displayStart, int displayLength, short recordStatus);
 }
