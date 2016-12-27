@@ -181,6 +181,7 @@ public class RepositoryResource {
         return "Invalid Request";
     }
 
+    //returns the status of repositry after changing it
     private String changeRepoStatus(List<String> repoUIDSList, short status) {
         return RepoStatusMsg(repositoryService.changeRepoStatus(repoUIDSList, status), status);
     }
